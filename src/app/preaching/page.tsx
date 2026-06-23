@@ -1,0 +1,22 @@
+// Preaching page — full library with search + topic filter.
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Button } from "@/components/ui/Button";
+import { PreachingList } from "@/components/lists/PreachingList";
+import { getPreaching } from "@/lib/data";
+
+export const metadata = { title: "Preaching — Apostolic Power Network" };
+
+export default async function PreachingPage() {
+  const items = await getPreaching();
+  return (
+    <div className="container-app py-12">
+      <SectionHeader
+        eyebrow="On Demand"
+        title="Apostolic Preaching Library"
+        subtitle="Sound doctrine, anytime — built around the truths we hold dear."
+        action={<Button href="/submit" size="sm">＋ Submit a Sermon</Button>}
+      />
+      <PreachingList items={items} />
+    </div>
+  );
+}
