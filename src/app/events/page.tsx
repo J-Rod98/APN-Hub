@@ -11,6 +11,7 @@ export default async function EventsPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="Upcoming"
         title="Apostolic Events"
         subtitle="Revivals, youth rallies, conferences, camp meetings, and more."

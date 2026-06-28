@@ -1,13 +1,14 @@
 // Preaching/sermon card with play icon, topic, scripture, and watch link.
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { safeUrl } from "@/lib/utils";
 import type { PreachingItem } from "@/lib/types";
 
 export function PreachingCard({ item }: { item: PreachingItem }) {
   return (
     <Card className="flex gap-4 p-5">
       <a
-        href={item.media_url ?? "#"}
+        href={safeUrl(item.media_url) ?? "#"}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Play ${item.title}`}
@@ -33,7 +34,7 @@ export function PreachingCard({ item }: { item: PreachingItem }) {
           <p className="line-clamp-2 text-sm text-ink-muted">{item.description}</p>
         )}
         <a
-          href={item.media_url ?? "#"}
+          href={safeUrl(item.media_url) ?? "#"}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-2 inline-block text-sm font-bold text-brand-bright hover:underline"

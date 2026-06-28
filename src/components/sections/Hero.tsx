@@ -1,4 +1,5 @@
 // Home hero: headline, CTAs, and a floating phone-style app preview.
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { FlameLogo } from "@/components/ui/FlameLogo";
 
@@ -10,25 +11,26 @@ export function Hero() {
           Apostolic Power Network
         </div>
         <h1 className="text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.2rem]">
-          The Apostolic Community,
+          Trusted Apostolic Preaching,
           <br />
           <span className="bg-gradient-to-r from-brand-bright to-brand bg-clip-text text-transparent">
-            All in One Place
-          </span>
+            Podcasts &amp; Events
+          </span>{" "}
+          — In One Place
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-ink-muted lg:mx-0">
-          Discover Apostolic events, preaching, podcasts, prayer support, Bible
-          study materials, and trusted resources.
+          Sound, Spirit-filled content from across the Apostolic movement —
+          sermons, podcasts, events, and resources you can trust.
         </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
-          <Button href="/events">🔥 Find Events</Button>
-          <Button href="/prayer" variant="ghost">🙏 Request Prayer</Button>
-          <Button href="/submit" variant="ghost">＋ Submit Content</Button>
-        </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-5 text-sm text-ink-muted lg:justify-start">
-          <span><b className="text-ink">120+</b> churches</span>
-          <span><b className="text-ink">500+</b> resources</span>
-          <span><b className="text-ink">40+</b> events monthly</span>
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <Button href="/preaching">Explore Content</Button>
+          <Button href="/#newsletter" variant="ghost">Get Weekly Updates</Button>
+          <Link
+            href="/submit"
+            className="text-sm font-semibold text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+          >
+            or submit content →
+          </Link>
         </div>
       </div>
 

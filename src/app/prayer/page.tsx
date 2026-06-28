@@ -11,6 +11,7 @@ export default async function PrayerPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="Community Prayer Wall"
         title="We pray for one another"
         subtitle="Post a request, then cover others in prayer with one tap."

@@ -3,7 +3,7 @@ import { NewsletterForm } from "@/components/forms/NewsletterForm";
 
 export function Newsletter() {
   return (
-    <section className="container-app py-14">
+    <section id="newsletter" className="container-app py-14 scroll-mt-20">
       <div className="rounded-[26px] border border-line bg-gradient-to-b from-navy-800 to-navy-900 px-7 py-12 text-center [background-image:radial-gradient(600px_280px_at_50%_0%,rgba(47,139,255,0.2),transparent_60%)]">
         <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-bright">
           Stay Connected

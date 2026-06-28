@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Badge";
 import { getPreachingById } from "@/lib/data";
-import { formatDate } from "@/lib/utils";
+import { formatDate, safeUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +21,8 @@ export default async function PreachingDetailPage({
 }) {
   const item = await getPreachingById(params.id);
   if (!item) notFound();
+
+  const media = safeUrl(item.media_url);
 
   return (
     <div className="container-app py-10">
@@ -41,11 +43,11 @@ export default async function PreachingDetailPage({
         {/* media placeholder */}
         <Card hover={false} className="mt-6 flex aspect-video items-center justify-center bg-navy-950">
           <a
-            href={item.media_url ?? "#"}
+            href={media ?? "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-brand to-brand-deep text-xl text-white shadow-glow transition hover:scale-105"
-            aria-label="Play"
+            aria-label={`Play ${item.title}`}
           >
             ▶
           </a>
@@ -55,9 +57,9 @@ export default async function PreachingDetailPage({
           <p className="mt-6 text-ink-muted">{item.description}</p>
         )}
 
-        {item.media_url && (
+        {media && (
           <div className="mt-6">
-            <Button href={item.media_url}>▶ Watch / Listen</Button>
+            <Button href={media}>▶ Watch / Listen</Button>
           </div>
         )}
       </div>

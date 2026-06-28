@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { safeUrl } from "@/lib/utils";
 import type { PodcastEpisode } from "@/lib/types";
 
 export function PodcastCard({ episode }: { episode: PodcastEpisode }) {
@@ -35,9 +36,9 @@ export function PodcastCard({ episode }: { episode: PodcastEpisode }) {
         >
           {playing ? "⏸" : "▶"}
         </button>
-        {episode.media_url && (
+        {safeUrl(episode.media_url) && (
           <a
-            href={episode.media_url}
+            href={safeUrl(episode.media_url)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold text-brand-bright hover:underline"

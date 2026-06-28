@@ -11,6 +11,7 @@ export default async function MaterialsPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="Download & Teach"
         title="Apostolic Materials"
         subtitle="Lessons, guides, and church media — all free in Phase 1."

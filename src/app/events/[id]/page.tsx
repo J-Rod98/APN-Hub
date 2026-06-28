@@ -2,9 +2,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { getEventById } from "@/lib/data";
-import { dateBadge, formatDate } from "@/lib/utils";
+import { dateBadge, formatDate, safeUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -63,10 +62,15 @@ export default async function EventDetailPage({
           </dl>
 
           <div className="mt-6 flex flex-col gap-3">
-            {event.source_url && (
-              <Button href={event.source_url} variant="ghost" size="sm">
+            {safeUrl(event.source_url) && (
+              <a
+                href={safeUrl(event.source_url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-bold transition hover:border-brand-bright hover:bg-brand/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-bright/60"
+              >
                 Visit Source ↗
-              </Button>
+              </a>
             )}
             {event.contact_email && (
               <a

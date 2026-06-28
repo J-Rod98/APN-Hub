@@ -11,6 +11,7 @@ export default async function PodcastPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="Listen"
         title="APN Podcast"
         subtitle="Conversations on faith, doctrine, and apostolic living."

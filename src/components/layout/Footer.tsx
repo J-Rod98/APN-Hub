@@ -6,19 +6,20 @@ const cols = [
   {
     title: "Explore",
     links: [
-      { href: "/events", label: "Events" },
       { href: "/preaching", label: "Preaching" },
       { href: "/podcast", label: "Podcast" },
-      { href: "/materials", label: "Materials" },
+      { href: "/events", label: "Events" },
+      { href: "/materials", label: "Resources" },
+      { href: "/prayer", label: "Prayer" },
     ],
   },
   {
-    title: "Community",
+    title: "Connect",
     links: [
-      { href: "/prayer", label: "Prayer" },
-      { href: "/submit", label: "Bible Studies" },
-      { href: "/submit", label: "Submit Event" },
-      { href: "/submit", label: "Contact" },
+      { href: "/about", label: "About APN" },
+      { href: "/submit", label: "Submit Content" },
+      { href: "/#newsletter", label: "Get Updates" },
+      { href: "mailto:jonathanrod98@gmail.com", label: "Contact" },
     ],
   },
 ];
@@ -40,15 +41,25 @@ export function Footer() {
               <h5 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-brand-bright">
                 {col.title}
               </h5>
-              {col.links.map((l, i) => (
-                <Link
-                  key={`${l.href}-${i}`}
-                  href={l.href}
-                  className="block py-1 text-sm text-ink-muted hover:text-ink"
-                >
-                  {l.label}
-                </Link>
-              ))}
+              {col.links.map((l, i) =>
+                l.href.startsWith("mailto:") ? (
+                  <a
+                    key={`${l.href}-${i}`}
+                    href={l.href}
+                    className="block py-1 text-sm text-ink-muted hover:text-ink"
+                  >
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={`${l.href}-${i}`}
+                    href={l.href}
+                    className="block py-1 text-sm text-ink-muted hover:text-ink"
+                  >
+                    {l.label}
+                  </Link>
+                ),
+              )}
             </div>
           ))}
         </div>

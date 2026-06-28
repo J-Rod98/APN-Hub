@@ -10,8 +10,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Honeypot: silently accept spam without storing it.
+  if (body.hp_website) {
+    return NextResponse.json({ ok: true });
+  }
+
   const email = (body.email as string | undefined)?.trim();
-  if (!email || !email.includes("@")) {
+  if (!email || !email.includes("@") || email.length > 255) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   }
 

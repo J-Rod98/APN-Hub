@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { getPodcastById } from "@/lib/data";
-import { formatDate } from "@/lib/utils";
+import { formatDate, safeUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +20,8 @@ export default async function PodcastDetailPage({
 }) {
   const ep = await getPodcastById(params.id);
   if (!ep) notFound();
+
+  const media = safeUrl(ep.media_url);
 
   return (
     <div className="container-app py-10">
@@ -59,9 +61,9 @@ export default async function PodcastDetailPage({
 
         {ep.description && <p className="mt-6 text-ink-muted">{ep.description}</p>}
 
-        {ep.media_url && (
+        {media && (
           <div className="mt-6">
-            <Button href={ep.media_url}>▶ Listen to Episode</Button>
+            <Button href={media}>▶ Listen to Episode</Button>
           </div>
         )}
       </div>

@@ -14,8 +14,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Honeypot: silently accept spam without storing it.
+  if (body.hp_website) {
+    return NextResponse.json({ ok: true });
+  }
+
   if (!body.submission_type || !VALID_TYPES.includes(body.submission_type as string)) {
     return NextResponse.json({ error: "Invalid submission_type" }, { status: 400 });
+  }
+  // Basic length guards against abusive payloads.
+  if (String(body.title ?? "").length > 200 || String(body.description ?? "").length > 5000) {
+    return NextResponse.json({ error: "Field too long" }, { status: 400 });
   }
 
   const db = getServerClient();

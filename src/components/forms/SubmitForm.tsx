@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import {
   SUBMISSION_TYPES,
   EVENT_CATEGORIES,
@@ -26,7 +27,7 @@ export function SubmitForm() {
     const fd = new FormData(form);
 
     // Common fields go top-level; type-specific fields collapse into content_data.
-    const common = ["submission_type", "submitter_name", "submitter_email", "title", "description", "source_url"];
+    const common = ["submission_type", "submitter_name", "submitter_email", "title", "description", "source_url", "hp_website"];
     const content_data: Record<string, unknown> = {};
     fd.forEach((value, key) => {
       if (!common.includes(key)) content_data[key] = value;
@@ -43,6 +44,7 @@ export function SubmitForm() {
           title: fd.get("title") || null,
           description: fd.get("description") || null,
           source_url: fd.get("source_url") || null,
+          hp_website: fd.get("hp_website") || "", // honeypot
           content_data,
         }),
       });
@@ -80,17 +82,20 @@ export function SubmitForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+        <HoneypotField />
         {/* --- Always shown --- */}
-        <input name="submitter_name" placeholder="Your name" className="input" />
-        <input name="submitter_email" type="email" placeholder="Your email" className="input" />
+        <input name="submitter_name" aria-label="Your name" placeholder="Your name" className="input" />
+        <input name="submitter_email" type="email" aria-label="Your email" placeholder="Your email" className="input" />
         <input
           name="title"
           required
+          aria-label={type === "prayer" ? "Prayer title" : "Title"}
           placeholder={type === "prayer" ? "Prayer title" : "Title"}
           className="input sm:col-span-2"
         />
         <textarea
           name="description"
+          aria-label={type === "prayer" ? "Your prayer request" : "Description"}
           placeholder={type === "prayer" ? "Your prayer request…" : "Description"}
           rows={3}
           className="input sm:col-span-2"
@@ -99,16 +104,16 @@ export function SubmitForm() {
         {/* --- Dynamic fields per type --- */}
         {type === "event" && (
           <>
-            <input name="event_date" type="date" className="input" />
-            <input name="event_time" placeholder="Time (e.g. 7:00 PM)" className="input" />
-            <input name="city" placeholder="City" className="input" />
-            <select name="state" defaultValue="" className="input">
+            <input name="event_date" type="date" aria-label="Event date" className="input" />
+            <input name="event_time" aria-label="Event time" placeholder="Time (e.g. 7:00 PM)" className="input" />
+            <input name="city" aria-label="City" placeholder="City" className="input" />
+            <select name="state" aria-label="State" defaultValue="" className="input">
               <option value="">State</option>
               {US_STATES.map((s) => <option key={s}>{s}</option>)}
             </select>
-            <input name="church_name" placeholder="Church name" className="input" />
-            <input name="speaker" placeholder="Speaker" className="input" />
-            <select name="category" defaultValue="" className="input sm:col-span-2">
+            <input name="church_name" aria-label="Church name" placeholder="Church name" className="input" />
+            <input name="speaker" aria-label="Speaker" placeholder="Speaker" className="input" />
+            <select name="category" aria-label="Event category" defaultValue="" className="input sm:col-span-2">
               <option value="">Event category</option>
               {EVENT_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
@@ -117,13 +122,13 @@ export function SubmitForm() {
 
         {type === "sermon" && (
           <>
-            <input name="speaker" placeholder="Speaker" className="input" />
-            <select name="topic" defaultValue="" className="input">
+            <input name="speaker" aria-label="Speaker" placeholder="Speaker" className="input" />
+            <select name="topic" aria-label="Topic" defaultValue="" className="input">
               <option value="">Topic</option>
               {PREACHING_TOPICS.map((t) => <option key={t}>{t}</option>)}
             </select>
-            <input name="scripture_reference" placeholder="Scripture reference" className="input" />
-            <select name="media_type" defaultValue="" className="input">
+            <input name="scripture_reference" aria-label="Scripture reference" placeholder="Scripture reference" className="input" />
+            <select name="media_type" aria-label="Media type" defaultValue="" className="input">
               <option value="">Media type</option>
               <option>video</option>
               <option>audio</option>
@@ -133,26 +138,26 @@ export function SubmitForm() {
 
         {type === "podcast" && (
           <>
-            <input name="episode_number" type="number" placeholder="Episode #" className="input" />
-            <input name="guest" placeholder="Guest" className="input" />
-            <input name="duration" placeholder="Duration (e.g. 52 min)" className="input sm:col-span-2" />
+            <input name="episode_number" type="number" aria-label="Episode number" placeholder="Episode #" className="input" />
+            <input name="guest" aria-label="Guest" placeholder="Guest" className="input" />
+            <input name="duration" aria-label="Duration" placeholder="Duration (e.g. 52 min)" className="input sm:col-span-2" />
           </>
         )}
 
         {type === "music" && (
           <>
-            <input name="artist" placeholder="Artist / group" className="input" />
-            <input name="release_type" placeholder="Type (single, album, live…)" className="input" />
+            <input name="artist" aria-label="Artist / group" placeholder="Artist / group" className="input" />
+            <input name="release_type" aria-label="Release type" placeholder="Type (single, album, live…)" className="input" />
           </>
         )}
 
         {type === "material" && (
           <>
-            <select name="category" defaultValue="" className="input">
+            <select name="category" aria-label="Material category" defaultValue="" className="input">
               <option value="">Material category</option>
               {MATERIAL_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
-            <select name="file_type" defaultValue="" className="input">
+            <select name="file_type" aria-label="File type" defaultValue="" className="input">
               <option value="">File type</option>
               {FILE_TYPES.map((f) => <option key={f}>{f}</option>)}
             </select>
@@ -160,15 +165,15 @@ export function SubmitForm() {
         )}
 
         {type === "testimony" && (
-          <input name="city" placeholder="City / State (optional)" className="input sm:col-span-2" />
+          <input name="city" aria-label="City / State (optional)" placeholder="City / State (optional)" className="input sm:col-span-2" />
         )}
 
         {type === "news" && (
-          <input name="news_source" placeholder="Where did this happen?" className="input sm:col-span-2" />
+          <input name="news_source" aria-label="Where did this happen?" placeholder="Where did this happen?" className="input sm:col-span-2" />
         )}
 
         {type === "prayer" && (
-          <select name="category" defaultValue="" className="input sm:col-span-2">
+          <select name="category" aria-label="Prayer category" defaultValue="" className="input sm:col-span-2">
             <option value="">Prayer category</option>
             {PRAYER_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
           </select>
@@ -176,7 +181,7 @@ export function SubmitForm() {
 
         {/* Source/link applies to most types */}
         {type !== "prayer" && type !== "testimony" && (
-          <input name="source_url" placeholder="Link / source URL (optional)" className="input sm:col-span-2" />
+          <input name="source_url" aria-label="Link / source URL (optional)" placeholder="Link / source URL (optional)" className="input sm:col-span-2" />
         )}
 
         <div className="sm:col-span-2">

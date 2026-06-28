@@ -16,9 +16,11 @@ export function SearchInput({
     <div className="flex items-center gap-3 rounded-2xl border border-line bg-navy-950 px-4 py-1">
       <span className="text-lg text-ink-muted">🔍</span>
       <input
+        type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-label={placeholder}
         className="w-full bg-transparent py-3 text-base outline-none placeholder:text-ink-muted"
       />
       {value && (

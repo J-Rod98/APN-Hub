@@ -10,8 +10,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Honeypot: a real user never fills hp_website. Pretend success, drop silently.
+  if (body.hp_website) {
+    return NextResponse.json({ ok: true });
+  }
+
   if (!body.request_text) {
     return NextResponse.json({ error: "request_text is required" }, { status: 400 });
+  }
+  // Basic length guard against abusive payloads.
+  if (String(body.request_text).length > 5000) {
+    return NextResponse.json({ error: "request_text too long" }, { status: 400 });
   }
 
   const db = getServerClient();

@@ -5,6 +5,20 @@ export function cn(...classes: Array<string | false | null | undefined>): string
   return classes.filter(Boolean).join(" ");
 }
 
+/**
+ * Only allow http(s) URLs into href attributes. Blocks `javascript:` and other
+ * dangerous schemes from user-submitted links. Returns undefined if unsafe.
+ */
+export function safeUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  try {
+    const u = new URL(url.trim());
+    return u.protocol === "http:" || u.protocol === "https:" ? u.href : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Format an ISO date string like "2026-07-12" -> "Jul 12, 2026". */
 export function formatDate(iso: string | null): string {
   if (!iso) return "Date TBA";

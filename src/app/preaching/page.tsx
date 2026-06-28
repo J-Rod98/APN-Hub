@@ -11,6 +11,7 @@ export default async function PreachingPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="On Demand"
         title="Apostolic Preaching Library"
         subtitle="Sound doctrine, anytime — built around the truths we hold dear."

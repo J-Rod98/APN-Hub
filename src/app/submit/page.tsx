@@ -9,6 +9,7 @@ export default function SubmitPage() {
   return (
     <div className="container-app py-12">
       <SectionHeader
+        as="h1"
         eyebrow="Share With the Network"
         title="Submit Content"
         subtitle="Have an event, sermon, podcast, resource, testimony, or prayer request? Submit it here for review."

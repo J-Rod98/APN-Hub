@@ -1,7 +1,7 @@
 // Event card with date badge, location, church, speaker, and details link.
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { dateBadge, formatDate } from "@/lib/utils";
+import { dateBadge, formatDate, safeUrl } from "@/lib/utils";
 import type { AppEvent } from "@/lib/types";
 
 export function EventCard({ event }: { event: AppEvent }) {
@@ -36,9 +36,9 @@ export function EventCard({ event }: { event: AppEvent }) {
         )}
         <div className="mt-auto flex items-center gap-3">
           <Button href={`/events/${event.id}`} size="sm">View Details</Button>
-          {event.source_url && (
+          {safeUrl(event.source_url) && (
             <a
-              href={event.source_url}
+              href={safeUrl(event.source_url)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold text-brand-bright hover:underline"

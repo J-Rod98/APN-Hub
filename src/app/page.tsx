@@ -1,7 +1,9 @@
-// Home page — hero + featured sections + prayer wall preview + newsletter.
+// Home page — hero + featured-of-the-day + featured sections + prayer wall + newsletter.
 import Link from "next/link";
 import { Hero } from "@/components/sections/Hero";
+import { FeaturedToday } from "@/components/sections/FeaturedToday";
 import { Newsletter } from "@/components/sections/Newsletter";
+import { pickFeaturedOfDay } from "@/lib/featured";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EmptyState } from "@/components/ui/States";
 import { EventCard } from "@/components/cards/EventCard";
@@ -17,6 +19,10 @@ import {
   getPrayers,
 } from "@/lib/data";
 
+// Re-render at most hourly (ISR) so the daily "Featured Today" pick rotates and
+// newly published content appears without a redeploy.
+export const revalidate = 3600;
+
 export default async function HomePage() {
   // Fetch everything in parallel; each call falls back to seed data.
   const [events, preaching, podcast, materials, prayers] = await Promise.all([
@@ -27,9 +33,13 @@ export default async function HomePage() {
     getPrayers(),
   ]);
 
+  // Today's rotating highlight, chosen deterministically from published content.
+  const featured = pickFeaturedOfDay(events, preaching, podcast, materials);
+
   return (
     <>
       <Hero />
+      <FeaturedToday item={featured} />
 
       {/* Featured Events */}
       <section className="container-app py-14">

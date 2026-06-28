@@ -2,6 +2,7 @@
 // Newsletter / text-updates signup. Posts to /api/newsletter.
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { US_STATES } from "@/lib/constants";
 
 export function NewsletterForm() {
@@ -20,6 +21,7 @@ export function NewsletterForm() {
           email: fd.get("email"),
           phone: fd.get("phone") || null,
           state: fd.get("state") || null,
+          hp_website: fd.get("hp_website") || "", // honeypot
         }),
       });
       if (!res.ok) throw new Error();
@@ -32,9 +34,10 @@ export function NewsletterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-3">
-      <input name="email" type="email" required placeholder="Email address" className="input min-w-[180px] flex-1" />
-      <input name="phone" type="tel" placeholder="Phone (optional)" className="input min-w-[160px] flex-1" />
-      <select name="state" defaultValue="" className="input min-w-[120px]">
+      <HoneypotField />
+      <input name="email" type="email" required aria-label="Email address" placeholder="Email address" className="input min-w-[180px] flex-1" />
+      <input name="phone" type="tel" aria-label="Phone (optional)" placeholder="Phone (optional)" className="input min-w-[160px] flex-1" />
+      <select name="state" aria-label="State" defaultValue="" className="input min-w-[120px]">
         <option value="">State…</option>
         {US_STATES.map((s) => (
           <option key={s}>{s}</option>

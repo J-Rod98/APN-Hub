@@ -1,10 +1,18 @@
 // Downloadable material card with file-type + free/premium badges.
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { FileBadge, FreePremiumBadge, Label } from "@/components/ui/Badge";
+import { safeUrl } from "@/lib/utils";
 import type { Material } from "@/lib/types";
 
+// Styled like a ghost button, but a real <a> so we can safely open external
+// files in a new tab with rel="noopener".
+const ghostBtn =
+  "inline-flex items-center justify-center gap-2 rounded-full border border-line " +
+  "px-4 py-2 text-sm font-bold transition hover:-translate-y-0.5 hover:border-brand-bright " +
+  "hover:bg-brand/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-bright/60";
+
 export function MaterialCard({ material }: { material: Material }) {
+  const url = safeUrl(material.file_url);
   return (
     <Card className="flex flex-col p-5">
       <div className="mb-3 flex flex-wrap gap-2">
@@ -22,13 +30,13 @@ export function MaterialCard({ material }: { material: Material }) {
         <p className="mb-4 flex-1 text-sm text-ink-muted">{material.description}</p>
       )}
       <div className="mt-auto">
-        <Button
-          href={material.file_url ?? "#"}
-          size="sm"
-          variant="ghost"
-        >
-          ⬇ Download / View
-        </Button>
+        {url ? (
+          <a href={url} target="_blank" rel="noopener noreferrer" className={ghostBtn}>
+            ⬇ Download / View
+          </a>
+        ) : (
+          <span className="text-sm text-ink-muted">Link coming soon</span>
+        )}
       </div>
     </Card>
   );

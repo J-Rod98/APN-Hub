@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/ui/HoneypotField";
 import { PRAYER_CATEGORIES, US_STATES } from "@/lib/constants";
 
 export function PrayerForm() {
@@ -21,6 +22,7 @@ export function PrayerForm() {
       city: fd.get("city") || null,
       state: fd.get("state") || null,
       is_public: fd.get("is_public") === "on",
+      hp_website: fd.get("hp_website") || "", // honeypot
     };
     try {
       const res = await fetch("/api/prayer", {
@@ -43,23 +45,25 @@ export function PrayerForm() {
         Requests are reviewed before appearing on the public wall.
       </p>
       <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-        <input name="name" placeholder="Your name (optional)" className="input" />
-        <select name="category" className="input" defaultValue="">
+        <HoneypotField />
+        <input name="name" aria-label="Your name (optional)" placeholder="Your name (optional)" className="input" />
+        <select name="category" aria-label="Prayer category" className="input" defaultValue="">
           <option value="">Category…</option>
           {PRAYER_CATEGORIES.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
-        <input name="title" placeholder="Short title (optional)" className="input sm:col-span-2" />
+        <input name="title" aria-label="Short title (optional)" placeholder="Short title (optional)" className="input sm:col-span-2" />
         <textarea
           name="request_text"
           required
+          aria-label="Your prayer request"
           placeholder="Share your prayer request…"
           className="input sm:col-span-2"
           rows={3}
         />
-        <input name="city" placeholder="City (optional)" className="input" />
-        <select name="state" className="input" defaultValue="">
+        <input name="city" aria-label="City (optional)" placeholder="City (optional)" className="input" />
+        <select name="state" aria-label="State (optional)" className="input" defaultValue="">
           <option value="">State (optional)</option>
           {US_STATES.map((s) => (
             <option key={s}>{s}</option>
