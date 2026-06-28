@@ -8,6 +8,13 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # These keys are public by design and appear in the build output:
+  #  - NEXT_PUBLIC_* are embedded in the browser bundle (Next.js convention);
+  #    the Supabase anon/publishable key is meant to be public + guarded by RLS.
+  #  - ADMIN_EMAILS shows up because the admin email is the public contact link.
+  # The genuinely-secret SUPABASE_SERVICE_ROLE_KEY is intentionally NOT listed,
+  # so Netlify still fails the build if that ever leaks into output.
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,ADMIN_EMAILS"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
