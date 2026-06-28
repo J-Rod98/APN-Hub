@@ -51,7 +51,7 @@ export default async function PodcastDetailPage({
           </div>
           <div className="flex-1">
             <b className="block text-sm">{ep.title}</b>
-            <small className="text-xs text-ink-muted">APN Podcast</small>
+            <small className="text-xs text-ink-muted">Apostolic Podcasts</small>
             <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-navy-950">
               <div className="h-full w-[12%] rounded-full bg-gradient-to-r from-brand to-brand-bright" />
             </div>

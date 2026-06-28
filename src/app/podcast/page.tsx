@@ -16,9 +16,9 @@ export default async function PodcastPage() {
       <SectionHeader
         as="h1"
         eyebrow="Listen"
-        title="APN Podcast"
-        subtitle="Conversations on faith, doctrine, and apostolic living."
-        action={<Button href="/submit" size="sm">＋ Suggest a Guest</Button>}
+        title="Apostolic Podcasts"
+        subtitle="A hand-picked collection of Apostolic podcast episodes worth a listen — from voices across the movement."
+        action={<Button href="/submit" size="sm">＋ Suggest a Podcast</Button>}
       />
       <PodcastList episodes={episodes} />
     </div>

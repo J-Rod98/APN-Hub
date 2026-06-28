@@ -23,9 +23,10 @@ function MiniPlayer({ episode }: { episode?: PodcastEpisode }) {
       </button>
       <div className="min-w-0 flex-1">
         <b className="block truncate text-sm">
-          {episode.title} · Ep. {episode.episode_number}
+          {episode.title}
+          {episode.episode_number ? ` · Ep. ${episode.episode_number}` : ""}
         </b>
-        <small className="text-xs text-ink-muted">APN Podcast · Now Playing</small>
+        <small className="text-xs text-ink-muted">Now Playing</small>
         <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-navy-950">
           <div className="h-full w-[38%] rounded-full bg-gradient-to-r from-brand to-brand-bright" />
         </div>
@@ -62,7 +63,7 @@ export function PodcastList({ episodes }: { episodes: PodcastEpisode[] }) {
           icon="🎙️"
           title="No episodes found"
           message="Try a different search term."
-          action={<Button href="/submit" size="sm">＋ Suggest a Guest</Button>}
+          action={<Button href="/submit" size="sm">＋ Suggest a Podcast</Button>}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">

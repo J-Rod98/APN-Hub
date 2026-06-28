@@ -86,7 +86,7 @@ export default async function HomePage() {
       <section className="container-app py-14">
         <SectionHeader
           eyebrow="Listen"
-          title="Latest Podcast"
+          title="Podcasts We Recommend"
           action={
             <Link href="/podcast" className="text-sm font-bold text-brand-bright hover:underline">
               View all →

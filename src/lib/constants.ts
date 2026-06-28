@@ -79,7 +79,7 @@ export const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
   { href: "/preaching", label: "Preaching" },
-  { href: "/podcast", label: "Podcast" },
+  { href: "/podcast", label: "Podcasts" },
   { href: "/materials", label: "Materials" },
   { href: "/prayer", label: "Prayer" },
   { href: "/submit", label: "Submit" },

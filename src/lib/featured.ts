@@ -70,7 +70,7 @@ export function pickFeaturedOfDay(
     pool.push({
       kind: "podcast",
       icon: "🎙️",
-      label: "Featured Episode",
+      label: "Recommended Podcast",
       title: p.title,
       description: p.description ?? "",
       meta: joinMeta([p.episode_number ? `Ep. ${p.episode_number}` : null, p.guest, p.duration]),
