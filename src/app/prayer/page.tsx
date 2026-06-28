@@ -6,6 +6,9 @@ import { getPrayers } from "@/lib/data";
 
 export const metadata = { title: "Prayer — Apostolic Power Network" };
 
+// Always read fresh so newly approved prayers appear immediately.
+export const dynamic = "force-dynamic";
+
 export default async function PrayerPage() {
   const prayers = await getPrayers();
   return (

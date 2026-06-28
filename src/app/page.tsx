@@ -19,9 +19,9 @@ import {
   getPrayers,
 } from "@/lib/data";
 
-// Re-render at most hourly (ISR) so the daily "Featured Today" pick rotates and
-// newly published content appears without a redeploy.
-export const revalidate = 3600;
+// Re-render frequently (ISR) so newly published content and the daily
+// "Featured Today" pick stay current.
+export const revalidate = 300;
 
 export default async function HomePage() {
   // Fetch everything in parallel; each call falls back to seed data.

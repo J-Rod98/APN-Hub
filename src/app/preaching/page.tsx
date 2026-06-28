@@ -6,6 +6,9 @@ import { getPreaching } from "@/lib/data";
 
 export const metadata = { title: "Preaching — Apostolic Power Network" };
 
+// Always read fresh so newly approved/published content appears immediately.
+export const dynamic = "force-dynamic";
+
 export default async function PreachingPage() {
   const items = await getPreaching();
   return (

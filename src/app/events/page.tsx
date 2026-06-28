@@ -6,6 +6,9 @@ import { getEvents } from "@/lib/data";
 
 export const metadata = { title: "Events — Apostolic Power Network" };
 
+// Always read fresh so newly approved/published content appears immediately.
+export const dynamic = "force-dynamic";
+
 export default async function EventsPage() {
   const events = await getEvents();
   return (
