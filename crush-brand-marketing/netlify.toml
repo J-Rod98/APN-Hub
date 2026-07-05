@@ -1,0 +1,22 @@
+# Netlify config for the Crush Brand Marketing static site.
+# Deploy this directory (crush-brand-marketing/) as its own Netlify site:
+# set "Base directory" to crush-brand-marketing and publish ".".
+# Netlify Forms on the contact/audit pages work automatically once deployed here.
+
+[build]
+  publish = "."
+
+# Clean-URL hardening: everything already lives at /<page>/index.html,
+# so no redirects are needed. Add security headers:
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets aggressively (HTML stays default so edits show up fast)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
