@@ -268,7 +268,7 @@ a.who:hover{border-color:var(--crush-deep);color:var(--crush-deep)}
   font-family:'Archivo';font-weight:900;font-size:2.6rem;line-height:1;letter-spacing:-.04em;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1rem;
 }
-.step h3{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}
+.step h3{font-size:1.25rem;font-weight:700;margin-bottom:.5rem;color:var(--on-paper)}
 .step p{font-size:.95rem;color:var(--on-paper-dim)}
 .step .line{position:absolute;top:3.3rem;right:-.9rem;width:1.8rem;height:2px;background:var(--cream-line);display:none}
 .steps.four{grid-template-columns:repeat(4,1fr)}
