@@ -27,19 +27,19 @@ export default async function PodcastDetailPage({
   const playable = getPlayable(episode.media_url);
 
   return (
-    <div className="container-app py-10">
-      <Link href="/podcast" className="mb-6 inline-block text-sm font-semibold text-ink-muted hover:text-ink">
+    <div className="container-app py-10 sm:py-12">
+      <Link href="/podcast" className="mb-6 inline-block text-sm font-semibold text-sanctuary-muted hover:text-sanctuary-link">
         ← Back to Podcast
       </Link>
 
       <div className="mx-auto max-w-3xl">
         <div className="flex items-center gap-4">
-          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-line bg-gradient-to-br from-navy-800 to-navy-850 font-extrabold text-brand-bright">
+          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-sanctuary-chipline bg-sanctuary-chip font-extrabold text-sanctuary-link">
             EP {episode.episode_number ?? "—"}
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight sm:text-3xl">{episode.title}</h1>
-            <div className="mt-1 flex flex-wrap gap-x-4 text-sm text-ink-muted">
+            <h1 className="font-serif text-3xl font-medium tracking-[-0.02em] text-sanctuary-ink sm:text-4xl">{episode.title}</h1>
+            <div className="mt-1 flex flex-wrap gap-x-4 text-sm text-sanctuary-muted">
               {episode.guest && <span>Guest: {episode.guest}</span>}
               {episode.duration && <span>{episode.duration}</span>}
               <span>{formatDate(episode.created_at.slice(0, 10))}</span>
@@ -66,7 +66,7 @@ export default async function PodcastDetailPage({
           </Card>
         )}
 
-        {episode.description && <p className="mt-6 text-ink-muted">{episode.description}</p>}
+        {episode.description && <p className="mt-6 text-[17px] leading-relaxed text-sanctuary-muted">{episode.description}</p>}
 
         {media && (
           <div className="mt-6">

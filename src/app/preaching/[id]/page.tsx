@@ -28,15 +28,15 @@ export default function PreachingDetailPage({
   const playable = getPlayable(item.media_url);
 
   return (
-    <div className="container-app py-10">
-      <Link href="/preaching/" className="mb-6 inline-block text-sm font-semibold text-ink-muted hover:text-ink">
+    <div className="container-app py-10 sm:py-12">
+      <Link href="/preaching/" className="mb-6 inline-block text-sm font-semibold text-sanctuary-muted hover:text-sanctuary-link">
         ← Back to Preaching
       </Link>
 
       <div className="mx-auto max-w-3xl">
         {item.topic && <Label>{item.topic}</Label>}
-        <h1 className="mt-3 text-3xl font-black tracking-tight">{item.title}</h1>
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted">
+        <h1 className="mt-3 font-serif text-4xl font-medium tracking-[-0.02em] text-sanctuary-ink sm:text-5xl">{item.title}</h1>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-sanctuary-muted">
           {item.speaker && <span>🎤 {item.speaker}</span>}
           {item.scripture_reference && <span>📖 {item.scripture_reference}</span>}
           {item.media_type && <span className="uppercase">{item.media_type}</span>}
@@ -62,7 +62,7 @@ export default function PreachingDetailPage({
           </Card>
         )}
 
-        {item.description && <p className="mt-6 text-ink-muted">{item.description}</p>}
+        {item.description && <p className="mt-6 text-[17px] leading-relaxed text-sanctuary-muted">{item.description}</p>}
 
         {media && (
           <div className="mt-6">

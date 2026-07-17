@@ -6,7 +6,7 @@ import type { ContentStatus } from "@/lib/types";
 // Category "label" pill (electric blue) used on cards.
 export function Label({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-block rounded-full border border-line bg-brand/10 px-2.5 py-1 text-[0.68rem] font-bold uppercase tracking-wider text-brand-bright">
+    <span className="inline-block rounded-full border border-sanctuary-chipline bg-sanctuary-chip px-2.5 py-1 text-[0.68rem] font-bold uppercase tracking-wider text-sanctuary-link">
       {children}
     </span>
   );
@@ -15,11 +15,11 @@ export function Label({ children }: { children: ReactNode }) {
 // File-type badge with color coding.
 const fileColors: Record<string, string> = {
   PDF: "bg-danger/15 text-[#ff8a8a] border-danger/30",
-  DOC: "bg-brand/15 text-brand-bright border-brand/30",
+  DOC: "bg-sanctuary-chip text-sanctuary-link border-sanctuary-chipline",
   Canva: "bg-[#a863ff]/15 text-[#c79bff] border-[#a863ff]/30",
   Audio: "bg-success/15 text-success border-success/30",
   Video: "bg-gold/15 text-gold border-gold/30",
-  Link: "bg-ink-muted/15 text-ink-muted border-line",
+  Link: "bg-sanctuary-chip text-sanctuary-muted border-sanctuary-chipline",
 };
 
 export function FileBadge({ type }: { type: string }) {
@@ -53,10 +53,10 @@ export function FreePremiumBadge({ premium }: { premium: boolean }) {
 // Status badge for the admin dashboard.
 const statusColors: Record<ContentStatus, string> = {
   pending: "bg-gold/15 text-gold border-gold/30",
-  approved: "bg-brand/15 text-brand-bright border-brand/30",
+  approved: "bg-sanctuary-chip text-sanctuary-link border-sanctuary-chipline",
   rejected: "bg-danger/15 text-[#ff8a8a] border-danger/30",
   published: "bg-success/15 text-success border-success/30",
-  draft: "bg-ink-muted/15 text-ink-muted border-line",
+  draft: "bg-sanctuary-chip text-sanctuary-muted border-sanctuary-chipline",
 };
 
 export function StatusBadge({ status }: { status: ContentStatus }) {

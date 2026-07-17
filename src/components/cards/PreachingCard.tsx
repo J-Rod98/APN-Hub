@@ -37,11 +37,11 @@ export function PreachingCard({ item }: { item: PreachingItem }) {
       )}
       <div className="min-w-0">
         {item.topic && (
-          <small className="text-[0.7rem] font-bold uppercase tracking-wide text-brand-bright">
+          <small className="text-[0.7rem] font-bold uppercase tracking-wide text-sanctuary-link">
             {item.topic}
           </small>
         )}
-        <Link href={"/preaching/" + item.id} className="my-1 block text-base font-bold hover:text-brand-bright">
+        <Link href={"/preaching/" + item.id} className="my-1 block font-serif text-[21px] font-medium text-sanctuary-ink hover:text-sanctuary-link">
           {item.title}
         </Link>
         <div className="mb-1.5 flex flex-wrap gap-x-3 text-xs text-ink-muted">
@@ -57,7 +57,7 @@ export function PreachingCard({ item }: { item: PreachingItem }) {
             href={media}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-block text-sm font-bold text-brand-bright hover:underline"
+            className="mt-2 inline-block text-sm font-bold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"
           >
             Watch ↗
           </a>

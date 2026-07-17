@@ -31,6 +31,28 @@ export function formatDate(iso: string | null): string {
   });
 }
 
+/** Format one or two ISO dates without needlessly repeating the year/month. */
+export function formatDateRange(start: string | null, end: string | null): string {
+  if (!start) return "Date TBA";
+  if (!end || end === start) return formatDate(start);
+
+  const from = new Date(start + "T00:00:00");
+  const to = new Date(end + "T00:00:00");
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+    return `${formatDate(start)} – ${formatDate(end)}`;
+  }
+
+  const sameYear = from.getFullYear() === to.getFullYear();
+  const sameMonth = sameYear && from.getMonth() === to.getMonth();
+  const month = from.toLocaleDateString("en-US", { month: "short" });
+  if (sameMonth) return `${month} ${from.getDate()}–${to.getDate()}, ${from.getFullYear()}`;
+  if (sameYear) {
+    const endMonth = to.toLocaleDateString("en-US", { month: "short" });
+    return `${month} ${from.getDate()} – ${endMonth} ${to.getDate()}, ${from.getFullYear()}`;
+  }
+  return `${formatDate(start)} – ${formatDate(end)}`;
+}
+
 /** Short month + day for compact date badges: { month: "JUL", day: "12" }. */
 export function dateBadge(iso: string | null): { month: string; day: string } {
   if (!iso) return { month: "TBA", day: "--" };

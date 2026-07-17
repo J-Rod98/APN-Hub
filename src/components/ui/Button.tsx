@@ -14,7 +14,7 @@ const variants: Record<Variant, string> = {
   primary:
     "text-white bg-gradient-to-br from-brand to-brand-deep shadow-glow hover:brightness-110",
   ghost:
-    "text-ink border border-line bg-transparent hover:border-brand-bright hover:bg-brand/10",
+    "text-sanctuary-ink border border-sanctuary-line bg-white/60 hover:border-[#bcd0f2] hover:bg-sanctuary-chip",
   gold: "text-[#2a1c00] bg-gradient-to-br from-gold to-[#e8a93c]",
 };
 

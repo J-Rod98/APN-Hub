@@ -3,8 +3,7 @@
 //
 // Two variants, one component:
 //  - Home: transparent, laid over the full-bleed hero photo.
-//  - Everywhere else: solid dark bar, sticky.
-// Both sit on dark backgrounds, so the link styling is identical.
+//  - Everywhere else: a light, sticky editorial bar.
 //
 // "Submit a Resource" appears ONCE, as the CTA button — it is deliberately not
 // in NAV_LINKS (that duplication is what produced two Submit buttons).
@@ -26,11 +25,15 @@ export function Navbar() {
         "z-50",
         isHome
           ? "absolute inset-x-0 top-0" // overlays the hero
-          : "sticky top-0 border-b border-line bg-navy-950/80 backdrop-blur-xl",
+          : "sticky top-0 border-b border-sanctuary-line bg-white/[0.92] shadow-[0_8px_24px_-20px_rgba(20,60,140,0.45)] backdrop-blur-xl",
       )}
     >
       <div className="mx-auto flex h-[82px] max-w-[1240px] items-center justify-between px-5 sm:px-10">
-        <Link href="/" aria-label="Apostolic Power Network home">
+        <Link
+          href="/"
+          aria-label="Apostolic Power Network home"
+          className={isHome ? "text-white" : "text-sanctuary-ink"}
+        >
           <BrandMark size={32} />
         </Link>
 
@@ -45,9 +48,13 @@ export function Navbar() {
                 href={link.href}
                 className={cn(
                   "rounded-[20px] px-[15px] py-[9px] text-sm font-semibold transition",
-                  active
-                    ? "bg-white/[0.14] text-white"
-                    : "text-white/80 hover:bg-white/[0.12] hover:text-white",
+                  isHome
+                    ? active
+                      ? "bg-white/[0.14] text-white"
+                      : "text-white/80 hover:bg-white/[0.12] hover:text-white"
+                    : active
+                      ? "bg-sanctuary-chip text-sanctuary-link"
+                      : "text-sanctuary-muted hover:bg-sanctuary-chip hover:text-sanctuary-ink",
                 )}
               >
                 {link.label}
@@ -69,24 +76,37 @@ export function Navbar() {
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border border-white/25 lg:hidden"
+            className={cn(
+              "flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border lg:hidden",
+              isHome ? "border-white/25" : "border-sanctuary-line bg-white",
+            )}
           >
-            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "translate-y-2 rotate-45")} />
-            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "opacity-0")} />
-            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "-translate-y-2 -rotate-45")} />
+            <span className={cn("h-0.5 w-[18px] transition", isHome ? "bg-white" : "bg-sanctuary-ink", open && "translate-y-2 rotate-45")} />
+            <span className={cn("h-0.5 w-[18px] transition", isHome ? "bg-white" : "bg-sanctuary-ink", open && "opacity-0")} />
+            <span className={cn("h-0.5 w-[18px] transition", isHome ? "bg-white" : "bg-sanctuary-ink", open && "-translate-y-2 -rotate-45")} />
           </button>
         </div>
       </div>
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="flex flex-col gap-1 border-b border-line bg-navy-950/95 px-5 pb-4 pt-1 backdrop-blur-xl lg:hidden">
+        <nav className={cn(
+          "flex flex-col gap-1 border-b px-5 pb-4 pt-1 backdrop-blur-xl lg:hidden",
+          isHome
+            ? "border-white/20 bg-[rgba(8,16,38,0.94)]"
+            : "border-sanctuary-line bg-white/[0.97]",
+        )}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/10"
+              className={cn(
+                "rounded-xl px-4 py-3 font-semibold",
+                isHome
+                  ? "text-white hover:bg-white/10"
+                  : "text-sanctuary-ink hover:bg-sanctuary-chip",
+              )}
             >
               {link.label}
             </Link>

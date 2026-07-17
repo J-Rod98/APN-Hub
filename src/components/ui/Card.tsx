@@ -14,9 +14,9 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl2 border border-line bg-gradient-to-b from-navy-850 to-navy-900",
+        "rounded-[20px] border border-sanctuary-line bg-white shadow-[0_8px_26px_-20px_rgba(20,60,140,0.45)]",
         hover &&
-          "transition hover:-translate-y-1.5 hover:border-brand-bright/35 hover:shadow-glow-lg",
+          "transition hover:-translate-y-1.5 hover:border-[#bcd0f2] hover:shadow-[0_20px_42px_-24px_rgba(20,60,140,0.55)]",
         className,
       )}
     >

@@ -36,12 +36,20 @@ export interface AppEvent extends Timestamps {
   title: string;
   description: string | null;
   event_date: string | null; // ISO date
+  /** Inclusive final date for multi-day gatherings. */
+  end_date: string | null;
   event_time: string | null;
+  venue: string | null;
   city: string | null;
   state: string | null;
   church_name: string | null;
   speaker: string | null;
   category: string | null;
+  /** A public, source-owned event or ministry image. Never a generated image. */
+  image_url: string | null;
+  image_alt: string | null;
+  /** Short, verified details shown on the event page. */
+  highlights: string[];
   source_url: string | null;
   contact_email: string | null;
   status: ContentStatus;

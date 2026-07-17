@@ -13,21 +13,21 @@ export function SearchInput({
   placeholder: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-line bg-navy-950 px-4 py-1">
-      <span className="text-lg text-ink-muted">🔍</span>
+    <div className="flex items-center gap-3 rounded-2xl border border-sanctuary-line bg-white px-4 py-1 shadow-[0_8px_22px_-20px_rgba(20,60,140,0.45)]">
+      <span className="text-lg text-sanctuary-muted">🔍</span>
       <input
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="w-full bg-transparent py-3 text-base outline-none placeholder:text-ink-muted"
+        className="w-full bg-transparent py-3 text-base text-sanctuary-ink outline-none placeholder:text-sanctuary-soft"
       />
       {value && (
         <button
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="text-ink-muted hover:text-ink"
+          className="text-sanctuary-muted hover:text-sanctuary-ink"
         >
           ✕
         </button>
@@ -55,7 +55,7 @@ export function ChipRow({
             "rounded-full border px-4 py-2 text-sm font-semibold transition",
             active === opt
               ? "border-transparent bg-gradient-to-br from-brand to-brand-deep text-white shadow-glow"
-              : "border-line bg-navy-850 text-ink-muted hover:border-brand hover:text-ink",
+              : "border-sanctuary-line bg-white text-sanctuary-muted hover:border-[#bcd0f2] hover:text-sanctuary-ink",
           )}
         >
           {opt}
@@ -81,7 +81,7 @@ export function Select({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       aria-label={label}
-      className="rounded-xl border border-line bg-navy-950 px-3 py-2.5 text-sm outline-none focus:border-brand"
+      className="rounded-xl border border-sanctuary-line bg-white px-3 py-2.5 text-sm text-sanctuary-ink outline-none focus:border-brand"
     >
       <option value="">{label}</option>
       {options.map((o) => (

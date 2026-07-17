@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { FORMSPREE_FORM_ID } from "@/lib/formspree";
 
 const fieldClass =
-  "mt-1.5 w-full rounded-xl border border-line bg-navy-950 px-4 py-3 text-ink outline-none placeholder:text-ink-muted focus:border-brand-bright";
+  "mt-1.5 w-full rounded-xl border border-sanctuary-line bg-white px-4 py-3 text-sanctuary-ink outline-none placeholder:text-sanctuary-soft focus:border-brand";
 
 export function SubmitForm() {
   const [state, handleSubmit] = useForm(FORMSPREE_FORM_ID, {

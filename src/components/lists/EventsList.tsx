@@ -5,13 +5,19 @@ import { EventCard } from "@/components/cards/EventCard";
 import { SearchInput, ChipRow, Select } from "@/components/ui/Filters";
 import { EmptyState } from "@/components/ui/States";
 import { Button } from "@/components/ui/Button";
-import { EVENT_CATEGORIES, US_STATES } from "@/lib/constants";
+import { US_STATES } from "@/lib/constants";
 import type { AppEvent } from "@/lib/types";
 
 export function EventsList({ events }: { events: AppEvent[] }) {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("");
+  // Only offer categories that currently have a published event, so visitors
+  // never hit an empty filter during the hand-curated launch.
+  const categories = useMemo(
+    () => Array.from(new Set(events.map((event) => event.category).filter((value): value is string => Boolean(value)))),
+    [events],
+  );
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -38,7 +44,7 @@ export function EventsList({ events }: { events: AppEvent[] }) {
           </div>
           <Select value={state} onChange={setState} options={US_STATES} label="All states" />
         </div>
-        <ChipRow options={EVENT_CATEGORIES} active={category} onSelect={setCategory} />
+        <ChipRow options={categories} active={category} onSelect={setCategory} />
       </div>
 
       {filtered.length === 0 ? (

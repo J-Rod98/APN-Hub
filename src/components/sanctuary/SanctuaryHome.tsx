@@ -8,7 +8,8 @@
 //   1. Play controls render ONLY when getPlayable() finds a real media source.
 //      Items without playable media link to their detail page instead — we
 //      never show a play button that can't play.
-//   2. Photos are temporary launch assets (see lib/sanctuary.ts).
+//   2. Hero photos are public UPCI imagery; sermon thumbnails come from each
+//      original video where available (see lib/sanctuary.ts).
 // ============================================================================
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -17,7 +18,7 @@ import { PlayerModal, type PlayerItem } from "./PlayerModal";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
 import { getPlayable, getVideoThumbnail } from "@/lib/media";
 import {
-  HERO_IMAGE_IDS,
+  HERO_IMAGES,
   heroImage,
   sermonImage,
   newsletterImage,
@@ -90,7 +91,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(
-      () => setHeroIndex((i) => (i + 1) % HERO_IMAGE_IDS.length),
+      () => setHeroIndex((i) => (i + 1) % HERO_IMAGES.length),
       4500,
     );
     return () => clearInterval(t);
@@ -118,9 +119,9 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
       <section className="relative flex min-h-[760px] flex-col overflow-hidden">
         {/* rotating photos */}
         <div className="absolute inset-0">
-          {HERO_IMAGE_IDS.map((id, i) => (
+          {HERO_IMAGES.map((image, i) => (
             <img
-              key={id}
+              key={image.src}
               src={heroImage(i)}
               alt=""
               aria-hidden

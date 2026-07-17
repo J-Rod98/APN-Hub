@@ -7,9 +7,9 @@ import type { Material } from "@/lib/types";
 // Styled like a ghost button, but a real <a> so we can safely open external
 // files in a new tab with rel="noopener".
 const ghostBtn =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-line " +
-  "px-4 py-2 text-sm font-bold transition hover:-translate-y-0.5 hover:border-brand-bright " +
-  "hover:bg-brand/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-bright/60";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-sanctuary-line " +
+  "px-4 py-2 text-sm font-bold text-sanctuary-ink transition hover:-translate-y-0.5 hover:border-[#bcd0f2] " +
+  "hover:bg-sanctuary-chip focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/30";
 
 export function MaterialCard({ material }: { material: Material }) {
   const url = safeUrl(material.file_url);
@@ -25,7 +25,7 @@ export function MaterialCard({ material }: { material: Material }) {
           <Label>{material.category}</Label>
         </div>
       )}
-      <h3 className="mb-1.5 text-base font-bold">{material.title}</h3>
+      <h3 className="mb-1.5 font-serif text-[21px] font-medium text-sanctuary-ink">{material.title}</h3>
       {material.description && (
         <p className="mb-4 flex-1 text-sm text-ink-muted">{material.description}</p>
       )}

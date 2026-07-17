@@ -1,8 +1,8 @@
 // About page — trust signals: who APN is, what's here, content review, and a
 // real contact method. Linked from the footer.
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { SanctuaryPageHeader } from "@/components/sanctuary/SanctuaryPageHeader";
 
 export const metadata = {
   title: "About — Apostolic Power Network",
@@ -14,12 +14,12 @@ const CONTACT_EMAIL = "jonathanrod98@gmail.com";
 
 export default function AboutPage() {
   return (
-    <div className="container-app py-12">
-      <SectionHeader
-        as="h1"
+    <div className="container-app py-10 sm:py-12">
+      <SanctuaryPageHeader
         eyebrow="About"
         title="About Apostolic Power Network"
         subtitle="One trusted place to discover sound, Spirit-filled Apostolic content."
+        imageIndex={1}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">

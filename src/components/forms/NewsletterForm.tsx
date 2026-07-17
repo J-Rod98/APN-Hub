@@ -22,7 +22,7 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
   const inputClass =
     variant === "light"
       ? "min-w-0 flex-1 rounded-[14px] border-0 bg-white px-4 py-4 text-[15px] text-sanctuary-ink outline-none placeholder:text-sanctuary-soft focus:ring-2 focus:ring-white/70"
-      : "min-w-0 flex-1 rounded-full border border-line bg-navy-950 px-4 py-3 text-sm text-ink outline-none placeholder:text-ink-muted focus:border-brand-bright";
+      : "min-w-0 flex-1 rounded-full border border-sanctuary-line bg-white px-4 py-3 text-sm text-sanctuary-ink outline-none placeholder:text-sanctuary-soft focus:border-brand";
   const buttonClass =
     variant === "light"
       ? "rounded-[14px] bg-sanctuary-ink px-6 py-4 text-[15px] font-bold text-white transition hover:brightness-125 disabled:cursor-not-allowed disabled:opacity-70"
@@ -57,7 +57,7 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
         errors={state.errors}
         className={variant === "light" ? "text-sm font-semibold text-white" : "text-sm font-semibold text-red-300"}
       />
-      <p className={variant === "light" ? "text-[13px] text-white/85" : "text-xs text-ink-muted"}>
+      <p className={variant === "light" ? "text-[13px] text-white/85" : "text-xs text-sanctuary-muted"}>
         Occasional Friday updates. No spam.
       </p>
     </form>

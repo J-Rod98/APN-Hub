@@ -42,7 +42,7 @@ export function SkeletonGrid({ count = 6 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="h-48 animate-pulse rounded-xl2 border border-line bg-navy-850/60"
+          className="h-48 animate-pulse rounded-xl2 border border-sanctuary-line bg-white/70"
         />
       ))}
     </div>
@@ -52,7 +52,7 @@ export function SkeletonGrid({ count = 6 }: { count?: number }) {
 export function Spinner({ label }: { label?: string }) {
   return (
     <div className="flex items-center justify-center gap-3 py-10 text-ink-muted">
-      <span className="h-5 w-5 animate-spin rounded-full border-2 border-line border-t-brand-bright" />
+      <span className="h-5 w-5 animate-spin rounded-full border-2 border-sanctuary-line border-t-brand" />
       {label && <span className="text-sm">{label}</span>}
     </div>
   );

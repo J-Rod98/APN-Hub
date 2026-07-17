@@ -9,7 +9,7 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-line bg-navy-950/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-sanctuary-line bg-white/[0.96] pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_22px_-18px_rgba(20,60,140,0.45)] backdrop-blur-xl md:hidden">
       {BOTTOM_NAV.map((item) => {
         const active =
           item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -19,7 +19,7 @@ export function BottomNav() {
             href={item.href}
             className={cn(
               "flex flex-col items-center gap-1 py-2 text-[0.66rem] font-semibold transition",
-              active ? "text-brand-bright" : "text-ink-muted",
+              active ? "text-sanctuary-link" : "text-sanctuary-muted",
             )}
           >
             <span

@@ -17,10 +17,10 @@ const config: Config = {
           850: "#0f1730", // card background
           800: "#16213f", // raised / hover
         },
-        line: "#1e2c52", // borders
+        line: "#e0e7f4", // borders (Sanctuary Light)
         ink: {
-          DEFAULT: "#eef3ff", // primary text
-          muted: "#9aa9cf", // secondary text
+          DEFAULT: "#0e1730", // primary text
+          muted: "#5c6a90", // secondary text
         },
         brand: {
           DEFAULT: "#2f8bff", // electric blue

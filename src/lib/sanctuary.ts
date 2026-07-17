@@ -1,11 +1,9 @@
 // ============================================================================
 // "Sanctuary Light" design assets.
 // ----------------------------------------------------------------------------
-// TEMPORARY LAUNCH ASSETS: these Unsplash photos come from the approved design
-// and stand in until real thumbnails exist. Content tables have no image column
-// yet, so sermon art is assigned deterministically by index (stable per card,
-// never random). To replace: add an `image_url` to the content model and read
-// it here instead.
+// Hero photography is drawn from UPCI's public homepage imagery. It depicts
+// real Apostolic Pentecostal worship, baptism, missions, and community rather
+// than generic or generated imagery. The images remain hosted by UPCI.
 // ============================================================================
 
 import { PREACHING_TOPICS } from "./constants";
@@ -14,14 +12,26 @@ const unsplash = (id: string, w: number) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=70&w=${w}`;
 
 /** Rotating full-bleed hero backgrounds (4, cross-fading). */
-export const HERO_IMAGE_IDS = [
-  "1507692049790-de58290a4334",
-  "1478147427282-58a87a120781",
-  "1579975096649-e773152b04cb",
-  "1622598453695-4fbaf151aadc",
-];
+export const HERO_IMAGES = [
+  {
+    src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider8.jpg",
+    alt: "A worshipper with raised hands at a UPCI gathering.",
+  },
+  {
+    src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider4.jpg",
+    alt: "UPCI worship leaders singing together.",
+  },
+  {
+    src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider7.jpg",
+    alt: "A baptism at an Apostolic Pentecostal church.",
+  },
+  {
+    src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider6.jpg",
+    alt: "Children smiling at a UPCI global ministry gathering.",
+  },
+] as const;
 
-export const heroImage = (i: number, w = 2200) => unsplash(HERO_IMAGE_IDS[i], w);
+export const heroImage = (i: number) => HERO_IMAGES[i % HERO_IMAGES.length].src;
 
 /** Sermon card art — cycles the design's three photos by index. */
 const SERMON_IMAGE_IDS = [
