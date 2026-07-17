@@ -5,9 +5,10 @@
 import { SanctuaryHome } from "@/components/sanctuary/SanctuaryHome";
 import { getEvents, getPreaching, getPodcast, getPrayers } from "@/lib/data";
 
-// Re-render frequently (ISR) so newly published content and the daily featured
-// pick stay current without a redeploy.
-export const revalidate = 300;
+// Rendered per request, like the other content pages. Deliberately NOT ISR:
+// prerendering at build time would make a transient Supabase outage fail the
+// whole deploy, and content must never be served from a stale/seeded snapshot.
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [events, preaching, podcast, prayers] = await Promise.all([
