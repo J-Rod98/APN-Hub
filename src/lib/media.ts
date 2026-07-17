@@ -66,3 +66,13 @@ export function getPlayable(rawUrl: string | null | undefined): Playable | null 
   // Unknown provider — not playable in-page. Caller should link out instead.
   return null;
 }
+
+// YouTube publishes a dependable preview image for every video. Use it only
+// after the URL has passed the same allow-list as the in-page player.
+export function getVideoThumbnail(rawUrl: string | null | undefined): string | null {
+  const playable = getPlayable(rawUrl);
+  if (playable?.kind !== "youtube") return null;
+
+  const videoId = playable.src.split("/").pop();
+  return videoId ? "https://i.ytimg.com/vi/" + videoId + "/hqdefault.jpg" : null;
+}

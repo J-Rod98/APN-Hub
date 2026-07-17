@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlayerModal, type PlayerItem } from "./PlayerModal";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
-import { getPlayable } from "@/lib/media";
+import { getPlayable, getVideoThumbnail } from "@/lib/media";
 import {
   HERO_IMAGE_IDS,
   heroImage,
@@ -48,7 +48,7 @@ function sermonToPlayer(p: PreachingItem, i: number): PlayerItem | null {
     topic: p.topic ?? "",
     meta: [p.speaker, p.scripture_reference].filter(Boolean).join(" · "),
     badge: playable.kind === "youtube" ? "VIDEO" : "AUDIO",
-    image: sermonImage(i),
+    image: getVideoThumbnail(p.media_url) ?? sermonImage(i),
     playable,
   };
 }
@@ -220,7 +220,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
               meta={[featured.item.speaker, featured.item.media_type ? undefined : null]
                 .filter(Boolean)
                 .join(" · ")}
-              image={sermonImage(featuredIndex)}
+              image={getVideoThumbnail(featured.item.media_url) ?? sermonImage(featuredIndex)}
               player={featured.player}
               href={`/preaching/${featured.item.id}`}
               onPlay={setPlaying}
@@ -258,13 +258,14 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {sermons.map((p, i) => {
               const player = sermonToPlayer(p, i);
+              const thumbnail = getVideoThumbnail(p.media_url) ?? sermonImage(i);
               return (
                 <article
                   key={p.id}
                   className="overflow-hidden rounded-[20px] border border-sanctuary-line bg-white shadow-[0_10px_30px_-18px_rgba(20,60,140,0.4)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_26px_50px_-22px_rgba(20,60,140,0.55)]"
                 >
                   <div className="relative h-[200px] overflow-hidden">
-                    <img src={sermonImage(i)} alt="" className="h-full w-full object-cover" />
+                    <img src={thumbnail} alt="" className="h-full w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-b from-[rgba(8,16,38,0.05)] to-[rgba(8,16,38,0.5)]" />
                     {/* Badge reflects the real media type; falls back to a neutral label. */}
                     <span className="absolute left-3.5 top-3.5 rounded-xl bg-white/[0.92] px-2.5 py-1 text-[11px] font-bold tracking-wide text-sanctuary-ink">

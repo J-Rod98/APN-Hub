@@ -1,14 +1,23 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { getVideoThumbnail } from "@/lib/media";
 import { safeUrl } from "@/lib/utils";
 import type { PreachingItem } from "@/lib/types";
 
 export function PreachingCard({ item }: { item: PreachingItem }) {
   const media = safeUrl(item.media_url);
+  const thumbnail = getVideoThumbnail(item.media_url);
 
   return (
     <Card className="flex gap-4 p-5">
-      {media ? (
+      {thumbnail ? (
+        <img
+          src={thumbnail}
+          alt=""
+          className="h-20 w-28 shrink-0 rounded-xl object-cover"
+        />
+      ) : media ? (
         <a
           href={media}
           target="_blank"
