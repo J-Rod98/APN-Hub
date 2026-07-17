@@ -39,10 +39,12 @@ The current catalogue starts with the verified Spotify episode provided for
 APN. Empty sections show an honest message until more reviewed content is
 added.
 
-## Content suggestions
+## Content suggestions and newsletter
 
-The **Suggest Content** links open an email to APN. This keeps the launch
-simple and prevents submissions from being publicly published without review.
+The newsletter and **Suggest Content** forms submit through Formspree. Both
+label their submissions with a form type, so they can share one inbox while
+remaining distinguishable in the Formspree dashboard. Suggestions are still
+reviewed before they are added to the public catalog.
 
 ## Deploy
 
