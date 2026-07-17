@@ -321,7 +321,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                 Upcoming
               </div>
               <h2 className="mt-2 font-serif text-[32px] font-medium text-sanctuary-ink">
-                Events near the network
+                Upcoming Apostolic gatherings
               </h2>
             </div>
             <Link href="/events" className="text-sm font-bold text-sanctuary-link hover:text-sanctuary-linkhover">
