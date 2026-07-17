@@ -28,6 +28,14 @@ export function SanctuaryPageHeader({
         className="absolute inset-0 h-full w-full object-cover opacity-90"
       />
       <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(8,16,38,0.9)_0%,rgba(12,29,73,0.79)_52%,rgba(20,82,214,0.54)_100%)]" />
+      <a
+        href={image.creditHref}
+        target="_blank"
+        rel="noreferrer"
+        className="absolute bottom-4 right-5 z-[1] text-[10px] font-semibold tracking-wide text-white/75 underline decoration-white/40 underline-offset-2 transition hover:text-white sm:bottom-5 sm:right-7"
+      >
+        {image.credit}
+      </a>
       <div className="relative flex min-h-[260px] flex-col justify-end px-6 py-8 sm:min-h-[292px] sm:px-10 sm:py-10">
         <div className="max-w-3xl">
           <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-sanctuary-sky">

@@ -6,3 +6,6 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # This release is a fully static Next export. Skip Netlify's server-side
+  # Next runtime and publish the already-generated `out/` directory instead.
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"

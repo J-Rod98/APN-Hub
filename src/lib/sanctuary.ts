@@ -3,7 +3,8 @@
 // ----------------------------------------------------------------------------
 // Hero photography is drawn from UPCI's public homepage imagery. It depicts
 // real Apostolic Pentecostal worship, baptism, missions, and community rather
-// than generic or generated imagery. The images remain hosted by UPCI.
+// than generic or generated imagery. The images remain hosted by UPCI and are
+// credited wherever they appear in the experience.
 // ============================================================================
 
 import { PREACHING_TOPICS } from "./constants";
@@ -16,18 +17,26 @@ export const HERO_IMAGES = [
   {
     src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider8.jpg",
     alt: "A worshipper with raised hands at a UPCI gathering.",
+    credit: "Photo courtesy of UPCI",
+    creditHref: "https://upci.org/",
   },
   {
     src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider4.jpg",
     alt: "UPCI worship leaders singing together.",
+    credit: "Photo courtesy of UPCI",
+    creditHref: "https://upci.org/",
   },
   {
     src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider7.jpg",
     alt: "A baptism at an Apostolic Pentecostal church.",
+    credit: "Photo courtesy of UPCI",
+    creditHref: "https://upci.org/",
   },
   {
     src: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider6.jpg",
     alt: "Children smiling at a UPCI global ministry gathering.",
+    credit: "Photo courtesy of UPCI",
+    creditHref: "https://upci.org/",
   },
 ] as const;
 

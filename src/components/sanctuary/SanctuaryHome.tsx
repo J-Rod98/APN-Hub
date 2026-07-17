@@ -132,6 +132,14 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
         </div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.72)_0%,rgba(8,16,38,0.35)_42%,rgba(10,20,48,0.82)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(1100px_520px_at_78%_8%,rgba(47,139,255,0.28),transparent_62%)]" />
+        <a
+          href={HERO_IMAGES[heroIndex].creditHref}
+          target="_blank"
+          rel="noreferrer"
+          className="absolute bottom-4 right-5 z-[3] rounded-full border border-white/25 bg-[#081026]/55 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-white/85 backdrop-blur-sm transition hover:bg-[#081026]/80 hover:text-white sm:bottom-5 sm:right-8"
+        >
+          {HERO_IMAGES[heroIndex].credit}
+        </a>
 
         {/* content (pt clears the overlaid navbar) */}
         <div className="relative z-[2] mx-auto flex w-full max-w-[1240px] flex-1 flex-col justify-center px-5 pb-8 pt-[122px] sm:px-10">
