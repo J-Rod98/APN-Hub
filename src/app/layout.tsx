@@ -29,8 +29,7 @@ const instrument = Instrument_Sans({
 export const metadata: Metadata = {
   title: "Apostolic Power Network",
   description:
-    "Discover Apostolic events, preaching, podcasts, prayer support, Bible study materials, and trusted resources — all in one place.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    "Discover Apostolic sermons, podcasts, events, and trusted resources — all in one place.",
   openGraph: {
     title: "Apostolic Power Network",
     description: "The Apostolic Community, All in One Place.",

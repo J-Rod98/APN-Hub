@@ -3,8 +3,8 @@
 // ============================================================================
 // Sanctuary Light homepage.
 // ----------------------------------------------------------------------------
-// Implements the approved "APN Sanctuary Light" design, wired to real Supabase
-// content. Two rules this file holds to:
+// Implements the approved "APN Sanctuary Light" design, wired to APN's local
+// curated catalog. Two rules this file holds to:
 //   1. Play controls render ONLY when getPlayable() finds a real media source.
 //      Items without playable media link to their detail page instead — we
 //      never show a play button that can't play.
@@ -20,7 +20,6 @@ import {
   HERO_IMAGE_IDS,
   heroImage,
   sermonImage,
-  prayerImage,
   newsletterImage,
   VALID_TOPIC_TILES,
 } from "@/lib/sanctuary";
@@ -28,7 +27,6 @@ import { dateBadge } from "@/lib/utils";
 import type {
   AppEvent,
   PodcastEpisode,
-  PrayerRequest,
   PreachingItem,
 } from "@/lib/types";
 
@@ -36,7 +34,6 @@ interface Props {
   events: AppEvent[];
   preaching: PreachingItem[];
   podcast: PodcastEpisode[];
-  prayers: PrayerRequest[];
   /** Index of today's featured sermon, computed server-side to avoid hydration drift. */
   featuredIndex: number;
 }
@@ -83,7 +80,7 @@ const PlayTriangle = ({ size = 20 }: { size?: number }) => (
 
 // ============================================================================
 
-export function SanctuaryHome({ events, preaching, podcast, prayers, featuredIndex }: Props) {
+export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Props) {
   const [playing, setPlaying] = useState<PlayerItem | null>(null);
   const [heroIndex, setHeroIndex] = useState(0);
   const [q, setQ] = useState("");
@@ -104,6 +101,10 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
     if (featuredIndex < 0 || !preaching[featuredIndex]) return null;
     return { item: preaching[featuredIndex], player: sermonToPlayer(preaching[featuredIndex], featuredIndex) };
   }, [preaching, featuredIndex]);
+  const topicTiles = useMemo(
+    () => VALID_TOPIC_TILES.filter((tile) => preaching.some((item) => item.topic === tile.topic)),
+    [preaching],
+  );
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -184,7 +185,6 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
                   { href: "/podcast", label: "Podcasts" },
                   { href: "/events", label: "Events" },
                   { href: "/materials", label: "Resources" },
-                  { href: "/prayer", label: "Prayer" },
                 ].map((c) => (
                   <Link
                     key={c.href}
@@ -202,7 +202,7 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
         {/* trust row + featured card */}
         <div className="relative z-[2] mx-auto flex w-full max-w-[1240px] flex-wrap items-end justify-between gap-6 px-5 pb-10 sm:px-10">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3.5 text-white">
-            {["Curated by Apostolic leaders", "Reviewed before publication", "Always free"].map(
+            {["Manually curated", "Linked to original sources", "Always free"].map(
               (t, i) => (
                 <span key={t} className="flex items-center gap-3">
                   {i > 0 && <span className="hidden h-4 w-px bg-white/25 sm:block" />}
@@ -240,8 +240,8 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
               Sound preaching, gathered in one place.
             </h2>
             <p className="mt-2.5 text-[15px] text-sanctuary-muted">
-              <span className="text-sanctuary-link">✓</span> Curated by Apostolic
-              leaders. Reviewed before publication.{" "}
+              <span className="text-sanctuary-link">✓</span> Hand-picked for the
+              first APN collection.{" "}
               <Link href="/about" className="font-bold text-sanctuary-link hover:text-sanctuary-linkhover">
                 Our standards →
               </Link>
@@ -436,67 +436,8 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
         </div>
       </section>
 
-      {/* ================= PRAYER WALL ================= */}
-      <section className="mt-[88px] border-y border-sanctuary-line2 bg-[linear-gradient(135deg,#e7eefb,#f4eee0)]">
-        <div className="mx-auto grid max-w-[1240px] items-center gap-12 px-5 py-[72px] sm:px-10 lg:grid-cols-[0.85fr_1.15fr]">
-          <div className="relative hidden h-[340px] overflow-hidden rounded-[22px] shadow-[0_24px_50px_-24px_rgba(20,60,140,0.5)] lg:block">
-            <img src={prayerImage()} alt="" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(8,16,38,0.55))]" />
-            <div className="absolute bottom-5 left-5 text-white">
-              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#ffd98a]">
-                Community
-              </div>
-              <div className="font-serif text-[26px]">We pray for one another.</div>
-            </div>
-          </div>
-
-          <div>
-            <div className="mb-5 flex items-end justify-between">
-              <h2 className="font-serif text-[30px] font-medium text-sanctuary-ink sm:text-[36px]">
-                The Prayer Wall
-              </h2>
-              <Link href="/prayer" className="text-sm font-bold text-sanctuary-link hover:text-sanctuary-linkhover">
-                View wall →
-              </Link>
-            </div>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              {prayers.slice(0, 3).map((p) => (
-                <div
-                  key={p.id}
-                  className="rounded-2xl border border-sanctuary-line bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-[0_16px_34px_-20px_rgba(20,60,140,0.5)]"
-                >
-                  <div className="text-[11px] font-bold uppercase tracking-wide text-sanctuary-gold">
-                    {[p.category, [p.city, p.state].filter(Boolean).join(", ")]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </div>
-                  <div className="mb-1.5 mt-2 font-serif text-[19px] text-sanctuary-ink">
-                    {p.title ?? "Prayer request"}
-                  </div>
-                  <p className="m-0 mb-3.5 text-[13px] leading-relaxed text-sanctuary-muted line-clamp-3">
-                    {p.request_text}
-                  </p>
-                  <div className="text-[13px] font-bold text-sanctuary-link">
-                    🙏 {p.prayer_count} prayed
-                  </div>
-                </div>
-              ))}
-              <Link
-                href="/prayer"
-                className="flex flex-col justify-center rounded-2xl bg-gradient-to-br from-brand to-brand-deep p-5 text-white transition hover:-translate-y-0.5"
-              >
-                <div className="font-serif text-[20px] leading-tight">Share a request</div>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-white/85">
-                  The network will stand with you in prayer.
-                </p>
-                <div className="mt-3 text-[13px] font-bold">Post to the wall →</div>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ================= BROWSE BY TOPIC ================= */}
+      {topicTiles.length > 0 && (
       <section className="mx-auto max-w-[1240px] px-5 pt-[88px] sm:px-10">
         <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -516,7 +457,7 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {VALID_TOPIC_TILES.map((t) => (
+          {topicTiles.map((t) => (
             <Link
               key={t.topic}
               href={`/preaching?q=${encodeURIComponent(t.topic)}`}
@@ -542,6 +483,7 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
           ))}
         </div>
       </section>
+      )}
 
       {/* ================= NEWSLETTER ================= */}
       <section id="newsletter" className="mx-auto max-w-[1240px] scroll-mt-24 px-5 pt-[88px] sm:px-10">
@@ -553,8 +495,8 @@ export function SanctuaryHome({ events, preaching, podcast, prayers, featuredInd
               Get the week ahead, every Friday.
             </h2>
             <p className="m-0 text-[15px] leading-relaxed text-white/90 sm:text-base">
-              New sermons, upcoming events and prayer needs — delivered to your
-              inbox. Free, always.
+              The first edition is in the works. Until then, send APN a note to
+              share feedback or suggest a resource.
             </p>
           </div>
           <div className="relative">

@@ -40,9 +40,9 @@ export default function AboutPage() {
           <div className="mb-2 text-2xl">🛡️</div>
           <h2 className="mb-2 text-lg font-bold">Reviewed before it&apos;s posted</h2>
           <p className="text-sm text-ink-muted">
-            Everything submitted to APN — events, sermons, podcasts, and
-            resources — is reviewed by an admin before it appears publicly.
-            Nothing is published automatically.
+            APN&apos;s first release is edited by hand. Every featured item is
+            checked before it is added to the public catalog and links back to
+            its original source.
           </p>
         </Card>
 
@@ -56,7 +56,7 @@ export default function AboutPage() {
             <li>• Events, revivals &amp; conferences</li>
             <li>• Music &amp; worship</li>
             <li>• Downloadable study materials</li>
-            <li>• A community prayer wall</li>
+            <li>• A growing, hand-curated catalog</li>
           </ul>
         </Card>
 
@@ -89,8 +89,8 @@ export default function AboutPage() {
           <div>
             <h2 className="mb-2 text-lg font-bold">Get in touch</h2>
             <p className="text-ink-muted">
-              Questions, feedback, or content to share? We&apos;d love to hear
-              from you.
+              Questions, feedback, or a resource to suggest? We&apos;d love to
+              hear from you.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -100,7 +100,7 @@ export default function AboutPage() {
             >
               ✉️ Email Us
             </a>
-            <Button href="/submit" variant="ghost">Submit Content</Button>
+            <Button href="/submit" variant="ghost">Suggest Content</Button>
           </div>
         </Card>
       </div>

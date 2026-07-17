@@ -6,9 +6,6 @@ import { getPodcast } from "@/lib/data";
 
 export const metadata = { title: "Podcast — Apostolic Power Network" };
 
-// Always read fresh so newly approved/published content appears immediately.
-export const dynamic = "force-dynamic";
-
 export default async function PodcastPage() {
   const episodes = await getPodcast();
   return (

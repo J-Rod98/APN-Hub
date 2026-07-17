@@ -1,5 +1,4 @@
-// Submit page — central submission form (event, sermon, podcast, material,
-// music, testimony, news, prayer). Everything lands as 'pending' for review.
+// Suggestion page — the static launch accepts recommendations by email only.
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SubmitForm } from "@/components/forms/SubmitForm";
 
@@ -11,8 +10,8 @@ export default function SubmitPage() {
       <SectionHeader
         as="h1"
         eyebrow="Share With the Network"
-        title="Submit Content"
-        subtitle="Have an event, sermon, podcast, resource, testimony, or prayer request? Submit it here for review."
+        title="Suggest Content"
+        subtitle="Know an Apostolic sermon, podcast, event, or resource worth sharing? Send APN the original link."
       />
       <SubmitForm />
     </div>

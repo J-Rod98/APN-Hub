@@ -6,9 +6,6 @@ import { getMaterials } from "@/lib/data";
 
 export const metadata = { title: "Materials — Apostolic Power Network" };
 
-// Always read fresh so newly approved/published content appears immediately.
-export const dynamic = "force-dynamic";
-
 export default async function MaterialsPage() {
   const materials = await getMaterials();
   return (
@@ -18,7 +15,7 @@ export default async function MaterialsPage() {
         eyebrow="Download & Teach"
         title="Apostolic Materials"
         subtitle="Lessons, guides, and church media — all free in Phase 1."
-        action={<Button href="/submit" size="sm">＋ Submit a Resource</Button>}
+        action={<Button href="/submit" size="sm">＋ Suggest a Resource</Button>}
       />
       <MaterialsList materials={materials} />
     </div>

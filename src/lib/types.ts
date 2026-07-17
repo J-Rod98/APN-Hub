@@ -1,8 +1,7 @@
 // ============================================================================
 // APN Hub — content models
 // ----------------------------------------------------------------------------
-// These TypeScript types mirror the Supabase schema in
-// supabase/migrations/0001_initial_schema.sql. Keep them in sync.
+// These TypeScript types define APN's local, hand-curated content catalog.
 // ============================================================================
 
 export type ContentStatus =

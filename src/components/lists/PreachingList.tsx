@@ -1,6 +1,6 @@
 "use client";
-// Browse + filter for preaching (search + topic).
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import { PreachingCard } from "@/components/cards/PreachingCard";
 import { SearchInput, ChipRow } from "@/components/ui/Filters";
 import { EmptyState } from "@/components/ui/States";
@@ -8,28 +8,28 @@ import { Button } from "@/components/ui/Button";
 import { PREACHING_TOPICS } from "@/lib/constants";
 import type { PreachingItem } from "@/lib/types";
 
-export function PreachingList({
-  items,
-  initialQuery = "",
-}: {
-  items: PreachingItem[];
-  /** Seeded from `?q=` (homepage hero search / topic tiles). */
-  initialQuery?: string;
-}) {
-  const [q, setQ] = useState(initialQuery);
+export function PreachingList({ items }: { items: PreachingItem[] }) {
+  const [q, setQ] = useState("");
   const [topic, setTopic] = useState("All");
+
+  // Read an optional homepage search after hydration so the route remains
+  // exportable as static HTML.
+  useEffect(() => {
+    const search = new URLSearchParams(window.location.search);
+    setQ(search.get("q") ?? "");
+  }, []);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
-    return items.filter((p) => {
+    return items.filter((item) => {
       const matchesText =
         !term ||
-        [p.title, p.speaker, p.topic, p.scripture_reference, p.description]
+        [item.title, item.speaker, item.topic, item.scripture_reference, item.description]
           .filter(Boolean)
           .join(" ")
           .toLowerCase()
           .includes(term);
-      const matchesTopic = topic === "All" || p.topic === topic;
+      const matchesTopic = topic === "All" || item.topic === topic;
       return matchesText && matchesTopic;
     });
   }, [items, q, topic]);
@@ -48,8 +48,8 @@ export function PreachingList({
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
-          {filtered.map((p) => (
-            <PreachingCard key={p.id} item={p} />
+          {filtered.map((item) => (
+            <PreachingCard key={item.id} item={item} />
           ))}
         </div>
       )}

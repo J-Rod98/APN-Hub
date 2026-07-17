@@ -10,16 +10,15 @@ const cols: { title: string; links: { href: string; label: string }[] }[] = [
       { href: "/events", label: "Events" },
       { href: "/preaching", label: "Preaching" },
       { href: "/podcast", label: "Podcasts" },
-      { href: "/materials", label: "Materials" },
+      { href: "/materials", label: "Resources" },
     ],
   },
   {
     title: "Community",
     links: [
-      { href: "/prayer", label: "Prayer Wall" },
       { href: "/about", label: "What We Believe" },
       { href: "/#newsletter", label: "Newsletter" },
-      { href: "/submit", label: "Submit Content" },
+      { href: "/submit", label: "Suggest Content" },
     ],
   },
   {

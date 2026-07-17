@@ -58,16 +58,10 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/admin"
-            className="hidden text-sm font-semibold text-white/85 hover:text-white sm:block"
-          >
-            Sign in
-          </Link>
-          <Link
             href="/submit"
             className="hidden rounded-[22px] bg-gradient-to-b from-brand to-brand-deep px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_26px_rgba(20,82,214,0.5)] transition hover:-translate-y-px hover:brightness-110 sm:block"
           >
-            Submit a Resource
+            Suggest Content
           </Link>
 
           {/* Hamburger (mobile) */}
@@ -102,7 +96,7 @@ export function Navbar() {
             onClick={() => setOpen(false)}
             className="mt-1 rounded-xl bg-gradient-to-b from-brand to-brand-deep px-4 py-3 text-center font-bold text-white"
           >
-            Submit a Resource
+            Suggest Content
           </Link>
         </nav>
       )}

@@ -83,7 +83,6 @@ export const NAV_LINKS = [
   { href: "/podcast", label: "Podcasts" },
   { href: "/events", label: "Events" },
   { href: "/materials", label: "Resources" },
-  { href: "/prayer", label: "Prayer" },
   { href: "/about", label: "Believe" },
 ] as const;
 
@@ -92,6 +91,6 @@ export const BOTTOM_NAV = [
   { href: "/", label: "Home", icon: "🏠" },
   { href: "/events", label: "Events", icon: "📅" },
   { href: "/preaching", label: "Preaching", icon: "🎧" },
-  { href: "/prayer", label: "Prayer", icon: "🙏" },
-  { href: "/submit", label: "Submit", icon: "＋" },
+  { href: "/materials", label: "Resources", icon: "📄" },
+  { href: "/submit", label: "Suggest", icon: "＋" },
 ] as const;
