@@ -75,14 +75,16 @@ export const SUBMISSION_TYPES: { value: SubmissionType; label: string; icon: str
 ];
 
 // Primary navigation ---------------------------------------------------------
+// NOTE: "Submit" is intentionally NOT listed here — it renders once as the CTA
+// button in the navbar. Having it in both places produced two Submit controls.
 export const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/events", label: "Events" },
-  { href: "/preaching", label: "Preaching" },
+  { href: "/preaching", label: "Sermons" },
   { href: "/podcast", label: "Podcasts" },
-  { href: "/materials", label: "Materials" },
+  { href: "/events", label: "Events" },
+  { href: "/materials", label: "Resources" },
   { href: "/prayer", label: "Prayer" },
-  { href: "/submit", label: "Submit" },
+  { href: "/about", label: "Believe" },
 ] as const;
 
 // Sticky mobile bottom nav (subset, with icons) ------------------------------

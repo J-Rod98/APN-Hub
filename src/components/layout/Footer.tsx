@@ -1,71 +1,84 @@
-// Site footer.
+// Shared site footer (Sanctuary Light chrome).
+// Light band, four columns, per the approved design.
 import Link from "next/link";
-import { BrandMark } from "@/components/ui/FlameLogo";
+import { FlameLogo } from "@/components/ui/FlameLogo";
 
-const cols = [
+const cols: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "Explore",
     links: [
-      { href: "/preaching", label: "Preaching" },
-      { href: "/podcast", label: "Podcast" },
       { href: "/events", label: "Events" },
-      { href: "/materials", label: "Resources" },
-      { href: "/prayer", label: "Prayer" },
+      { href: "/preaching", label: "Preaching" },
+      { href: "/podcast", label: "Podcasts" },
+      { href: "/materials", label: "Materials" },
     ],
   },
   {
-    title: "Connect",
+    title: "Community",
     links: [
-      { href: "/about", label: "About APN" },
+      { href: "/prayer", label: "Prayer Wall" },
+      { href: "/about", label: "What We Believe" },
+      { href: "/#newsletter", label: "Newsletter" },
       { href: "/submit", label: "Submit Content" },
-      { href: "/#newsletter", label: "Get Updates" },
-      { href: "mailto:jonathanrod98@gmail.com", label: "Contact" },
     ],
+  },
+  {
+    title: "Get in touch",
+    links: [{ href: "mailto:jonathanrod98@gmail.com", label: "Contact" }],
   },
 ];
 
+function FooterLink({ href, label }: { href: string; label: string }) {
+  const cls = "text-sanctuary-link hover:text-sanctuary-linkhover transition";
+  return href.startsWith("mailto:") ? (
+    <a href={href} className={cls}>
+      {label}
+    </a>
+  ) : (
+    <Link href={href} className={cls}>
+      {label}
+    </Link>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="mt-8 border-t border-line bg-navy-950 pb-24 pt-12 md:pb-12">
-      <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-8 px-5">
-        <div className="max-w-xs">
-          <BrandMark />
-          <p className="mt-3 text-sm text-ink-muted">
-            Built for the Apostolic Pentecostal community — one place for
-            preaching, prayer, events, materials, and connection.
-          </p>
-        </div>
-        <div className="flex gap-12">
+    <footer className="border-t border-sanctuary-line2 bg-sanctuary-footer pb-24 md:pb-0">
+      <div className="mx-auto max-w-[1240px] px-5 pb-10 pt-[52px] sm:px-10">
+        <div className="grid gap-9 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          <div>
+            <div className="mb-3.5 flex items-center gap-2.5">
+              <FlameLogo size={28} />
+              <span className="text-[15px] font-bold text-sanctuary-ink">
+                Apostolic Power Network
+              </span>
+            </div>
+            <p className="m-0 max-w-[300px] text-sm leading-relaxed text-sanctuary-muted">
+              Sound, Spirit-filled content from across the Apostolic movement —
+              built for the community.
+            </p>
+          </div>
+
           {cols.map((col) => (
             <div key={col.title}>
-              <h5 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-brand-bright">
+              <div className="mb-3 text-[13px] font-bold text-sanctuary-ink">
                 {col.title}
-              </h5>
-              {col.links.map((l, i) =>
-                l.href.startsWith("mailto:") ? (
-                  <a
-                    key={`${l.href}-${i}`}
-                    href={l.href}
-                    className="block py-1 text-sm text-ink-muted hover:text-ink"
-                  >
-                    {l.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={`${l.href}-${i}`}
-                    href={l.href}
-                    className="block py-1 text-sm text-ink-muted hover:text-ink"
-                  >
-                    {l.label}
-                  </Link>
-                ),
-              )}
+              </div>
+              <div className="flex flex-col gap-2.5 text-sm">
+                {col.links.map((l) => (
+                  <FooterLink key={`${col.title}-${l.href}-${l.label}`} {...l} />
+                ))}
+              </div>
             </div>
           ))}
         </div>
-      </div>
-      <div className="mx-auto mt-8 max-w-6xl border-t border-line px-5 pt-5 text-center text-xs text-ink-muted">
-        © {new Date().getFullYear()} Apostolic Power Network
+
+        <div className="mt-9 flex flex-wrap justify-between gap-3 border-t border-sanctuary-line2 pt-5 text-[13px] text-sanctuary-soft">
+          <span>© {new Date().getFullYear()} Apostolic Power Network</span>
+          <span className="flex gap-4">
+            <FooterLink href="/about" label="What We Believe" />
+          </span>
+        </div>
       </div>
     </footer>
   );

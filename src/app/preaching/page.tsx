@@ -9,7 +9,12 @@ export const metadata = { title: "Preaching — Apostolic Power Network" };
 // Always read fresh so newly approved/published content appears immediately.
 export const dynamic = "force-dynamic";
 
-export default async function PreachingPage() {
+export default async function PreachingPage({
+  searchParams,
+}: {
+  // `?q=` comes from the homepage hero search and the "Browse by Topic" tiles.
+  searchParams?: { q?: string };
+}) {
   const items = await getPreaching();
   return (
     <div className="container-app py-12">
@@ -20,7 +25,7 @@ export default async function PreachingPage() {
         subtitle="Sound doctrine, anytime — built around the truths we hold dear."
         action={<Button href="/submit" size="sm">＋ Submit a Sermon</Button>}
       />
-      <PreachingList items={items} />
+      <PreachingList items={items} initialQuery={searchParams?.q ?? ""} />
     </div>
   );
 }

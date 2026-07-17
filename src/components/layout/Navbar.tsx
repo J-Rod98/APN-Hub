@@ -1,26 +1,41 @@
 "use client";
-// Sticky top nav with desktop links + mobile hamburger dropdown.
+// Shared top navigation (Sanctuary Light chrome).
+//
+// Two variants, one component:
+//  - Home: transparent, laid over the full-bleed hero photo.
+//  - Everywhere else: solid dark bar, sticky.
+// Both sit on dark backgrounds, so the link styling is identical.
+//
+// "Submit a Resource" appears ONCE, as the CTA button — it is deliberately not
+// in NAV_LINKS (that duplication is what produced two Submit buttons).
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BrandMark } from "@/components/ui/FlameLogo";
-import { Button } from "@/components/ui/Button";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isHome = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-navy-950/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+    <header
+      className={cn(
+        "z-50",
+        isHome
+          ? "absolute inset-x-0 top-0" // overlays the hero
+          : "sticky top-0 border-b border-line bg-navy-950/80 backdrop-blur-xl",
+      )}
+    >
+      <div className="mx-auto flex h-[82px] max-w-[1240px] items-center justify-between px-5 sm:px-10">
         <Link href="/" aria-label="Apostolic Power Network home">
-          <BrandMark />
+          <BrandMark size={32} />
         </Link>
 
         {/* Desktop links */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           {NAV_LINKS.map((link) => {
             const active =
               link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
@@ -29,10 +44,10 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-full px-3 py-2 text-sm font-semibold transition",
+                  "rounded-[20px] px-[15px] py-[9px] text-sm font-semibold transition",
                   active
-                    ? "bg-brand/10 text-ink"
-                    : "text-ink-muted hover:bg-brand/10 hover:text-ink",
+                    ? "bg-white/[0.14] text-white"
+                    : "text-white/80 hover:bg-white/[0.12] hover:text-white",
                 )}
               >
                 {link.label}
@@ -41,40 +56,54 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2.5">
-          <div className="hidden md:block">
-            <Button href="/submit" size="sm">
-              ＋ Submit
-            </Button>
-          </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin"
+            className="hidden text-sm font-semibold text-white/85 hover:text-white sm:block"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/submit"
+            className="hidden rounded-[22px] bg-gradient-to-b from-brand to-brand-deep px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_26px_rgba(20,82,214,0.5)] transition hover:-translate-y-px hover:brightness-110 sm:block"
+          >
+            Submit a Resource
+          </Link>
 
           {/* Hamburger (mobile) */}
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={open}
-            className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border border-line md:hidden"
+            className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border border-white/25 lg:hidden"
           >
-            <span className={cn("h-0.5 w-4.5 bg-ink transition", open && "translate-y-2 rotate-45")} style={{ width: 18 }} />
-            <span className={cn("h-0.5 bg-ink transition", open && "opacity-0")} style={{ width: 18 }} />
-            <span className={cn("h-0.5 bg-ink transition", open && "-translate-y-2 -rotate-45")} style={{ width: 18 }} />
+            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "translate-y-2 rotate-45")} />
+            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "opacity-0")} />
+            <span className={cn("h-0.5 w-[18px] bg-white transition", open && "-translate-y-2 -rotate-45")} />
           </button>
         </div>
       </div>
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="flex flex-col gap-1 border-b border-line bg-navy-950/95 px-5 pb-4 pt-1 md:hidden">
+        <nav className="flex flex-col gap-1 border-b border-line bg-navy-950/95 px-5 pb-4 pt-1 backdrop-blur-xl lg:hidden">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3 font-semibold text-ink hover:bg-brand/10"
+              className="rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/10"
             >
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/submit"
+            onClick={() => setOpen(false)}
+            className="mt-1 rounded-xl bg-gradient-to-b from-brand to-brand-deep px-4 py-3 text-center font-bold text-white"
+          >
+            Submit a Resource
+          </Link>
         </nav>
       )}
     </header>

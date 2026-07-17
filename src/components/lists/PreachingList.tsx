@@ -8,8 +8,15 @@ import { Button } from "@/components/ui/Button";
 import { PREACHING_TOPICS } from "@/lib/constants";
 import type { PreachingItem } from "@/lib/types";
 
-export function PreachingList({ items }: { items: PreachingItem[] }) {
-  const [q, setQ] = useState("");
+export function PreachingList({
+  items,
+  initialQuery = "",
+}: {
+  items: PreachingItem[];
+  /** Seeded from `?q=` (homepage hero search / topic tiles). */
+  initialQuery?: string;
+}) {
+  const [q, setQ] = useState(initialQuery);
   const [topic, setTopic] = useState("All");
 
   const filtered = useMemo(() => {
