@@ -2,18 +2,21 @@
 // Event card with a source-owned image, date badge, location, and details link.
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { resolveEventImage } from "@/lib/event-images";
 import { dateBadge, formatDateRange, safeUrl } from "@/lib/utils";
 import type { AppEvent } from "@/lib/types";
 
 export function EventCard({ event }: { event: AppEvent }) {
   const badge = dateBadge(event.event_date);
-  const image = safeUrl(event.image_url);
+  const eventImage = resolveEventImage(event);
+  const image = safeUrl(eventImage.image_url);
+  const imageCreditUrl = safeUrl(eventImage.image_credit_url);
   return (
     <Card className="flex flex-col overflow-hidden">
       {/* Image has an official source and remains externally hosted. */}
       <div className="relative flex h-40 items-end bg-gradient-to-br from-brand-deep to-navy-950 p-3.5">
         {image && (
-          <img src={image} alt={event.image_alt ?? ""} className="absolute inset-0 h-full w-full object-cover" />
+          <img src={image} alt={eventImage.image_alt ?? ""} className="absolute inset-0 h-full w-full object-cover" />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.08),rgba(8,16,38,0.72))]" />
         <div className="absolute left-3.5 top-3.5 rounded-xl border border-white/45 bg-white/[0.94] px-2.5 py-1.5 text-center leading-none shadow-sm">
@@ -26,6 +29,16 @@ export function EventCard({ event }: { event: AppEvent }) {
           <span className="relative rounded-full bg-white/[0.92] px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wide text-sanctuary-ink">
             {event.category}
           </span>
+        )}
+        {imageCreditUrl && eventImage.image_credit && (
+          <a
+            href={imageCreditUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="absolute bottom-3 right-3 z-[1] rounded-full bg-[#081026]/65 px-2 py-1 text-[0.58rem] font-semibold tracking-wide text-white/90 backdrop-blur-sm transition hover:bg-[#081026]/85 hover:text-white"
+          >
+            {eventImage.image_credit}
+          </a>
         )}
       </div>
 

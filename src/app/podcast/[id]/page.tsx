@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -24,6 +25,7 @@ export default async function PodcastDetailPage({
   if (!episode) notFound();
 
   const media = safeUrl(episode.media_url);
+  const cover = safeUrl(episode.image_url);
   const playable = getPlayable(episode.media_url);
 
   return (
@@ -34,8 +36,16 @@ export default async function PodcastDetailPage({
 
       <div className="mx-auto max-w-3xl">
         <div className="flex items-center gap-4">
-          <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-sanctuary-chipline bg-sanctuary-chip font-extrabold text-sanctuary-link">
-            EP {episode.episode_number ?? "—"}
+          <div className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-sanctuary-chipline bg-sanctuary-chip font-extrabold text-sanctuary-link">
+            {cover ? (
+              <img
+                src={cover}
+                alt={episode.image_alt ?? `${episode.title} podcast artwork`}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span aria-label="Podcast">🎙️</span>
+            )}
           </div>
           <div>
             <h1 className="font-serif text-3xl font-medium tracking-[-0.02em] text-sanctuary-ink sm:text-4xl">{episode.title}</h1>

@@ -48,6 +48,9 @@ export interface AppEvent extends Timestamps {
   /** A public, source-owned event or ministry image. Never a generated image. */
   image_url: string | null;
   image_alt: string | null;
+  /** Attribution for the image shown on the public event card. */
+  image_credit?: string | null;
+  image_credit_url?: string | null;
   /** Short, verified details shown on the event page. */
   highlights: string[];
   source_url: string | null;
@@ -70,6 +73,9 @@ export interface PreachingItem extends Timestamps {
 export interface PodcastEpisode extends Timestamps {
   id: string;
   title: string;
+  /** Official podcast or episode cover shown wherever this item is played. */
+  image_url?: string | null;
+  image_alt?: string | null;
   episode_number: number | null;
   guest: string | null;
   description: string | null;

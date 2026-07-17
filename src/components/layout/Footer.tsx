@@ -23,7 +23,7 @@ const cols: { title: string; links: { href: string; label: string }[] }[] = [
   },
   {
     title: "Get in touch",
-    links: [{ href: "mailto:jonathanrod98@gmail.com", label: "Contact" }],
+    links: [{ href: "mailto:apostolicpowernet@gmail.com", label: "Contact" }],
   },
 ];
 

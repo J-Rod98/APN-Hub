@@ -10,7 +10,7 @@ export const metadata = {
     "What Apostolic Power Network is, who it's for, and how content is reviewed before it's shared.",
 };
 
-const CONTACT_EMAIL = "jonathanrod98@gmail.com";
+const CONTACT_EMAIL = "apostolicpowernet@gmail.com";
 
 export default function AboutPage() {
   return (

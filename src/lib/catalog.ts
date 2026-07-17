@@ -7,22 +7,12 @@
 // ============================================================================
 
 import type { AppEvent, Material, PodcastEpisode, PreachingItem } from "./types";
+import { eventImage } from "./event-images";
 
 const publishedAt = "2026-07-17T00:00:00.000Z";
 const childrensMinistriesCalendar =
   "https://upci.org/wp-content/uploads/2026/02/2026-DATES-CM.pdf";
 const generalConferenceSchedule = "https://www.upcigc.net/schedule/";
-
-// Public, source-owned UPCI images used with the relevant event cards. The
-// images stay hosted by their original organization rather than being copied
-// into APN's repository.
-const upciEventImage = {
-  worship: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider8.jpg",
-  singers: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider4.jpg",
-  baptism: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider7.jpg",
-  global: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider6.jpg",
-  community: "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider5.jpg",
-} as const;
 
 export const events: AppEvent[] = [
   {
@@ -39,8 +29,7 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Bible Study",
-    image_url: upciEventImage.community,
-    image_alt: "A UPCI community gathering.",
+    ...eventImage.juniorBibleQuiz,
     highlights: [
       "Junior division teams gather for the North American tournament.",
       "Check the original Children’s Ministries calendar for host and registration updates.",
@@ -64,8 +53,7 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: "LJ Harry, Jonathan Walker, Kaleb Saucer, and other UPCI teachers",
     category: "Conference",
-    image_url: upciEventImage.singers,
-    image_alt: "UPCI worship leaders singing together.",
+    ...eventImage.formed2026,
     highlights: [
       "Fifteen teaching sessions plus bonus content for ministry teams.",
       "Tracks cover children, youth, and adult teaching.",
@@ -90,8 +78,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -115,8 +103,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: "Pastor Shane Paulson",
     category: "Conference",
-    image_url: upciEventImage.baptism,
-    image_alt: "A baptism at an Apostolic Pentecostal church.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Two days of Children’s Ministries training.",
       "Speaker: Pastor Shane Paulson.",
@@ -141,8 +129,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -166,8 +154,7 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: "Raymond Woodward, Joel Urshan, David K. Bernard, Drew Galloway, Wayne Wyatt, and more",
     category: "Conference",
-    image_url: upciEventImage.worship,
-    image_alt: "A worshipper with raised hands at a UPCI gathering.",
+    ...eventImage.generalConference2026,
     highlights: [
       "Global Missions service opens Tuesday evening with Raymond Woodward.",
       "Seminars, exhibits, and ministry sessions run throughout the week.",
@@ -193,8 +180,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: "Pastor Mark Foster",
     category: "Conference",
-    image_url: upciEventImage.singers,
-    image_alt: "UPCI worship leaders singing together.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Two days of Children’s Ministries training.",
       "Speaker: Pastor Mark Foster.",
@@ -219,8 +206,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -244,8 +231,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -269,8 +256,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -294,8 +281,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Revival",
-    image_url: upciEventImage.global,
-    image_alt: "Children at a UPCI global ministry gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "Part of the 2026 S.O.C. Global Rallies schedule.",
       "See the official calendar for local host and participation details.",
@@ -319,8 +306,8 @@ export const events: AppEvent[] = [
     church_name: null,
     speaker: null,
     category: "Youth Rally",
-    image_url: upciEventImage.worship,
-    image_alt: "A worshipper with raised hands at a UPCI gathering.",
+    image_url: null,
+    image_alt: null,
     highlights: [
       "A future UPCI Youth Ministries gathering for young people across North America.",
       "Dates and location are listed by the Kansas District UPCI calendar; use the original source for updates.",
@@ -479,6 +466,9 @@ export const podcast: PodcastEpisode[] = [
   {
     id: "cleansing-of-the-leper",
     title: "The Cleansing of the Leper",
+    image_url:
+      "https://image-cdn-fa.spotifycdn.com/image/ab6772ab000015be6e1b00f19e1142153df6eabf",
+    image_alt: "BIBLOS podcast cover artwork.",
     episode_number: null,
     guest: null,
     description: "Listen to this featured Apostolic message on Spotify.",
@@ -490,6 +480,9 @@ export const podcast: PodcastEpisode[] = [
   {
     id: "apostolic-life-in-the-21st-century",
     title: "Apostolic Life in the 21st Century",
+    image_url:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67656300005f1faeba55effcfdf15629f1d78e",
+    image_alt: "Apostolic Life in the 21st Century podcast cover artwork.",
     episode_number: null,
     guest: "Dr. David K. Bernard",
     description:
@@ -502,6 +495,9 @@ export const podcast: PodcastEpisode[] = [
   {
     id: "reflections-upci",
     title: "Reflections UPCI",
+    image_url:
+      "https://image-cdn-fa.spotifycdn.com/image/ab6772ab000015be01d447a8d8b9f05bfc84c63d",
+    image_alt: "Reflections UPCI podcast cover artwork.",
     episode_number: null,
     guest: "Ladies Ministries UPCI",
     description:

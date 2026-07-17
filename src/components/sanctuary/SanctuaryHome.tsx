@@ -24,7 +24,8 @@ import {
   newsletterImage,
   VALID_TOPIC_TILES,
 } from "@/lib/sanctuary";
-import { dateBadge } from "@/lib/utils";
+import { resolveEventImage } from "@/lib/event-images";
+import { dateBadge, safeUrl } from "@/lib/utils";
 import type {
   AppEvent,
   PodcastEpisode,
@@ -62,7 +63,7 @@ function podcastToPlayer(e: PodcastEpisode, i: number): PlayerItem | null {
     topic: "Podcast",
     meta: [e.guest ? `with ${e.guest}` : null, e.duration].filter(Boolean).join(" · "),
     badge: "PODCAST",
-    image: sermonImage(i),
+    image: e.image_url ?? sermonImage(i),
     playable,
   };
 }
@@ -342,20 +343,38 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
             ) : (
               events.slice(0, 3).map((e) => {
                 const b = dateBadge(e.event_date);
+                const artwork = resolveEventImage(e);
+                const image = safeUrl(artwork.image_url);
                 return (
                   <Link
                     key={e.id}
                     href={`/events/${e.id}`}
                     className="flex items-center gap-4 rounded-[18px] border border-sanctuary-line bg-white p-[18px] transition hover:border-[#bcd0f2] hover:shadow-[0_14px_32px_-20px_rgba(20,60,140,0.5)]"
                   >
-                    <div className="min-w-[66px] rounded-[14px] border border-sanctuary-chipline bg-sanctuary-chip px-4 py-3 text-center">
-                      <div className="text-[11px] font-bold tracking-[0.08em] text-sanctuary-link">
-                        {b.month}
+                    {image ? (
+                      <div className="relative h-[68px] w-[88px] shrink-0 overflow-hidden rounded-[14px] bg-sanctuary-chip">
+                        <img
+                          src={image}
+                          alt={artwork.image_alt ?? `${e.title} event artwork`}
+                          className="h-full w-full object-cover"
+                        />
+                        <div className="absolute bottom-1.5 left-1.5 rounded-md bg-[#081026]/85 px-1.5 py-1 text-center leading-none text-white shadow-sm">
+                          <div className="text-[8px] font-bold tracking-[0.08em] text-white/80">
+                            {b.month}
+                          </div>
+                          <div className="font-serif text-[16px]">{b.day}</div>
+                        </div>
                       </div>
-                      <div className="font-serif text-[26px] leading-none text-sanctuary-ink">
-                        {b.day}
+                    ) : (
+                      <div className="min-w-[66px] rounded-[14px] border border-sanctuary-chipline bg-sanctuary-chip px-4 py-3 text-center">
+                        <div className="text-[11px] font-bold tracking-[0.08em] text-sanctuary-link">
+                          {b.month}
+                        </div>
+                        <div className="font-serif text-[26px] leading-none text-sanctuary-ink">
+                          {b.day}
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="flex-1">
                       <div className="text-[17px] font-bold text-sanctuary-ink">{e.title}</div>
                       <div className="mt-0.5 text-[13px] text-sanctuary-muted">
@@ -397,6 +416,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
             ) : (
               podcast.slice(0, 3).map((ep, i) => {
                 const player = podcastToPlayer(ep, i);
+                const coverImage = ep.image_url;
                 const grads = [
                   "from-[#2f8bff] to-[#1452d6]",
                   "from-[#4fc3ff] to-[#2f8bff]",
@@ -411,9 +431,18 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                       <button
                         onClick={() => setPlaying(player)}
                         aria-label={`Play ${ep.title}`}
-                        className={`grid h-[60px] w-[60px] shrink-0 place-items-center rounded-[14px] bg-gradient-to-br text-[23px] transition hover:scale-105 ${grads[i % 3]}`}
+                        className={`relative grid h-[60px] w-[60px] shrink-0 place-items-center overflow-hidden rounded-[14px] bg-gradient-to-br text-[23px] transition hover:scale-105 ${grads[i % 3]}`}
                       >
-                        <PlayTriangle size={13} />
+                        {coverImage && (
+                          <img
+                            src={coverImage}
+                            alt={ep.image_alt ?? `${ep.title} podcast artwork`}
+                            className="absolute inset-0 h-full w-full object-cover"
+                          />
+                        )}
+                        <span className="relative grid h-7 w-7 place-items-center rounded-full bg-white/90 shadow-sm">
+                          <PlayTriangle size={10} />
+                        </span>
                       </button>
                     ) : (
                       <div

@@ -7,7 +7,7 @@ export const metadata = {
   description: "How Apostolic Power Network collects, uses, and protects information.",
 };
 
-const CONTACT_EMAIL = "jonathanrod98@gmail.com";
+const CONTACT_EMAIL = "apostolicpowernet@gmail.com";
 const EFFECTIVE_DATE = "July 17, 2026";
 
 export default function PrivacyPage() {

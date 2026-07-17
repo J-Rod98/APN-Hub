@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { getEventById, getEvents } from "@/lib/data";
+import { resolveEventImage } from "@/lib/event-images";
 import { dateBadge, formatDateRange, safeUrl } from "@/lib/utils";
 
 /* eslint-disable @next/next/no-img-element */
@@ -25,7 +26,9 @@ export default function EventDetailPage({
 
   const badge = dateBadge(event.event_date);
   const source = safeUrl(event.source_url);
-  const image = safeUrl(event.image_url);
+  const eventImage = resolveEventImage(event);
+  const image = safeUrl(eventImage.image_url);
+  const imageCreditUrl = safeUrl(eventImage.image_credit_url);
 
   return (
     <div className="container-app py-10 sm:py-12">
@@ -36,7 +39,7 @@ export default function EventDetailPage({
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.6fr]">
         <div>
           <div className="relative mb-7 flex min-h-[280px] items-end overflow-hidden rounded-[24px] border border-sanctuary-line bg-gradient-to-br from-brand-deep to-navy-950 p-6 shadow-[0_20px_46px_-28px_rgba(20,60,140,0.7)]">
-            {image && <img src={image} alt={event.image_alt ?? ""} className="absolute inset-0 h-full w-full object-cover" />}
+            {image && <img src={image} alt={eventImage.image_alt ?? ""} className="absolute inset-0 h-full w-full object-cover" />}
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.12),rgba(8,16,38,0.82))]" />
             <div className="absolute left-6 top-6 rounded-[14px] border border-white/45 bg-white/[0.94] px-3 py-2 text-center leading-none">
               <b className="block text-2xl text-sanctuary-ink">{badge.day}</b>
@@ -46,6 +49,16 @@ export default function EventDetailPage({
               <span className="relative rounded-full bg-white/[0.92] px-3 py-1 text-xs font-bold uppercase tracking-wide text-sanctuary-ink">
                 {event.category}
               </span>
+            )}
+            {imageCreditUrl && eventImage.image_credit && (
+              <a
+                href={imageCreditUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="absolute bottom-5 right-5 z-[1] rounded-full bg-[#081026]/65 px-2.5 py-1.5 text-[0.62rem] font-semibold tracking-wide text-white/90 backdrop-blur-sm transition hover:bg-[#081026]/85 hover:text-white"
+              >
+                {eventImage.image_credit}
+              </a>
             )}
           </div>
 
