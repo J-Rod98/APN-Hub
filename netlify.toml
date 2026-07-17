@@ -9,3 +9,8 @@
   # This release is a fully static Next export. Skip Netlify's server-side
   # Next runtime and publish the already-generated `out/` directory instead.
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  # ADMIN_EMAILS is an internal routing setting, but its address is also the
+  # deliberately public contact address shown on the About, Privacy, and
+  # footer pages. It is not a credential, so do not block this static release
+  # when the two intentionally match.
+  SECRETS_SCAN_OMIT_KEYS = "ADMIN_EMAILS"
