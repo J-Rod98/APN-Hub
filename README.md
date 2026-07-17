@@ -3,9 +3,9 @@
 A static, curated discovery site for the Apostolic movement: sermons, podcasts,
 events, and resources from their original sources.
 
-This first release deliberately has no database, authentication, public forms,
-admin panel, or invented demo content. Visitors can browse the published
-catalogue and open or play material from its verified source.
+This first release deliberately has no database, authentication, or admin
+panel. Visitors can browse the published catalogue, submit a content suggestion,
+join the newsletter, and open or play material from its verified source.
 
 ## Run locally
 

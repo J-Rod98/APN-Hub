@@ -76,6 +76,7 @@ export function Footer() {
           <span>© {new Date().getFullYear()} Apostolic Power Network</span>
           <span className="flex gap-4">
             <FooterLink href="/about" label="What We Believe" />
+            <FooterLink href="/privacy" label="Privacy Policy" />
           </span>
         </div>
       </div>
