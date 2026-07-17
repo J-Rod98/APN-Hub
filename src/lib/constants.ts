@@ -29,16 +29,11 @@ export const PREACHING_TOPICS = [
 ] as const;
 
 export const MATERIAL_CATEGORIES = [
-  "Bible Study Lessons",
-  "New Convert Lessons",
-  "Doctrine Sheets",
-  "Prayer Guides",
-  "Youth Lessons",
-  "Sunday School",
-  "Outreach Flyers",
-  "Sermon Notes",
-  "Family Devotionals",
-  "Church Media Templates",
+  "Discipleship & Bible Study",
+  "Leadership & Ministry Training",
+  "Church Safety",
+  "Evangelism & Outreach",
+  "Education & Training",
 ] as const;
 
 export const PRAYER_CATEGORIES = [
