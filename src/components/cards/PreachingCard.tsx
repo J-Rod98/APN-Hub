@@ -15,6 +15,8 @@ export function PreachingCard({ item }: { item: PreachingItem }) {
         <img
           src={thumbnail}
           alt=""
+          loading="lazy"
+          decoding="async"
           className="h-20 w-28 shrink-0 rounded-xl object-cover"
         />
       ) : media ? (

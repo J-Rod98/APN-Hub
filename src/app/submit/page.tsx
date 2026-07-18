@@ -1,8 +1,13 @@
 // Suggestion page — the static launch accepts recommendations by email only.
-import { SubmitForm } from "@/components/forms/SubmitForm";
+import { SecureSubmitForm } from "@/components/forms/SecureSubmitForm";
 import { SanctuaryPageHeader } from "@/components/sanctuary/SanctuaryPageHeader";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Submit Content — Apostolic Power Network" };
+export const metadata = pageMetadata({
+  title: "Suggest Content",
+  description: "Suggest an Apostolic sermon, podcast, event, or resource for APN to review.",
+  path: "/submit/",
+});
 
 export default function SubmitPage() {
   return (
@@ -13,7 +18,7 @@ export default function SubmitPage() {
         subtitle="Know an Apostolic sermon, podcast, event, or resource worth sharing? Send APN the original link."
         imageIndex={0}
       />
-      <SubmitForm />
+      <SecureSubmitForm />
     </div>
   );
 }

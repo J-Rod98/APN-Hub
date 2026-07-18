@@ -27,7 +27,7 @@ export function SearchInput({
         <button
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="text-sanctuary-muted hover:text-sanctuary-ink"
+          className="grid h-11 w-11 place-items-center text-sanctuary-muted hover:text-sanctuary-ink"
         >
           ✕
         </button>
@@ -52,7 +52,7 @@ export function ChipRow({
           key={opt}
           onClick={() => onSelect(opt)}
           className={cn(
-            "rounded-full border px-4 py-2 text-sm font-semibold transition",
+            "min-h-11 rounded-full border px-4 py-2 text-sm font-semibold transition",
             active === opt
               ? "border-transparent bg-gradient-to-br from-brand to-brand-deep text-white shadow-glow"
               : "border-sanctuary-line bg-white text-sanctuary-muted hover:border-[#bcd0f2] hover:text-sanctuary-ink",
@@ -81,7 +81,7 @@ export function Select({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       aria-label={label}
-      className="rounded-xl border border-sanctuary-line bg-white px-3 py-2.5 text-sm text-sanctuary-ink outline-none focus:border-brand"
+      className="min-h-11 rounded-xl border border-sanctuary-line bg-white px-3 py-2.5 text-sm text-sanctuary-ink outline-none focus:border-brand"
     >
       <option value="">{label}</option>
       {options.map((o) => (

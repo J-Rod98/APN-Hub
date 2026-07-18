@@ -24,7 +24,7 @@ export function Hero() {
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
           <Button href="/preaching">Explore Content</Button>
-          <Button href="/#newsletter" variant="ghost">Get Weekly Updates</Button>
+          <Button href="/#newsletter" variant="ghost">Join the launch list</Button>
           <Link
             href="/submit"
             className="text-sm font-semibold text-ink-muted underline-offset-4 hover:text-ink hover:underline"

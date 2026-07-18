@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { getPodcast, getPodcastById } from "@/lib/data";
 import { getPlayable } from "@/lib/media";
+import { pageMetadata } from "@/lib/seo";
 import { formatDate, safeUrl } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -13,7 +14,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const episode = await getPodcastById(params.id);
-  return { title: episode ? episode.title + " — Apostolic Power Network" : "Podcast" };
+  return pageMetadata({
+    title: episode?.title ?? "Apostolic Podcast",
+    description: episode?.description ?? "Apostolic podcast content curated by Apostolic Power Network.",
+    path: `/podcast/${params.id}/`,
+    image: episode?.image_url,
+    imageAlt: episode?.image_alt ?? "Apostolic podcast artwork.",
+  });
 }
 
 export default async function PodcastDetailPage({

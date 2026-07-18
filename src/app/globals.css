@@ -18,9 +18,26 @@
     @apply bg-brand/25 text-sanctuary-ink;
   }
 
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid #1452d6;
+    outline-offset: 3px;
+  }
+
   /* Respect users who prefer reduced motion (WCAG 2.3.3). Disables the
      looping hero animation, hovers, and skeleton pulses for them. */
   @media (prefers-reduced-motion: reduce) {
+    .hero-slide,
+    .animate-fadein,
+    .animate-floaty {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+
     *,
     *::before,
     *::after {

@@ -3,8 +3,13 @@ import { Button } from "@/components/ui/Button";
 import { EventsList } from "@/components/lists/EventsList";
 import { SanctuaryPageHeader } from "@/components/sanctuary/SanctuaryPageHeader";
 import { getEvents } from "@/lib/data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Events — Apostolic Power Network" };
+export const metadata = pageMetadata({
+  title: "Apostolic Events",
+  description: "Find verified Apostolic conferences, rallies, revivals, and ministry training gatherings.",
+  path: "/events/",
+});
 
 export default async function EventsPage() {
   const events = await getEvents();
@@ -14,7 +19,7 @@ export default async function EventsPage() {
         eyebrow="Upcoming"
         title="Apostolic Events"
         subtitle="Verified gatherings, conferences, rallies, and training from across the Apostolic movement."
-        action={<Button href="/submit" size="sm">＋ Suggest an Event</Button>}
+        action={<Button href="/submit" variant="ghost" size="sm">Suggest an event</Button>}
         imageIndex={0}
       />
       <EventsList events={events} />

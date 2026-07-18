@@ -16,7 +16,7 @@ export function EventCard({ event }: { event: AppEvent }) {
       {/* Image has an official source and remains externally hosted. */}
       <div className="relative flex h-40 items-end bg-gradient-to-br from-brand-deep to-navy-950 p-3.5">
         {image && (
-          <img src={image} alt={eventImage.image_alt ?? ""} className="absolute inset-0 h-full w-full object-cover" />
+          <img src={image} alt={eventImage.image_alt ?? ""} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.08),rgba(8,16,38,0.72))]" />
         <div className="absolute left-3.5 top-3.5 rounded-xl border border-white/45 bg-white/[0.94] px-2.5 py-1.5 text-center leading-none shadow-sm">
