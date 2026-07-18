@@ -18,7 +18,7 @@ export function BottomNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex flex-col items-center gap-1 py-2 text-[0.66rem] font-semibold transition",
+              "flex min-h-[52px] flex-col items-center justify-center gap-1 py-2 text-[0.66rem] font-semibold transition",
               active ? "text-sanctuary-link" : "text-sanctuary-muted",
             )}
           >

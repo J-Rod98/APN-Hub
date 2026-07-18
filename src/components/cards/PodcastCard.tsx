@@ -18,6 +18,8 @@ export function PodcastCard({ episode }: { episode: PodcastEpisode }) {
             <img
               src={cover}
               alt={episode.image_alt ?? `${episode.title} podcast artwork`}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover"
             />
           ) : (

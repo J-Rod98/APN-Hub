@@ -11,7 +11,7 @@
 //   2. Hero photos are public UPCI imagery; sermon thumbnails come from each
 //      original video where available (see lib/sanctuary.ts).
 // ============================================================================
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlayerModal, type PlayerItem } from "./PlayerModal";
@@ -19,9 +19,8 @@ import { NewsletterForm } from "@/components/forms/NewsletterForm";
 import { getPlayable, getVideoThumbnail } from "@/lib/media";
 import {
   HERO_IMAGES,
-  heroImage,
-  sermonImage,
   newsletterImage,
+  sermonImage,
   VALID_TOPIC_TILES,
 } from "@/lib/sanctuary";
 import { resolveEventImage } from "@/lib/event-images";
@@ -84,19 +83,8 @@ const PlayTriangle = ({ size = 20 }: { size?: number }) => (
 
 export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Props) {
   const [playing, setPlaying] = useState<PlayerItem | null>(null);
-  const [heroIndex, setHeroIndex] = useState(0);
   const [q, setQ] = useState("");
   const router = useRouter();
-
-  // Cross-fade hero photos — skipped entirely for reduced-motion users.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(
-      () => setHeroIndex((i) => (i + 1) % HERO_IMAGES.length),
-      4500,
-    );
-    return () => clearInterval(t);
-  }, []);
 
   const sermons = useMemo(() => preaching.slice(0, 3), [preaching]);
   const featured = useMemo(() => {
@@ -111,35 +99,33 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
     const term = q.trim();
-    router.push(term ? `/preaching?q=${encodeURIComponent(term)}` : "/preaching");
+    router.push(term ? `/preaching/?q=${encodeURIComponent(term)}` : "/preaching/");
   }
 
   return (
     <div className="bg-sanctuary-bg text-sanctuary-ink">
       {/* ================= HERO ================= */}
       <section className="relative flex min-h-[760px] flex-col overflow-hidden">
-        {/* rotating photos */}
         <div className="absolute inset-0">
-          {HERO_IMAGES.map((image, i) => (
-            <img
-              key={image.src}
-              src={heroImage(i)}
-              alt=""
-              aria-hidden
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out"
-              style={{ opacity: i === heroIndex ? 1 : 0 }}
-            />
-          ))}
+          <img
+            src={HERO_IMAGES[0].src}
+            alt=""
+            aria-hidden
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="hero-slide absolute inset-0 h-full w-full object-cover"
+          />
         </div>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.72)_0%,rgba(8,16,38,0.35)_42%,rgba(10,20,48,0.82)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,16,38,0.84)_0%,rgba(8,16,38,0.62)_50%,rgba(10,20,48,0.88)_100%)] sm:bg-[linear-gradient(180deg,rgba(8,16,38,0.72)_0%,rgba(8,16,38,0.35)_42%,rgba(10,20,48,0.82)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(1100px_520px_at_78%_8%,rgba(47,139,255,0.28),transparent_62%)]" />
         <a
-          href={HERO_IMAGES[heroIndex].creditHref}
+          href={HERO_IMAGES[0].creditHref}
           target="_blank"
           rel="noreferrer"
           className="absolute bottom-4 right-5 z-[3] rounded-full border border-white/25 bg-[#081026]/55 px-3 py-1.5 text-[10px] font-semibold tracking-wide text-white/85 backdrop-blur-sm transition hover:bg-[#081026]/80 hover:text-white sm:bottom-5 sm:right-8"
         >
-          {HERO_IMAGES[heroIndex].credit}
+          {HERO_IMAGES[0].credit}
         </a>
 
         {/* content (pt clears the overlaid navbar) */}
@@ -158,10 +144,25 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
               the network.
             </p>
 
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                href="/preaching/"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-bold text-sanctuary-ink shadow-[0_12px_28px_rgba(8,16,38,0.32)] transition hover:-translate-y-px hover:bg-sanctuary-chip"
+              >
+                Explore sermons
+              </Link>
+              <Link
+                href="/events/"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/45 bg-white/[0.12] px-5 py-3 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/25"
+              >
+                Browse events
+              </Link>
+            </div>
+
             {/* search */}
-            <div className="mt-7 max-w-[660px]">
+            <div className="mt-6 max-w-[660px]">
               <div className="mb-2.5 text-[13px] font-semibold text-[#bfe0ff]">
-                Find a sermon, podcast, event, or resource
+                Search sermons, speakers, or topics
               </div>
               <form
                 onSubmit={onSearch}
@@ -176,35 +177,19 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     type="search"
-                    aria-label="Search sermons, speakers, ministries, or cities"
-                    placeholder="Search topics, speakers, ministries, or cities…"
+                    aria-label="Search sermons, speakers, or topics"
+                    placeholder="Search sermons, speakers, or topics…"
                     className="flex-1 border-0 bg-transparent py-3 text-[15.5px] text-sanctuary-ink outline-none placeholder:text-[#8a93b0]"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="rounded-[13px] bg-gradient-to-b from-brand to-brand-deep px-6 text-[15px] font-bold text-white transition hover:brightness-110"
+                  className="min-h-11 rounded-[13px] bg-gradient-to-b from-brand to-brand-deep px-6 text-[15px] font-bold text-white transition hover:brightness-110"
                 >
                   Search
                 </button>
               </form>
 
-              <div className="mt-4 flex flex-wrap gap-2.5">
-                {[
-                  { href: "/preaching", label: "Sermons" },
-                  { href: "/podcast", label: "Podcasts" },
-                  { href: "/events", label: "Events" },
-                  { href: "/materials", label: "Resources" },
-                ].map((c) => (
-                  <Link
-                    key={c.href}
-                    href={c.href}
-                    className="rounded-[20px] border border-white/30 bg-white/[0.12] px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/25"
-                  >
-                    {c.label}
-                  </Link>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -257,7 +242,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
               </Link>
             </p>
           </div>
-          <Link href="/preaching" className="text-sm font-bold text-sanctuary-link hover:text-sanctuary-linkhover">
+          <Link href="/preaching/" className="text-sm font-bold text-sanctuary-link hover:text-sanctuary-linkhover">
             View all →
           </Link>
         </div>
@@ -275,7 +260,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                   className="overflow-hidden rounded-[20px] border border-sanctuary-line bg-white shadow-[0_10px_30px_-18px_rgba(20,60,140,0.4)] transition duration-200 hover:-translate-y-1.5 hover:shadow-[0_26px_50px_-22px_rgba(20,60,140,0.55)]"
                 >
                   <div className="relative h-[200px] overflow-hidden">
-                    <img src={thumbnail} alt="" className="h-full w-full object-cover" />
+                    <img src={thumbnail} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-b from-[rgba(8,16,38,0.05)] to-[rgba(8,16,38,0.5)]" />
                     {/* Badge reflects the real media type; falls back to a neutral label. */}
                     <span className="absolute left-3.5 top-3.5 rounded-xl bg-white/[0.92] px-2.5 py-1 text-[11px] font-bold tracking-wide text-sanctuary-ink">
@@ -356,6 +341,8 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                         <img
                           src={image}
                           alt={artwork.image_alt ?? `${e.title} event artwork`}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full object-cover"
                         />
                         <div className="absolute bottom-1.5 left-1.5 rounded-md bg-[#081026]/85 px-1.5 py-1 text-center leading-none text-white shadow-sm">
@@ -437,6 +424,8 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
                           <img
                             src={coverImage}
                             alt={ep.image_alt ?? `${ep.title} podcast artwork`}
+                            loading="lazy"
+                            decoding="async"
                             className="absolute inset-0 h-full w-full object-cover"
                           />
                         )}
@@ -499,7 +488,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
           {topicTiles.map((t) => (
             <Link
               key={t.topic}
-              href={`/preaching?q=${encodeURIComponent(t.topic)}`}
+              href={`/preaching/?q=${encodeURIComponent(t.topic)}`}
               className="flex items-center gap-4 rounded-[18px] border border-sanctuary-line bg-white px-[22px] py-5 shadow-[0_8px_26px_-20px_rgba(20,60,140,0.45)] transition hover:-translate-y-1 hover:border-[#bcd0f2] hover:shadow-[0_20px_40px_-22px_rgba(20,60,140,0.55)]"
             >
               <span
@@ -524,21 +513,23 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
       </section>
       )}
 
-      {/* ================= NEWSLETTER ================= */}
+      {/* ================= LAUNCH LIST ================= */}
       <section id="newsletter" className="mx-auto max-w-[1240px] scroll-mt-24 px-5 pt-[88px] sm:px-10">
         <div className="relative grid items-center gap-11 overflow-hidden rounded-[28px] px-6 py-12 shadow-[0_28px_60px_-24px_rgba(20,82,214,0.5)] sm:px-[52px] sm:py-[60px] lg:grid-cols-[1fr_0.9fr]">
           <img src={newsletterImage()} alt="" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(20,82,214,0.94),rgba(47,139,255,0.82))]" />
           <div className="relative">
+            <div className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/75">
+              Stay connected
+            </div>
             <h2 className="m-0 mb-3 font-serif text-[30px] font-medium text-white sm:text-[38px]">
-              Get the week ahead, every Friday.
+              Be first to receive the APN roundup.
             </h2>
             <p className="m-0 text-[15px] leading-relaxed text-white/90 sm:text-base">
-              The first edition is in the works. Until then, send APN a note to
-              share feedback or suggest a resource.
+              Join the launch list for hand-picked sermons, upcoming events, and trusted Apostolic resources. We&apos;ll email you when the first curated roundup is ready.
             </p>
           </div>
-          <div className="relative">
+          <div className="relative w-full">
             <NewsletterForm variant="light" />
           </div>
         </div>
@@ -572,7 +563,7 @@ function FeaturedCard({
   const inner = (
     <>
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl">
-        <img src={image} alt="" className="h-full w-full object-cover" />
+        <img src={image} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
         {player && (
           <div className="absolute inset-0 grid place-items-center bg-[rgba(8,16,38,0.35)]">
             <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-white">

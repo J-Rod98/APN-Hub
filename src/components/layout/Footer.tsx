@@ -17,7 +17,6 @@ const cols: { title: string; links: { href: string; label: string }[] }[] = [
     title: "Community",
     links: [
       { href: "/about", label: "What We Believe" },
-      { href: "/#newsletter", label: "Newsletter" },
       { href: "/submit", label: "Suggest Content" },
     ],
   },

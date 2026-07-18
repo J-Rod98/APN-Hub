@@ -7,7 +7,7 @@ type Variant = "primary" | "ghost" | "gold";
 type Size = "sm" | "md";
 
 const base =
-  "inline-flex items-center justify-center gap-2 font-bold rounded-full transition " +
+  "inline-flex min-h-11 items-center justify-center gap-2 font-bold rounded-full transition " +
   "hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-bright/60 disabled:opacity-60 disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {

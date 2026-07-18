@@ -25,6 +25,9 @@ export function SanctuaryPageHeader({
         src={image.src}
         alt=""
         aria-hidden
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover opacity-90"
       />
       <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(8,16,38,0.9)_0%,rgba(12,29,73,0.79)_52%,rgba(20,82,214,0.54)_100%)]" />

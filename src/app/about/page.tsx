@@ -3,12 +3,13 @@
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SanctuaryPageHeader } from "@/components/sanctuary/SanctuaryPageHeader";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "About — Apostolic Power Network",
-  description:
-    "What Apostolic Power Network is, who it's for, and how content is reviewed before it's shared.",
-};
+export const metadata = pageMetadata({
+  title: "What We Believe",
+  description: "Learn about Apostolic Power Network, its Apostolic convictions, and how content is reviewed.",
+  path: "/about/",
+});
 
 const CONTACT_EMAIL = "apostolicpowernet@gmail.com";
 

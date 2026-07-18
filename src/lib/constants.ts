@@ -78,7 +78,7 @@ export const NAV_LINKS = [
   { href: "/podcast", label: "Podcasts" },
   { href: "/events", label: "Events" },
   { href: "/materials", label: "Resources" },
-  { href: "/about", label: "Believe" },
+  { href: "/about", label: "What We Believe" },
 ] as const;
 
 // Sticky mobile bottom nav (subset, with icons) ------------------------------
@@ -87,5 +87,5 @@ export const BOTTOM_NAV = [
   { href: "/events", label: "Events", icon: "📅" },
   { href: "/preaching", label: "Preaching", icon: "🎧" },
   { href: "/materials", label: "Resources", icon: "📄" },
-  { href: "/submit", label: "Suggest", icon: "＋" },
+  { href: "/about", label: "Beliefs", icon: "✝️" },
 ] as const;

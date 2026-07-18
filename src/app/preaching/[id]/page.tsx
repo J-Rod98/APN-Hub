@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Badge";
 import { getPreaching, getPreachingById } from "@/lib/data";
 import { getPlayable } from "@/lib/media";
+import { getVideoThumbnail } from "@/lib/media";
+import { pageMetadata } from "@/lib/seo";
 import { formatDate, safeUrl } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -13,7 +15,13 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const item = getPreachingById(params.id);
-  return { title: item ? item.title + " — Apostolic Power Network" : "Preaching" };
+  return pageMetadata({
+    title: item?.title ?? "Apostolic Sermon",
+    description: item?.description ?? "Apostolic preaching curated by Apostolic Power Network.",
+    path: `/preaching/${params.id}/`,
+    image: item ? getVideoThumbnail(item.media_url) : null,
+    imageAlt: item ? `${item.title} sermon thumbnail.` : "Apostolic sermon thumbnail.",
+  });
 }
 
 export default function PreachingDetailPage({

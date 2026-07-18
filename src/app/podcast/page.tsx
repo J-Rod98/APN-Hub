@@ -3,8 +3,13 @@ import { Button } from "@/components/ui/Button";
 import { PodcastList } from "@/components/lists/PodcastList";
 import { SanctuaryPageHeader } from "@/components/sanctuary/SanctuaryPageHeader";
 import { getPodcast } from "@/lib/data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Podcast — Apostolic Power Network" };
+export const metadata = pageMetadata({
+  title: "Apostolic Podcasts",
+  description: "Listen to hand-picked Apostolic podcasts and teaching from trusted voices across the movement.",
+  path: "/podcast/",
+});
 
 export default async function PodcastPage() {
   const episodes = await getPodcast();
@@ -14,7 +19,7 @@ export default async function PodcastPage() {
         eyebrow="Listen"
         title="Apostolic Podcasts"
         subtitle="A hand-picked collection of Apostolic podcast episodes worth a listen — from voices across the movement."
-        action={<Button href="/submit" size="sm">＋ Suggest a Podcast</Button>}
+        action={<Button href="/submit" variant="ghost" size="sm">Suggest a podcast</Button>}
         imageIndex={2}
       />
       <PodcastList episodes={episodes} />

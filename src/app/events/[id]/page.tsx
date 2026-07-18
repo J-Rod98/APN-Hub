@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { getEventById, getEvents } from "@/lib/data";
 import { resolveEventImage } from "@/lib/event-images";
+import { pageMetadata } from "@/lib/seo";
 import { dateBadge, formatDateRange, safeUrl } from "@/lib/utils";
 
 /* eslint-disable @next/next/no-img-element */
@@ -13,7 +14,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const event = getEventById(params.id);
-  return { title: event ? event.title + " — Apostolic Power Network" : "Event" };
+  const eventImage = event ? resolveEventImage(event) : null;
+  return pageMetadata({
+    title: event?.title ?? "Event",
+    description: event?.description ?? "Verified Apostolic event details from Apostolic Power Network.",
+    path: `/events/${params.id}/`,
+    image: eventImage?.image_url,
+    imageAlt: eventImage?.image_alt ?? "Apostolic event artwork.",
+  });
 }
 
 export default function EventDetailPage({

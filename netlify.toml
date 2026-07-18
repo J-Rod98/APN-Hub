@@ -14,3 +14,6 @@
   # footer pages. It is not a credential, so do not block this static release
   # when the two intentionally match.
   SECRETS_SCAN_OMIT_KEYS = "ADMIN_EMAILS"
+
+[functions]
+  node_bundler = "esbuild"

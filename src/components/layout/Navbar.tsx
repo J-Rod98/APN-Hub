@@ -47,7 +47,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-[20px] px-[15px] py-[9px] text-sm font-semibold transition",
+                  "inline-flex min-h-11 items-center rounded-[20px] px-[15px] py-[9px] text-sm font-semibold transition",
                   isHome
                     ? active
                       ? "bg-white/[0.14] text-white"
@@ -65,10 +65,10 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/submit"
-            className="hidden rounded-[22px] bg-gradient-to-b from-brand to-brand-deep px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_26px_rgba(20,82,214,0.5)] transition hover:-translate-y-px hover:brightness-110 sm:block"
+            href="/preaching/"
+            className="hidden min-h-11 items-center rounded-[22px] bg-gradient-to-b from-brand to-brand-deep px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_26px_rgba(20,82,214,0.5)] transition hover:-translate-y-px hover:brightness-110 sm:inline-flex"
           >
-            Suggest Content
+            Explore sermons
           </Link>
 
           {/* Hamburger (mobile) */}
@@ -77,7 +77,7 @@ export function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={open}
             className={cn(
-              "flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border lg:hidden",
+              "flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border lg:hidden",
               isHome ? "border-white/25" : "border-sanctuary-line bg-white",
             )}
           >
@@ -102,7 +102,7 @@ export function Navbar() {
               href={link.href}
               onClick={() => setOpen(false)}
               className={cn(
-                "rounded-xl px-4 py-3 font-semibold",
+                "flex min-h-11 items-center rounded-xl px-4 py-3 font-semibold",
                 isHome
                   ? "text-white hover:bg-white/10"
                   : "text-sanctuary-ink hover:bg-sanctuary-chip",
@@ -111,13 +111,6 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/submit"
-            onClick={() => setOpen(false)}
-            className="mt-1 rounded-xl bg-gradient-to-b from-brand to-brand-deep px-4 py-3 text-center font-bold text-white"
-          >
-            Suggest Content
-          </Link>
         </nav>
       )}
     </header>

@@ -33,18 +33,25 @@ export function PreachingList({ items }: { items: PreachingItem[] }) {
       return matchesText && matchesTopic;
     });
   }, [items, q, topic]);
+  const query = q.trim();
 
   return (
     <div className="flex flex-col gap-6">
       <SearchInput value={q} onChange={setQ} placeholder="Search preaching…" />
       <ChipRow options={PREACHING_TOPICS} active={topic} onSelect={setTopic} />
 
-      {filtered.length === 0 ? (
+      {items.length === 0 ? (
         <EmptyState
           icon="🎧"
-          title="No messages found"
-          message="Try a different topic or search term."
-          action={<Button href="/submit" size="sm">＋ Submit a Sermon</Button>}
+          title="Search sermons, podcasts, events, and resources."
+          message="APN is still building this hand-curated library."
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          icon="🎧"
+          title={query ? `No results for “${query}”.` : "No sermons match this topic."}
+          message={query ? "Browse all sermons." : "Try a different topic or search term."}
+          action={<Button href="/preaching" variant="ghost" size="sm">Browse all sermons</Button>}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
