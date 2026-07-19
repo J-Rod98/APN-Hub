@@ -352,6 +352,19 @@ export const events: AppEvent[] = [
 
 export const preaching: PreachingItem[] = [
   {
+    id: "our-infirmities-healed-lee-stoneking",
+    title: "Our Infirmities Healed",
+    speaker: "Rev. Lee Stoneking",
+    topic: null,
+    scripture_reference: null,
+    description:
+      "Rev. Lee Stoneking preaches “Our Infirmities Healed,” published by AZUSA STREET 1906.",
+    media_url: "https://www.youtube.com/watch?v=Ge57VKRU2UU",
+    media_type: "video",
+    status: "published",
+    created_at: publishedAt,
+  },
+  {
     id: "through-new-eyes-jonathan-downs",
     title: "Through New Eyes",
     speaker: "Pastor Jonathan Downs",
