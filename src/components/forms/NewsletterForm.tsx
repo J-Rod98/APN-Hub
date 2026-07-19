@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { HoneypotField } from "@/components/ui/HoneypotField";
-import { type WaitlistErrors, validateWaitlist } from "@/lib/waitlist";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzdnenwv";
 
 export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState<WaitlistErrors>({});
+  const [emailError, setEmailError] = useState("");
+  const [botSubmitted, setBotSubmitted] = useState(false);
   const [formError, setFormError] = useState("");
   const [state, setState] = useState<"idle" | "joining" | "success" | "error">("idle");
 
@@ -16,53 +19,50 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const checked = validateWaitlist({
-      email,
-      hp_website: form.get("hp_website"),
-    });
-
-    if (!checked.ok) {
-      setErrors(checked.errors);
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!EMAIL_PATTERN.test(normalizedEmail)) {
+      event.preventDefault();
+      setEmailError("Enter a valid email address.");
       setFormError("");
       setState("error");
       return;
     }
 
-    setErrors({});
+    // Keep a filled honeypot away from Formspree while giving bots a benign
+    // success state. Formspree also applies its own provider-side spam checks.
+    if (form.get("hp_website")) {
+      event.preventDefault();
+      setBotSubmitted(true);
+      return;
+    }
+
+    setEmailError("");
     setFormError("");
     setState("joining");
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          email: checked.value.email,
-          hp_website: checked.value.hp_website,
-        }),
-      });
-      const result = (await response.json().catch(() => ({}))) as {
-        error?: string;
-        errors?: WaitlistErrors;
-      };
+    form.set("email", normalizedEmail);
 
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { accept: "application/json" },
+        body: form,
+      });
       if (!response.ok) {
-        setErrors(result.errors ?? {});
-        setFormError(result.error ?? "We couldn’t add you right now. Please try again shortly.");
+        setFormError("We couldn't add you right now. Please try again shortly.");
         setState("error");
         return;
       }
-
       setState("success");
     } catch {
-      setFormError("We couldn’t add you right now. Please try again shortly.");
+      setFormError("We couldn't add you right now. Please try again shortly.");
       setState("error");
     }
   }
 
-  if (state === "success") {
+  if (botSubmitted || state === "success") {
     return (
       <p role="status" className={isLight ? "text-[15px] font-semibold text-white" : "font-semibold text-ink"}>
-        Check your inbox to confirm your place on the APN launch list.
+        Thanks—we&apos;ve received your request to join the APN launch list.
       </p>
     );
   }
@@ -91,9 +91,12 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
           required
           maxLength={254}
           value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          aria-invalid={Boolean(errors.email)}
-          aria-describedby={errors.email ? "newsletter-email-error" : undefined}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            if (emailError) setEmailError("");
+          }}
+          aria-invalid={Boolean(emailError)}
+          aria-describedby={emailError ? "newsletter-email-error" : undefined}
           placeholder="Email address"
           className={inputClass}
         />
@@ -101,9 +104,9 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
           {state === "joining" ? "Joining…" : "Join the launch list"}
         </button>
       </div>
-      {errors.email && (
+      {emailError && (
         <p id="newsletter-email-error" role="alert" className={isLight ? "text-sm font-semibold text-white" : "text-sm font-semibold text-red-700"}>
-          {errors.email}
+          {emailError}
         </p>
       )}
       {formError && (
