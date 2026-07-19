@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-export const SITE_URL = "https://apn-hub.netlify.app";
+export const SITE_URL = "https://www.apostolicpowernetwork.com";
 export const DEFAULT_SOCIAL_IMAGE =
   "https://upci.org/wp-content/uploads/2022/04/UPCI_Home_Slider8.jpg";
 
