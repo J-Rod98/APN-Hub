@@ -50,28 +50,23 @@ Cloudflare Turnstile is optional but recommended before launch. Set both
 `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in Netlify to turn
 on the final-submission challenge.
 
-## Launch-list waitlist
+## Launch-list requests
 
-The homepage waitlist uses APN's MailerLite embedded-form endpoint. APN keeps
-its own visual design and sends the visitor's email through a protected Netlify
-endpoint, with client/server validation, a honeypot, and rate limiting.
+The homepage launch-list form uses Formspree directly from the React client.
+It keeps APN's visual design, accepts only an email address, uses client-side
+email validation plus a honeypot, and uses Formspree's form handling and spam
+protection. The `xzdnenwv` form endpoint is public by design and does not need
+an environment variable.
 
-Before enabling it in Netlify:
-
-1. In MailerLite, enable double opt-in on the APN Launch List form and confirm
-   that every campaign includes MailerLite's unsubscribe method.
-2. Test the confirmation email, duplicate-address behavior, and unsubscribe.
-3. Set `MAILERLITE_DOUBLE_OPT_IN_ENABLED=true` in Netlify only after those
-   checks are complete.
-
-Until that setting is true, the form returns a safe error and does not forward
-addresses to MailerLite.
+Formspree receives requests; it is not APN's future email-campaign provider.
+Before APN sends recurring launch-list updates, configure an email provider with
+an unsubscribe method and update the public privacy policy accordingly.
 
 ## Deploy
 
 Netlify runs \`npm run build\` and publishes \`out/\` as configured in
 \`netlify.toml\`. It also deploys the protected server-side suggestion handler
-at \`/api/suggest\` and MailerLite-backed launch-list handler at \`/api/waitlist\`.
+at \`/api/suggest\`.
 
 ## Later
 

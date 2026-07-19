@@ -36,10 +36,10 @@ export default function PrivacyPage() {
             and message you submit so we can review and respond to that suggestion.
           </p>
           <p className="mt-3">
-            The APN launch-list form asks only for an email address. MailerLite records the email
+            The APN launch-list form asks only for an email address. Formspree records the email
             address and submission timestamp. APN does not ask for a name or other personal details
-            for the launch list. Netlify receives the minimal request and IP-address data needed to
-            rate-limit requests, and a hidden honeypot rejects automated submissions.
+            for the launch list. A hidden honeypot rejects automated submissions, and Formspree may
+            process minimal technical and anti-spam data associated with a submission.
           </p>
           <p className="mt-3">Please do not submit sensitive personal information through the suggestion form.</p>
         </PolicySection>
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
         <PolicySection title="How we use information">
           <ul className="list-disc space-y-2 pl-5">
             <li>To review, respond to, and follow up on content suggestions.</li>
-            <li>To deliver launch-list confirmation and occasional curated APN updates after the launch list is enabled.</li>
+            <li>To receive launch-list requests and, if APN later sends curated updates, to use the submitted email only for those updates.</li>
             <li>To prevent fraud and spam, secure the forms, and respond to unsubscribe or privacy requests.</li>
             <li>To comply with applicable law or protect APN and its visitors.</li>
           </ul>
@@ -56,32 +56,21 @@ export default function PrivacyPage() {
 
         <PolicySection title="Launch-list email provider">
           <p>
-            APN uses MailerLite to manage the launch list and send APN updates. The public form is
-            protected by a server-side gate: APN does not forward an address to MailerLite until its
-            MailerLite form has double opt-in enabled and the confirmation and unsubscribe flow has
-            been checked.
+            APN uses Formspree to receive and store launch-list requests. The current form sends the
+            submitted email address to APN through Formspree; it does not send an automated
+            subscription-confirmation email or create a separate marketing profile.
           </p>
           <p className="mt-3">
-            When the launch list is active, subscribers first receive a MailerLite confirmation email
-            and must confirm their address before receiving APN updates. Every APN update will include
-            an unsubscribe method.
+            Before APN sends any recurring launch-list updates, it will configure an email provider
+            with an unsubscribe method and update this policy to identify that provider and the
+            applicable confirmation process.
           </p>
         </PolicySection>
 
         <PolicySection title="Service providers and third-party content">
           <p>
-            Netlify hosts APN and runs the protected form endpoints. MailerLite receives launch-list
-            submissions and sends confirmation and APN updates after APN enables the double-opt-in
-            gate. Formspree receives content suggestions only.
+            Netlify hosts APN. Formspree receives launch-list and content-suggestion submissions.
             These providers process information under their own policies: {" "}
-            <a
-              href="https://www.mailerlite.com/legal/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"
-            >
-              MailerLite&apos;s Privacy Policy
-            </a>, and {" "}
             <a
               href="https://formspree.io/legal/privacy-policy/"
               target="_blank"
@@ -101,10 +90,10 @@ export default function PrivacyPage() {
 
         <PolicySection title="Cookies and similar technologies">
           <p>
-            APN does not use its own analytics or advertising cookies in this release, and the
-            launch-list form does not load a third-party CAPTCHA script. Other third-party media and
-            image providers may use cookies or similar technologies when their content is loaded. You
-            can manage many cookies through your browser settings.
+            APN does not use its own analytics or advertising cookies in this release. Formspree may
+            use cookies or similar technologies when its form service processes a submission. Other
+            third-party media and image providers may do the same when their content is loaded. You can
+            manage many cookies through your browser settings.
           </p>
         </PolicySection>
 
@@ -116,21 +105,20 @@ export default function PrivacyPage() {
             long as those purposes require and as the relevant provider retains them under its settings.
           </p>
           <p className="mt-3">
-            MailerLite keeps an unsubscribed address as needed to honor that opt-out. APN does not set
-            a separate fixed retention period for launch-list addresses. If a subscriber asks APN to
-            delete their information, APN will use MailerLite&apos;s deletion process and may retain the
-            minimum suppression information needed to honor an unsubscribe request. MailerLite&apos;s
-            &ldquo;forget&rdquo; process permanently removes subscriber data within 30 days. No online service
-            can guarantee absolute security, but we take reasonable steps to limit access to the
-            information we receive.
+            Formspree retains launch-list submissions under its account and settings. APN does not set
+            a separate fixed retention period for launch-list requests. If you ask APN to delete your
+            information, APN will delete the applicable Formspree submission where available and may
+            retain the minimum information necessary to honor a future opt-out request. No online
+            service can guarantee absolute security, but we take reasonable steps to limit access to
+            the information we receive.
           </p>
         </PolicySection>
 
         <PolicySection title="Your choices and requests">
           <p>
             You may ask us to access, correct, or delete personal information you submitted to APN, or
-            to stop further follow-up about a suggestion. Once the launch list is enabled, you can use
-            the unsubscribe method in any email or contact us for help. Email{" "}
+            to stop further follow-up about a suggestion or launch-list request. If APN later sends
+            launch-list updates, each message will include an unsubscribe method. Email{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=APN%20Privacy%20Request`}
               className="font-semibold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"

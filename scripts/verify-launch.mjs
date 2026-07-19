@@ -14,7 +14,6 @@ const [
   formSource,
   functionSource,
   waitlistFormSource,
-  waitlistFunctionSource,
 ] = await Promise.all([
   read("out/robots.txt"),
   read("out/sitemap.xml"),
@@ -25,7 +24,6 @@ const [
   read("src/components/forms/SecureSubmitForm.tsx"),
   read("netlify/functions/suggest.ts"),
   read("src/components/forms/NewsletterForm.tsx"),
-  read("netlify/functions/waitlist.ts"),
 ]);
 
 assert.match(robots, /User-Agent: \*/);
@@ -40,8 +38,8 @@ assert.match(home, /Join the launch list/);
 assert.match(home, /One launch email, then occasional curated updates\. Unsubscribe anytime\./);
 assert.doesNotMatch(home, /Get the week ahead, every Friday/);
 assert.match(privacy, /Effective date: (?:<!-- -->)?July 17, 2026/);
-assert.match(privacy, /APN uses MailerLite to manage the launch list and send APN updates\./);
-assert.match(privacy, /rate-limit requests, and a hidden honeypot rejects automated submissions\./);
+assert.match(privacy, /APN uses Formspree to receive and store launch-list requests\./);
+assert.match(privacy, /A hidden honeypot rejects automated submissions/);
 assert.match(searchSource, /No results for/);
 assert.match(searchSource, /Browse all sermons/);
 assert.match(formSource, /HoneypotField/);
@@ -50,15 +48,9 @@ assert.match(formSource, /role="status"/);
 assert.match(functionSource, /request\.method !== "POST"/);
 assert.match(functionSource, /rateLimit/);
 assert.match(functionSource, /validateSuggestion/);
-assert.match(waitlistFormSource, /\/api\/waitlist/);
-assert.doesNotMatch(waitlistFormSource, /recaptcha/i);
-assert.match(waitlistFormSource, /Check your inbox to confirm your place on the APN launch list\./);
+assert.match(waitlistFormSource, /https:\/\/formspree\.io\/f\/xzdnenwv/);
+assert.match(waitlistFormSource, /Thanks—we&apos;ve received your request to join the APN launch list\./);
 assert.match(waitlistFormSource, /Joining…/);
 assert.match(waitlistFormSource, /Privacy Policy/);
-assert.match(waitlistFunctionSource, /request\.method !== "POST"/);
-assert.match(waitlistFunctionSource, /rateLimit/);
-assert.match(waitlistFunctionSource, /validateWaitlist/);
-assert.match(waitlistFunctionSource, /assets\.mailerlite\.com/);
-assert.match(waitlistFunctionSource, /MAILERLITE_DOUBLE_OPT_IN_ENABLED/);
 
 console.log("Launch checks passed.");
