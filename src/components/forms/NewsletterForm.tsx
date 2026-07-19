@@ -214,7 +214,7 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
         </button>
       </div>
       <div ref={captchaContainer} className="min-h-[78px]" />
-      {captchaStatus === "unavailable" && (
+      {captchaStatus === "unavailable" && !formError && (
         <p role="alert" className={isLight ? "text-sm font-semibold text-white" : "text-sm font-semibold text-red-700"}>
           The anti-spam check could not load. Refresh the page or disable a content blocker, then try again.
         </p>
