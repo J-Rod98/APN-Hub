@@ -6,7 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 const LAUNCH_DATE = new Date("2026-07-17T00:00:00.000Z");
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["/", "/preaching/", "/podcast/", "/events/", "/materials/", "/guides/", "/general-conference-2026/", "/about/", "/privacy/", "/submit/"];
+  const staticRoutes = ["/", "/preaching/", "/podcast/", "/events/", "/materials/", "/guides/", "/general-conference-2026/", "/nayc-2027/", "/about/", "/privacy/", "/submit/"];
   const dated = (path: string, date: string) => ({
     url: absoluteUrl(path),
     lastModified: new Date(date),
