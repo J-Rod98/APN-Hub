@@ -54,15 +54,13 @@ on the final-submission challenge.
 
 The homepage waitlist uses APN's MailerLite embedded-form endpoint. APN keeps
 its own visual design and sends the visitor's email through a protected Netlify
-endpoint, with client/server validation, a honeypot, rate limiting, and the
-MailerLite form's Google reCAPTCHA challenge.
+endpoint, with client/server validation, a honeypot, and rate limiting.
 
 Before enabling it in Netlify:
 
 1. In MailerLite, enable double opt-in on the APN Launch List form and confirm
    that every campaign includes MailerLite's unsubscribe method.
-2. Test the confirmation email, duplicate-address behavior, unsubscribe, and
-   the form's Google reCAPTCHA challenge.
+2. Test the confirmation email, duplicate-address behavior, and unsubscribe.
 3. Set `MAILERLITE_DOUBLE_OPT_IN_ENABLED=true` in Netlify only after those
    checks are complete.
 

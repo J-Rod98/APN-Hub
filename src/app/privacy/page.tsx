@@ -39,8 +39,7 @@ export default function PrivacyPage() {
             The APN launch-list form asks only for an email address. MailerLite records the email
             address and submission timestamp. APN does not ask for a name or other personal details
             for the launch list. Netlify receives the minimal request and IP-address data needed to
-            rate-limit requests, a hidden honeypot rejects automated submissions, and Google
-            reCAPTCHA processes the anti-spam/security data needed to verify the form response.
+            rate-limit requests, and a hidden honeypot rejects automated submissions.
           </p>
           <p className="mt-3">Please do not submit sensitive personal information through the suggestion form.</p>
         </PolicySection>
@@ -73,8 +72,7 @@ export default function PrivacyPage() {
           <p>
             Netlify hosts APN and runs the protected form endpoints. MailerLite receives launch-list
             submissions and sends confirmation and APN updates after APN enables the double-opt-in
-            gate. Google reCAPTCHA helps protect the launch-list form from automated abuse. Formspree
-            receives content suggestions only.
+            gate. Formspree receives content suggestions only.
             These providers process information under their own policies: {" "}
             <a
               href="https://www.mailerlite.com/legal/privacy-policy"
@@ -83,14 +81,6 @@ export default function PrivacyPage() {
               className="font-semibold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"
             >
               MailerLite&apos;s Privacy Policy
-            </a>, {" "}
-            <a
-              href="https://policies.google.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"
-            >
-              Google&apos;s Privacy Policy
             </a>, and {" "}
             <a
               href="https://formspree.io/legal/privacy-policy/"
@@ -111,11 +101,10 @@ export default function PrivacyPage() {
 
         <PolicySection title="Cookies and similar technologies">
           <p>
-            APN does not use its own analytics or advertising cookies in this release. MailerLite and
-            Google reCAPTCHA load when the launch-list form is displayed and may use cookies or similar
-            technologies under their own policies. Other third-party media and image providers may do
-            the same when their content is loaded. You can manage many cookies through your browser
-            settings.
+            APN does not use its own analytics or advertising cookies in this release, and the
+            launch-list form does not load a third-party CAPTCHA script. Other third-party media and
+            image providers may use cookies or similar technologies when their content is loaded. You
+            can manage many cookies through your browser settings.
           </p>
         </PolicySection>
 

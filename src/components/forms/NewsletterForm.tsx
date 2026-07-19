@@ -1,115 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
 import { HoneypotField } from "@/components/ui/HoneypotField";
 import { type WaitlistErrors, validateWaitlist } from "@/lib/waitlist";
-
-const RECAPTCHA_SCRIPT_ID = "apn-mailerlite-recaptcha";
-const RECAPTCHA_SITE_KEY = "6Lf1KHQUAAAAAFNKEX1hdSWCS3mRMv4FlFaNslaD";
-
-declare global {
-  interface Window {
-    grecaptcha?: {
-      render: (
-        container: HTMLElement,
-        options: {
-          sitekey: string;
-          callback: (token: string) => void;
-          "expired-callback": () => void;
-          "error-callback": () => void;
-        },
-      ) => number;
-      reset: (widgetId?: number) => void;
-    };
-  }
-}
-
-type RecaptchaApi = NonNullable<Window["grecaptcha"]>;
-
-let recaptchaLoader: Promise<RecaptchaApi> | null = null;
-
-function loadRecaptcha() {
-  if (window.grecaptcha) return Promise.resolve(window.grecaptcha);
-  if (recaptchaLoader) return recaptchaLoader;
-
-  recaptchaLoader = new Promise<RecaptchaApi>((resolve, reject) => {
-    const ready = () => {
-      if (window.grecaptcha) resolve(window.grecaptcha);
-      else reject(new Error("reCAPTCHA did not initialize."));
-    };
-    const failed = () => reject(new Error("reCAPTCHA could not load."));
-    const existing = document.getElementById(RECAPTCHA_SCRIPT_ID) as HTMLScriptElement | null;
-
-    if (existing) {
-      existing.addEventListener("load", ready, { once: true });
-      existing.addEventListener("error", failed, { once: true });
-      // Covers the small gap where the script finishes between the initial
-      // availability check and attaching the load listener without treating
-      // a still-loading script as a failure.
-      window.setTimeout(() => {
-        if (window.grecaptcha) ready();
-      }, 50);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = RECAPTCHA_SCRIPT_ID;
-    script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
-    script.async = true;
-    script.defer = true;
-    script.addEventListener("load", ready, { once: true });
-    script.addEventListener("error", failed, { once: true });
-    document.head.appendChild(script);
-  });
-
-  return recaptchaLoader;
-}
 
 export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<WaitlistErrors>({});
   const [formError, setFormError] = useState("");
   const [state, setState] = useState<"idle" | "joining" | "success" | "error">("idle");
-  const [captchaStatus, setCaptchaStatus] = useState<"loading" | "ready" | "unavailable">("loading");
-  const captchaContainer = useRef<HTMLDivElement>(null);
-  const captchaToken = useRef("");
-  const captchaWidget = useRef<number | null>(null);
 
   const isLight = variant === "light";
-
-  useEffect(() => {
-    let active = true;
-
-    loadRecaptcha()
-      .then((recaptcha) => {
-        if (!active || !captchaContainer.current || captchaWidget.current !== null) return;
-
-        captchaWidget.current = recaptcha.render(captchaContainer.current, {
-          sitekey: RECAPTCHA_SITE_KEY,
-          callback: (token) => {
-            captchaToken.current = token;
-            setFormError("");
-          },
-          "expired-callback": () => {
-            captchaToken.current = "";
-          },
-          "error-callback": () => {
-            captchaToken.current = "";
-            setFormError("We couldn’t add you right now. Please try again shortly.");
-            setState("error");
-          },
-        });
-        setCaptchaStatus("ready");
-      })
-      .catch(() => {
-        if (active) setCaptchaStatus("unavailable");
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -126,17 +28,6 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
       return;
     }
 
-    if (!captchaToken.current) {
-      setErrors({});
-      setFormError(
-        captchaStatus === "unavailable"
-          ? "The anti-spam check could not load. Refresh the page or disable a content blocker, then try again."
-          : "Please complete the anti-spam check to join the launch list.",
-      );
-      setState("error");
-      return;
-    }
-
     setErrors({});
     setFormError("");
     setState("joining");
@@ -147,7 +38,6 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
         body: JSON.stringify({
           email: checked.value.email,
           hp_website: checked.value.hp_website,
-          captchaToken: captchaToken.current,
         }),
       });
       const result = (await response.json().catch(() => ({}))) as {
@@ -159,8 +49,6 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
         setErrors(result.errors ?? {});
         setFormError(result.error ?? "We couldn’t add you right now. Please try again shortly.");
         setState("error");
-        captchaToken.current = "";
-        if (captchaWidget.current !== null) window.grecaptcha?.reset(captchaWidget.current);
         return;
       }
 
@@ -213,12 +101,6 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
           {state === "joining" ? "Joining…" : "Join the launch list"}
         </button>
       </div>
-      <div ref={captchaContainer} className="min-h-[78px]" />
-      {captchaStatus === "unavailable" && !formError && (
-        <p role="alert" className={isLight ? "text-sm font-semibold text-white" : "text-sm font-semibold text-red-700"}>
-          The anti-spam check could not load. Refresh the page or disable a content blocker, then try again.
-        </p>
-      )}
       {errors.email && (
         <p id="newsletter-email-error" role="alert" className={isLight ? "text-sm font-semibold text-white" : "text-sm font-semibold text-red-700"}>
           {errors.email}

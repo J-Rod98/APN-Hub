@@ -41,7 +41,7 @@ assert.match(home, /One launch email, then occasional curated updates\. Unsubscr
 assert.doesNotMatch(home, /Get the week ahead, every Friday/);
 assert.match(privacy, /Effective date: (?:<!-- -->)?July 17, 2026/);
 assert.match(privacy, /APN uses MailerLite to manage the launch list and send APN updates\./);
-assert.match(privacy, /Google reCAPTCHA helps protect the launch-list form from automated abuse\./);
+assert.match(privacy, /rate-limit requests, and a hidden honeypot rejects automated submissions\./);
 assert.match(searchSource, /No results for/);
 assert.match(searchSource, /Browse all sermons/);
 assert.match(formSource, /HoneypotField/);
@@ -51,7 +51,7 @@ assert.match(functionSource, /request\.method !== "POST"/);
 assert.match(functionSource, /rateLimit/);
 assert.match(functionSource, /validateSuggestion/);
 assert.match(waitlistFormSource, /\/api\/waitlist/);
-assert.match(waitlistFormSource, /google\.com\/recaptcha\/api\.js/);
+assert.doesNotMatch(waitlistFormSource, /recaptcha/i);
 assert.match(waitlistFormSource, /Check your inbox to confirm your place on the APN launch list\./);
 assert.match(waitlistFormSource, /Joining…/);
 assert.match(waitlistFormSource, /Privacy Policy/);
