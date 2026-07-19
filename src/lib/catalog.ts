@@ -141,6 +141,37 @@ export const events: AppEvent[] = [
     created_at: publishedAt,
   },
   {
+    id: "jcm-conference-2026",
+    title: "JCM Conference 2026",
+    description:
+      "A three-day gathering for Apostolic young people to pray, worship, grow in practical ministry, and connect with others pursuing revival.",
+    event_date: "2026-09-25",
+    end_date: "2026-09-27",
+    event_time: null,
+    venue: null,
+    city: null,
+    state: null,
+    church_name: "JCM",
+    speaker: "Rev. Shane Burns and Rev. Benjamin Rodriguez",
+    category: "Conference",
+    image_url:
+      "https://scontent-dfw6-1.cdninstagram.com/v/t51.82787-15/720655322_18410982253151946_5367588044353461896_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ig_cache_key=MzkxNzQyMDc3MzE4NzIwODY1NQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0ueHBpZHMuMTA4MC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=IOZeb3EhyvkQ7kNvwEOUN7d&_nc_oc=Adqa9cm5OImbg5vUQ4J8HXLtnQHpSAigyx00cNs_iZIXLbOkXUkFjpREb9IXl7Gs4ek&_nc_zt=23&_nc_ht=scontent-dfw6-1.cdninstagram.com&_nc_gid=_-ggC7ABo8s97zcbZcowVA&_nc_ss=7b689&oh=00_AQCRf7S65SeJsFV0QjZ_rEPhZhBMIFbsLmrD22dZbBTRVA&oe=6A621934",
+    image_alt:
+      "JCM Conference 2026 graphic with September 25–27 dates and guest preachers Shane Burns and Benjamin Rodriguez.",
+    image_credit: "Graphic courtesy of JCM",
+    image_credit_url: "https://www.instagram.com/p/DZduvMdj9Nm/",
+    highlights: [
+      "A 1,000 Hour Prayer Challenge in the lead-up to the conference.",
+      "Friday worship service with guest preachers Rev. Shane Burns and Rev. Benjamin Rodriguez.",
+      "Saturday ministry sessions on music, apologetics, evangelism, media, women’s, and pulpit ministry.",
+      "A live podcast recording and Afterburner fellowship.",
+    ],
+    source_url: "https://www.instagram.com/p/DZduvMdj9Nm/",
+    contact_email: null,
+    status: "published",
+    created_at: publishedAt,
+  },
+  {
     id: "upci-general-conference-2026",
     title: "UPCI General Conference 2026",
     description:
