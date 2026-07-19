@@ -21,6 +21,17 @@ export default function GuidesPage() {
         imageIndex={1}
       />
 
+      <Card className="mt-8 border-sanctuary-link/25 bg-gradient-to-r from-white to-sanctuary-chip p-6 sm:p-7">
+        <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-sanctuary-link">Independent attendee planning</div>
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="font-serif text-3xl font-medium text-sanctuary-ink">General Conference 2026</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sanctuary-muted">First-time, family, packing, schedule, exhibit, travel, and post-conference planning guides for UPCI General Conference in Salt Lake City.</p>
+          </div>
+          <Link href="/general-conference-2026/" className="text-sm font-bold text-sanctuary-link hover:underline">Open planning hub →</Link>
+        </div>
+      </Card>
+
       <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="APN guides">
         {guides.map((guide) => (
           <Card key={guide.slug} className="flex flex-col p-6">
