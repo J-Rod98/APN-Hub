@@ -98,12 +98,12 @@ export function PlayerModal({
         </div>
 
         {/* Meta */}
-        <div className="px-7 pb-7 pt-6 text-ink">
+        <div className="px-7 pb-7 pt-6 text-white">
           <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-sanctuary-sky">
             {item.topic || item.badge}
           </div>
-          <div className="mt-1.5 font-serif text-[28px] leading-tight">{item.title}</div>
-          <div className="mt-1 text-sm text-ink-muted">{item.meta}</div>
+          <div className="mt-1.5 font-serif text-[28px] leading-tight text-white">{item.title}</div>
+          <div className="mt-1 text-sm text-white/75">{item.meta}</div>
           <a
             href={playable.href}
             target="_blank"
