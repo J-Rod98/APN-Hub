@@ -21,16 +21,29 @@ export default function GuidesPage() {
         imageIndex={1}
       />
 
-      <Card className="mt-8 border-sanctuary-link/25 bg-gradient-to-r from-white to-sanctuary-chip p-6 sm:p-7">
-        <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-sanctuary-link">Independent attendee planning</div>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="font-serif text-3xl font-medium text-sanctuary-ink">General Conference 2026</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sanctuary-muted">First-time, family, packing, schedule, exhibit, travel, and post-conference planning guides for UPCI General Conference in Salt Lake City.</p>
+      <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <Card className="border-sanctuary-link/25 bg-gradient-to-r from-white to-sanctuary-chip p-6 sm:p-7">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-sanctuary-link">Independent attendee planning</div>
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-3xl font-medium text-sanctuary-ink">General Conference 2026</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sanctuary-muted">First-time, family, packing, schedule, exhibit, travel, and post-conference planning guides for UPCI General Conference in Salt Lake City.</p>
+            </div>
+            <Link href="/general-conference-2026/" className="text-sm font-bold text-sanctuary-link hover:underline">Open planning hub →</Link>
           </div>
-          <Link href="/general-conference-2026/" className="text-sm font-bold text-sanctuary-link hover:underline">Open planning hub →</Link>
-        </div>
-      </Card>
+        </Card>
+
+        <Card className="border-sanctuary-link/25 bg-gradient-to-r from-white to-sanctuary-chip p-6 sm:p-7">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-sanctuary-link">Independent youth event planning</div>
+          <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-3xl font-medium text-sanctuary-ink">NAYC 2027</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sanctuary-muted">First-time, parent, chaperone, group, registration, packing, travel, venue, and post-event planning guides for North American Youth Congress in Indianapolis.</p>
+            </div>
+            <Link href="/nayc-2027/" className="text-sm font-bold text-sanctuary-link hover:underline">Open planning hub →</Link>
+          </div>
+        </Card>
+      </div>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" aria-label="APN guides">
         {guides.map((guide) => (
