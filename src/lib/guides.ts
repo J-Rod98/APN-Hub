@@ -18,6 +18,7 @@ export type Guide = {
   intro: string;
   sections: GuideSection[];
   faqs: { question: string; answer: string }[];
+  referencesHeading?: string;
   references?: { label: string; href: string }[];
 };
 
@@ -1068,8 +1069,364 @@ export const guides: Guide[] = [
       { question: "What should churches do now about AI?", answer: "Start with a clear policy, one low-risk pilot, human review, and strong privacy boundaries. Learn from the results before expanding." },
     ],
   }),
+  standard({
+    slug: "upci-general-conference-2026-first-time-guide",
+    eyebrow: "General Conference 2026",
+    title: "UPCI General Conference 2026: First-Time Attendee Guide",
+    description: "An independent planning guide for first-time attendees of UPCI General Conference 2026 in Salt Lake City, with official links for registration, schedule, hotels, and updates.",
+    readingTime: "8 min read",
+    intro: "UPCI General Conference 2026 is scheduled for September 29–October 2 at the Salt Palace Convention Center in Salt Lake City. This is an independent APN attendee guide—not an official event page—designed to help a first-time guest prepare, then point you to the official UPCI pages for the details that can change.",
+    foundationHeading: "Know the essential details before you travel",
+    foundation: [
+      "The official conference site lists the Salt Palace Convention Center at 100 S W Temple St, Salt Lake City, Utah, as the venue. It says registration is free but required for entry into all services, and it recommends pre-registration to make entry faster. Confirm your registration, hotel, travel, and current schedule directly with UPCI before making plans.",
+      "This is a multi-day gathering with worship services, seminars, exhibits, ministry-focused events, and a business meeting. You do not need to try to attend everything; choose the gatherings that best serve your spiritual, family, and ministry responsibilities.",
+    ],
+    practiceHeading: "Build a simple first-time plan",
+    practice: [
+      "Start by registering, reserving a room, and saving the official schedule. Then choose one or two services or seminar blocks that matter most to you. Leave room for meals, travel time, exhibit hall visits, and unexpected changes.",
+      "If you are traveling with a church group, agree on a communication plan before you arrive. Share your hotel, emergency contacts, meeting places, and which official updates everyone should follow.",
+    ],
+    actions: [
+      "Register every person attending before you travel, including children.",
+      "Use the official schedule as your source of truth; it is marked tentative and subject to change.",
+      "Choose comfortable walking shoes, a charged phone, and a way to carry your confirmation details.",
+      "Plan one clear way to reconnect with your group if phones or schedules change.",
+    ],
+    careHeading: "Let the conference serve your local church",
+    care: [
+      "A conference can be encouraging, but the value grows when you bring the learning home. Take a few notes, identify one idea to discuss with your pastor or team, and avoid trying to turn every moment into content for social media.",
+      "Honor the people around you. Ask before photographing others, keep sensitive conversations private, and make space for worship, prayer, and the ordinary kindness that makes a first-time attendee feel welcome.",
+    ],
+    faqs: [
+      { question: "Where is UPCI General Conference 2026?", answer: "The official UPCI General Conference site lists the Salt Palace Convention Center in Salt Lake City, Utah, for September 29–October 2, 2026. Confirm current details on the official site before travel." },
+      { question: "Is this an official UPCI conference page?", answer: "No. This is an independent APN planning guide. Use UPCI's official conference site for registration, hotel information, the live schedule, and event questions." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [
+      { label: "UPCI General Conference 2026 home", href: "https://www.upcigc.net/" },
+      { label: "Official conference FAQ", href: "https://www.upcigc.net/faq/" },
+      { label: "Official schedule", href: "https://www.upcigc.net/schedule/" },
+    ],
+  }),
+  standard({
+    slug: "upci-general-conference-2026-schedule-planner",
+    eyebrow: "General Conference 2026",
+    title: "UPCI General Conference 2026 Schedule: How to Plan Your Days",
+    description: "A practical way to plan worship services, seminars, exhibits, meals, and group time around the official UPCI General Conference 2026 schedule.",
+    readingTime: "7 min read",
+    intro: "A multi-day conference feels much more manageable when you plan around a few priorities instead of reacting to every option. UPCI’s official schedule includes services, seminars, exhibits, and ministry gatherings across September 29–October 2; use the official schedule as the current source because times and details can change.",
+    foundationHeading: "Treat the official schedule as the source of truth",
+    foundation: [
+      "The conference schedule is published by UPCI and is marked tentative and subject to change. It also specifies that times are listed in mountain daylight time. Save the official page, check it before you leave your hotel each day, and do not rely only on a screenshot shared days earlier.",
+      "Rather than duplicating the full schedule, APN recommends using it to make a personal plan: identify your priority service, any seminar block that serves your role, and the practical time you need for meals, travel, and rest.",
+    ],
+    practiceHeading: "Plan each day around three anchors",
+    practice: [
+      "Choose a worship service, a learning opportunity, and a relationship or logistics window. That gives your day purpose without creating a schedule so tight that a delayed meal or a long walk turns into frustration.",
+      "Groups should agree on where to meet after a service and how they will handle overlapping interests. It is fine for a family or team to attend different seminars if everyone knows the plan for reconnecting.",
+    ],
+    actions: [
+      "Save the official schedule and note that times are mountain daylight time.",
+      "Circle one priority gathering per day before adding optional activities.",
+      "Leave transition time for the convention center, meals, exhibits, and group meetups.",
+      "Check the official schedule again each morning and before a major session.",
+    ],
+    careHeading: "Do not confuse a full calendar with a meaningful week",
+    care: [
+      "You may not attend every session, visit every exhibit, or meet every person. Give your attention to the moments that genuinely serve your walk with God, your family, and your local church.",
+      "At the end of each day, write down one takeaway and one action you can carry home. That small practice keeps the conference from becoming a blur of activity.",
+    ],
+    faqs: [
+      { question: "What time zone is the UPCI General Conference schedule in?", answer: "The official 2026 schedule states that its times are listed in mountain daylight time. Verify the latest schedule before travel or each conference day." },
+      { question: "Can I use this as the official conference schedule?", answer: "No. This is a planning guide. Always use the official UPCI schedule for current times, speakers, sessions, and changes." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 schedule", href: "https://www.upcigc.net/schedule/" }],
+  }),
+  standard({
+    slug: "what-to-pack-for-upci-general-conference",
+    eyebrow: "General Conference 2026",
+    title: "What to Pack for UPCI General Conference in Salt Lake City",
+    description: "A practical packing checklist for UPCI General Conference attendees: conference essentials, walking comfort, group logistics, family needs, and respectful preparation.",
+    readingTime: "6 min read",
+    intro: "A thoughtful packing list makes General Conference less stressful. Plan for long convention-center days, changing plans, worship services, and the needs of your family or church group. Check the official conference site and your hotel directly for any venue-specific rules before you leave.",
+    foundationHeading: "Pack for long days, not just services",
+    foundation: [
+      "Conference days can include walking between your hotel, the convention center, services, seminars, exhibits, meals, and group meetups. Comfortable, appropriate shoes and a small, organized day bag will usually serve you better than trying to carry everything at once.",
+      "Bring your registration confirmation, identification, hotel details, emergency contacts, and a way to keep your phone charged. Keep important travel information available offline in case connectivity is inconsistent.",
+    ],
+    practiceHeading: "Use a simple three-part checklist",
+    practice: [
+      "Separate your packing list into conference essentials, personal comfort, and group or family needs. This makes it easier to identify what belongs in a day bag, what stays at the hotel, and what needs to be shared with a spouse or group leader.",
+      "Travel conditions, weather, venue policies, airline rules, and hotel amenities can change. Check official and local sources close to departure instead of relying on a generic packing list alone.",
+    ],
+    actions: [
+      "Conference essentials: registration confirmation, ID, hotel address, group contacts, charger, and a note-taking method.",
+      "Personal comfort: comfortable shoes, layered clothing, refillable water container if venue rules permit, and any needed medication.",
+      "Family needs: snacks and activities as appropriate, supervision plan, and a reunion point if your group separates.",
+      "Ministry follow-up: a notebook or digital file for sermon notes, exhibitor contacts, and next steps for home.",
+    ],
+    careHeading: "Prepare for people as well as logistics",
+    care: [
+      "Bring a posture of patience. Lines, crowded hallways, travel delays, and schedule changes are normal in a large gathering. A little margin in your bag and your calendar helps you remain gracious.",
+      "Respect photography, recording, and venue guidelines. Do not assume a private conversation, child, or worship moment should become public content.",
+    ],
+    faqs: [
+      { question: "What is the most important thing to bring to General Conference?", answer: "Bring your registration details, identification, hotel and group information, comfortable shoes, a charged phone, and a plan for keeping up with official updates." },
+      { question: "Should I bring a printed schedule?", answer: "A printed backup can be helpful, but the official online schedule should remain your source of truth because it may change." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 FAQ", href: "https://www.upcigc.net/faq/" }, { label: "Official schedule", href: "https://www.upcigc.net/schedule/" }],
+  }),
+  standard({
+    slug: "upci-general-conference-2026-family-guide",
+    eyebrow: "General Conference 2026",
+    title: "UPCI General Conference 2026 Family Guide",
+    description: "A family planning guide for UPCI General Conference 2026: registration, supervision, realistic schedules, rest, meals, packing, and group communication.",
+    readingTime: "7 min read",
+    intro: "Families can have a meaningful General Conference experience when they plan for the practical realities ahead of time. UPCI’s official FAQ says registration is required regardless of age, children are welcome with adult supervision, and the conference does not provide childcare. Confirm current details directly with UPCI before traveling.",
+    foundationHeading: "Make a family plan before you arrive",
+    foundation: [
+      "Decide which gatherings the family will attend together, when younger children may need a break, where you will eat, and how you will reconnect if you divide for a short time. A realistic plan makes it easier for adults to enjoy the conference without asking children to sustain an adult schedule all day.",
+      "Register every attendee early, carry the information you need, and keep an adult responsible for supervision at all times. Share hotel room details and a meeting point with every adult in the group.",
+    ],
+    practiceHeading: "Plan for energy, not just attendance",
+    practice: [
+      "Choose fewer priority moments and build in meals, rest, and movement. A child who has had a chance to eat, walk, and rest will likely have a better experience than one rushed from session to session.",
+      "Bring quiet, age-appropriate activities for waiting periods and a small bag with essentials you normally use as a family. Check venue policies before bringing outside items.",
+    ],
+    actions: [
+      "Register each family member and save confirmations in more than one place.",
+      "Name the supervising adult and a clear meetup point before entering the venue.",
+      "Choose one or two priority gatherings each day and protect rest time.",
+      "Carry family contacts, hotel details, and any needed medication or comfort items.",
+    ],
+    careHeading: "Give children a genuine place in the experience",
+    care: [
+      "Explain what the conference is and invite age-appropriate questions. Let children participate through worship, listening, note-taking, or simple observations rather than expecting them to absorb every adult session in the same way.",
+      "Be considerate of other attendees and your own family. Taking a needed break is not a failure; it can be part of caring well for the people God has entrusted to you.",
+    ],
+    faqs: [
+      { question: "Do children need registration for UPCI General Conference?", answer: "The official FAQ says registration is required regardless of age. Check the official site for the most current information before travel." },
+      { question: "Does UPCI provide childcare during General Conference?", answer: "The official FAQ says the conference does not provide childcare, though children of all ages are welcome with adult supervision." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 FAQ", href: "https://www.upcigc.net/faq/" }],
+  }),
+  standard({
+    slug: "where-to-stay-near-salt-palace-general-conference",
+    eyebrow: "General Conference 2026",
+    title: "Where to Stay Near the Salt Palace for General Conference",
+    description: "How to choose a hotel for UPCI General Conference 2026 near Salt Palace: official hotel blocks, walking distance, group needs, accessibility, costs, and cancellation terms.",
+    readingTime: "7 min read",
+    intro: "The right General Conference hotel is the one that fits your budget, mobility needs, family or group plan, and ability to get to the Salt Palace reliably. UPCI says it offers discounted hotel rooms for the conference; use the official conference site for the current hotel-block details and booking links.",
+    foundationHeading: "Start with the official room block",
+    foundation: [
+      "The official UPCI conference FAQ says a discounted hotel block is provided. Begin there before looking at third-party listings, because the official options are connected to the event and may have specific booking instructions or deadlines.",
+      "Do not assume a hotel is ‘close’ based only on a map thumbnail. Check the walking route, arrival route, accessibility needs, daily parking or transit plan, room type, cancellation terms, and the full price after taxes and fees.",
+    ],
+    practiceHeading: "Choose by your group’s actual needs",
+    practice: [
+      "A solo attendee may prioritize a shorter walk. A family may need room layout, food options, and a realistic rest plan. A church group may need a place to meet and clear expectations about who is responsible for reservations and payments.",
+      "Reserve only after you understand the terms. Save the confirmation number, hotel address, check-in information, and cancellation policy somewhere the traveler and group leader can reach.",
+    ],
+    actions: [
+      "Check the official conference hotel block first.",
+      "Compare total cost, not only the advertised nightly rate.",
+      "Confirm walking distance or transportation time to the Salt Palace at the times you will travel.",
+      "Save your confirmation, cancellation policy, and group contact information offline.",
+    ],
+    careHeading: "Be alert to scams and unofficial offers",
+    care: [
+      "Use the official conference website or a hotel’s verified website when booking. Be careful with unsolicited messages, social posts, or unfamiliar booking pages that claim to be connected to the event.",
+      "If something is unclear, contact the official conference team or hotel directly instead of sending payment or personal details through an unverified channel.",
+    ],
+    faqs: [
+      { question: "Does UPCI offer a General Conference hotel block?", answer: "The official FAQ says discounted hotel rooms are provided. Use the official conference home page and FAQ for current hotel information, availability, and booking instructions." },
+      { question: "Should I book a hotel within walking distance?", answer: "That depends on your budget, mobility, family needs, and group plan. Compare the actual route and total cost before deciding." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 FAQ", href: "https://www.upcigc.net/faq/" }, { label: "UPCI General Conference 2026 home", href: "https://www.upcigc.net/" }],
+  }),
+  standard({
+    slug: "getting-around-salt-lake-city-for-general-conference",
+    eyebrow: "General Conference 2026",
+    title: "Getting Around Salt Lake City for General Conference",
+    description: "A practical arrival and transportation planning guide for UPCI General Conference 2026 attendees at the Salt Palace Convention Center in Salt Lake City.",
+    readingTime: "7 min read",
+    intro: "Transportation is easier when it is planned before the first service. UPCI General Conference 2026 is scheduled at the Salt Palace Convention Center in downtown Salt Lake City. Use the official conference FAQ and current local transportation sources to confirm parking, venue access, walking routes, and travel conditions close to your trip.",
+    foundationHeading: "Plan the route from your actual starting point",
+    foundation: [
+      "Your best option depends on where you are staying, how many people are traveling together, mobility needs, luggage, and the time you will arrive. Decide whether you will walk, use a rideshare or taxi, use public transportation, or park—and have a backup if the first option changes.",
+      "The official FAQ confirms parking is available at the Salt Palace and links to additional parking information. Check the current venue and local guidance rather than assuming prices, entrances, or availability from an older post.",
+    ],
+    practiceHeading: "Build margin into every trip",
+    practice: [
+      "Large services and convention activity can create lines and slower movement. Leave earlier than your map estimate, especially for a priority service, group meetup, or airport departure. Decide on an exact meeting location instead of saying only ‘at the entrance.’",
+      "Keep your hotel address, venue address, group contacts, and confirmation details available without relying on a single phone battery or signal.",
+    ],
+    actions: [
+      "Confirm your hotel-to-venue route before the first conference day.",
+      "Check current venue parking information if you plan to drive.",
+      "Choose a clear, recognizable group meetup point and time.",
+      "Allow margin for walking, security, crowds, meals, and schedule changes.",
+    ],
+    careHeading: "Keep your group connected and safe",
+    care: [
+      "Share plans before people separate, particularly with families, teens, or larger church groups. A simple group text or printed contact card can prevent unnecessary stress when a session ends or a phone battery fails.",
+      "Use normal travel wisdom: be aware of your surroundings, protect personal belongings, and choose official or well-established transportation options.",
+    ],
+    faqs: [
+      { question: "Is parking available at the Salt Palace for General Conference?", answer: "The official UPCI General Conference FAQ says parking is available at the Salt Palace and links to more information. Confirm the latest venue guidance before driving." },
+      { question: "How early should I arrive for a service?", answer: "Allow more time than a normal local service for walking, parking or transportation, crowds, and finding your group. Use the official schedule and venue guidance for the latest details." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 FAQ", href: "https://www.upcigc.net/faq/" }, { label: "Official schedule and venue address", href: "https://www.upcigc.net/schedule/" }],
+  }),
+  standard({
+    slug: "upci-general-conference-2026-exhibits-guide",
+    eyebrow: "General Conference 2026",
+    title: "UPCI General Conference 2026 Exhibits: Visitor and Exhibitor Guide",
+    description: "How attendees and exhibitors can prepare for the UPCI General Conference 2026 exhibit hall, with official links for exhibit applications and current event details.",
+    readingTime: "7 min read",
+    intro: "The exhibit hall can be one of the most practical parts of General Conference: a place to learn about ministries, resources, services, and connections across the Apostolic movement. Whether you are visiting or considering an exhibit space, use the official UPCI page for current rules, deadlines, registration, and requirements.",
+    foundationHeading: "Visit the exhibit hall with a purpose",
+    foundation: [
+      "Before the conference, make a short list of the ministry areas you want to explore: missions, church resources, education, leadership tools, family ministry, or other needs. A short list helps you have meaningful conversations instead of collecting material you will never revisit.",
+      "Bring a way to take notes and save contact information. If you are interested in a resource, ask what problem it solves, what it costs, how it handles data if applicable, and who in your local church should evaluate it with you.",
+    ],
+    practiceHeading: "Exhibitors should rely on official requirements",
+    practice: [
+      "The official exhibit page contains the event’s application process, exhibit-space information, and current requirements. Do not rely on a social-media screenshot or an unofficial resale offer for space, badges, power, or setup details.",
+      "An effective booth communicates one clear value, welcomes a conversation, and gives visitors a simple next step. Prepare your team to answer questions accurately without promising more than your ministry or service can deliver.",
+    ],
+    actions: [
+      "Attendees: identify a few categories or exhibitors you want to visit before arriving.",
+      "Attendees: take notes on resources that could serve your local church after prayerful review.",
+      "Exhibitors: use only the official UPCI exhibit application and instructions.",
+      "Exhibitors: prepare clear contact, follow-up, and privacy practices before collecting visitor information.",
+    ],
+    careHeading: "Choose resources with discernment",
+    care: [
+      "A busy exhibit hall can make every resource look urgent. Give your church time to review theology, cost, data practices, licensing, and fit before making a purchasing or ministry decision.",
+      "Respect exhibitors and other visitors by asking permission before recording or photographing a booth. Keep conversations honest and remember that a connection is more valuable than a stack of flyers.",
+    ],
+    faqs: [
+      { question: "Where can I find official UPCI General Conference exhibit information?", answer: "Use the official UPCI General Conference exhibits page for current application, registration, space, and event details." },
+      { question: "Should churches buy resources at the exhibit hall?", answer: "A church should evaluate any resource for fit, cost, terms, theology, and data practices before making a decision. Taking information home for review is often wise." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 exhibits", href: "https://www.upcigc.net/exhibits/" }, { label: "Official schedule", href: "https://www.upcigc.net/schedule/" }],
+  }),
+  standard({
+    slug: "what-happens-at-upci-general-conference",
+    eyebrow: "General Conference 2026",
+    title: "What Happens at UPCI General Conference?",
+    description: "An introduction to what attendees can expect from UPCI General Conference: worship services, seminars, exhibits, ministry gatherings, business sessions, and fellowship.",
+    readingTime: "7 min read",
+    intro: "UPCI General Conference brings together Apostolic people, churches, ministers, ministries, and guests for worship, teaching, business, exhibits, and fellowship. The exact schedule changes each year, but understanding the main kinds of gathering can help a first-time attendee arrive prepared instead of overwhelmed.",
+    foundationHeading: "Expect more than evening services",
+    foundation: [
+      "The official 2026 schedule includes worship services, seminars, exhibits, ministry-focused gatherings, and a business meeting. Each part serves a different purpose: worship and preaching strengthen the whole body, seminars offer focused learning, exhibits connect people with resources, and business sessions serve the organization’s shared life.",
+      "Not every attendee will participate in every kind of gathering in the same way. A first-time guest may focus on worship and a few seminars, while ministers, leaders, exhibitors, or organizational delegates may have additional responsibilities.",
+    ],
+    practiceHeading: "Choose the parts that serve your calling",
+    practice: [
+      "Read the official schedule before you arrive, then choose a manageable plan. If you are a parent, ministry leader, student, pastor, or exhibitor, think about which sessions most directly serve your present responsibilities.",
+      "Make room for fellowship as well as formal sessions. Some of the most helpful conference moments are a conversation with another believer, a connection with a ministry, or a quiet reflection after a service.",
+    ],
+    actions: [
+      "Review the official schedule and identify your priority gatherings.",
+      "Learn whether any session has special expectations for attendees or leaders.",
+      "Visit exhibits with questions related to real local-church needs.",
+      "Take notes on one or two ideas you can discuss with your local pastor or team afterward.",
+    ],
+    careHeading: "Let conference inspiration become local faithfulness",
+    care: [
+      "A powerful moment at a large gathering is a gift, but the lasting work happens in local churches and ordinary obedience. Choose a few next steps rather than making a long list of resolutions that disappear after travel home.",
+      "Attend with humility. Listen well, honor your leadership, and be careful not to turn a partial impression or social-media clip into a sweeping judgment about a person, ministry, or the conference as a whole.",
+    ],
+    faqs: [
+      { question: "Do I have to be a UPCI minister to attend General Conference?", answer: "The official FAQ says everyone is welcome to attend. Use the official site for current registration and entry information." },
+      { question: "What kinds of events are at UPCI General Conference?", answer: "The official schedule includes services, seminars, exhibits, ministry gatherings, and a business meeting. Check the current schedule for the exact program." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 schedule", href: "https://www.upcigc.net/schedule/" }, { label: "Official conference FAQ", href: "https://www.upcigc.net/faq/" }],
+  }),
+  standard({
+    slug: "general-conference-2026-sermons-and-services",
+    eyebrow: "General Conference 2026",
+    title: "General Conference 2026 Sermons and Services: Where to Watch",
+    description: "A pre-conference guide to finding official UPCI General Conference 2026 services and sermons, with a clear plan for APN’s post-conference curated resource collection.",
+    readingTime: "5 min read",
+    intro: "This APN page is a planning guide, not a promise of unofficial livestreams or copied recordings. UPCI has not published all post-conference recordings in advance. When official services and messages are available, APN will point readers to the original sources and curate a clearly labeled collection of helpful follow-up resources.",
+    foundationHeading: "Follow official channels for live and original content",
+    foundation: [
+      "For current information about services, recordings, and any live viewing options, begin with the official UPCI General Conference site and UPCI’s official channels. Do not rely on reposted clips that remove context, attribution, or the speaker’s complete message.",
+      "The official 2026 schedule identifies the main gatherings, but the schedule is tentative and subject to change. Bookmark it now, then check for official viewing and recording links during and after the event.",
+    ],
+    practiceHeading: "Use APN for curated follow-up, not imitation",
+    practice: [
+      "After the conference, APN can help people find messages and resources by topic: prayer, missions, church growth, family ministry, leadership, or youth. Every card should link to the original video, sermon page, podcast, or ministry source.",
+      "A useful recap should include a clear title, speaker or ministry name, official source link, a short factual description, and a note that readers should watch or hear the full message in context.",
+    ],
+    actions: [
+      "Bookmark the official conference schedule before the event.",
+      "Follow official UPCI channels for announced livestream and recording information.",
+      "Afterward, save original links rather than downloading or reposting full messages without permission.",
+      "Use APN’s curated collection to discover messages by topic once it is published.",
+    ],
+    careHeading: "Keep context and attribution intact",
+    care: [
+      "A sermon excerpt can encourage someone, but it can also misrepresent a message when separated from its context. Link to the full official recording whenever possible and name the speaker and original ministry accurately.",
+      "Respect copyright, platform rules, and the ministries that created the original work. APN’s role is curation: helping people discover content while sending attention and traffic back to its source.",
+    ],
+    faqs: [
+      { question: "Will APN livestream UPCI General Conference 2026?", answer: "No livestream is promised by APN. Use official UPCI channels for current viewing information. APN will curate links to original official sources when available." },
+      { question: "Where will I find General Conference sermons after the event?", answer: "Check the official UPCI conference channels first. APN plans to publish a curated guide that links readers back to the original messages and resources." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 home", href: "https://www.upcigc.net/" }, { label: "Official schedule", href: "https://www.upcigc.net/schedule/" }],
+  }),
+  standard({
+    slug: "apn-general-conference-2026-message-guide",
+    eyebrow: "General Conference 2026",
+    title: "APN General Conference 2026 Message Guide",
+    description: "How APN will curate General Conference 2026 sermons, sessions, podcasts, and resources after the event—always linking to original Apostolic sources.",
+    readingTime: "5 min read",
+    intro: "APN’s General Conference Message Guide is a post-conference collection in progress. Its purpose is simple: help people find the most useful official sermons, sessions, resources, and follow-up material without claiming ownership of work created by UPCI, speakers, churches, or ministries.",
+    foundationHeading: "Curation is different from copying",
+    foundation: [
+      "APN will not present another ministry’s sermon as its own or repost complete content without permission. Each curated item should name its speaker or ministry, give a factual summary, and link directly to the original video, audio, article, or resource.",
+      "That approach respects the people who created the work while making it easier for someone to find a message by need or topic after the conference has ended.",
+    ],
+    practiceHeading: "What the post-conference guide will include",
+    practice: [
+      "After official recordings and resources are available, APN will organize them into helpful paths such as worship and prayer, missions, pastoral leadership, church growth, family ministry, youth, and practical church communication.",
+      "Every resource will be reviewed for a working original link, accurate title, attribution, and a description that helps a visitor decide whether to invest time in the full source.",
+    ],
+    actions: [
+      "Browse original sermons and sessions by topic after the conference.",
+      "Save APN resources that serve a real ministry need.",
+      "Use every APN card to visit and support the original source.",
+      "Suggest a missing official resource through APN’s content-submission process.",
+    ],
+    careHeading: "Quality matters more than speed",
+    care: [
+      "APN will not rush to label a message ‘best’ based on a clip, a popularity count, or an incomplete impression. Curation should be prayerful, accurate, and clear about what is a direct source versus an APN editorial description.",
+      "If a recording is removed or an original link changes, APN should update or remove the listing. A trustworthy library is maintained, not merely published once.",
+    ],
+    faqs: [
+      { question: "Is the APN Message Guide available now?", answer: "The structure is available before the conference; the curated sermon and resource collection will be added after official material is available for review and linking." },
+      { question: "Can I suggest a General Conference message for APN?", answer: "Yes. Send APN the original public link and the relevant details. APN can review it for accurate attribution, fit, and a working source link." },
+    ],
+    referencesHeading: "Official conference information",
+    references: [{ label: "UPCI General Conference 2026 home", href: "https://www.upcigc.net/" }, { label: "Official schedule", href: "https://www.upcigc.net/schedule/" }],
+  }),
 ];
 
 export function getGuideBySlug(slug: string) {
   return guides.find((guide) => guide.slug === slug) ?? null;
 }
+
+export const generalConferenceGuides = guides.filter((guide) => guide.eyebrow === "General Conference 2026");

@@ -88,7 +88,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
 
         {guide.references && (
           <section className="mt-10">
-            <h2 className="font-serif text-2xl font-medium text-sanctuary-ink">Official product information</h2>
+            <h2 className="font-serif text-2xl font-medium text-sanctuary-ink">{guide.referencesHeading ?? "Official product information"}</h2>
             <p className="mt-3 text-sm leading-relaxed text-sanctuary-muted">Features, terms, and privacy controls change. Review current provider documentation before making a purchasing or data-handling decision.</p>
             <ul className="mt-4 grid gap-2 text-sm">
               {guide.references.map((reference) => (
