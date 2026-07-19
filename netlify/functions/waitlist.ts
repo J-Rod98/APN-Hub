@@ -30,9 +30,7 @@ export default async function waitlist(request: Request) {
     return json({ error: "We couldn’t add you right now. Please try again shortly." }, 400);
   }
 
-  const values = input && typeof input === "object"
-    ? input as WaitlistInput & { captchaToken?: unknown }
-    : {} as WaitlistInput & { captchaToken?: unknown };
+  const values = input && typeof input === "object" ? input as WaitlistInput : {} as WaitlistInput;
   const checked = validateWaitlist(values);
   if (!checked.ok) {
     return json({ error: "Enter a valid email address.", errors: checked.errors }, 400);
@@ -40,13 +38,6 @@ export default async function waitlist(request: Request) {
 
   // Silently accept bot-filled honeypots without passing their data to any provider.
   if (checked.value.hp_website) return json({ ok: true }, 201);
-
-  const captchaToken = typeof values.captchaToken === "string"
-    ? values.captchaToken.trim().slice(0, 4096)
-    : "";
-  if (!captchaToken) {
-    return json({ error: "Please complete the anti-spam check to join the launch list." }, 400);
-  }
 
   // MailerLite's form must have double opt-in enabled before this forwarding
   // gate is opened. This prevents a misleading confirmation promise.
@@ -57,7 +48,6 @@ export default async function waitlist(request: Request) {
   try {
     const payload = new URLSearchParams({
       "fields[email]": checked.value.email,
-      "g-recaptcha-response": captchaToken,
       "ml-submit": "1",
       anticsrf: "true",
     });
