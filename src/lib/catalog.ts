@@ -352,6 +352,19 @@ export const events: AppEvent[] = [
 
 export const preaching: PreachingItem[] = [
   {
+    id: "the-garment-myles-young",
+    title: "The Garment",
+    speaker: "Rev. Myles Young",
+    topic: null,
+    scripture_reference: null,
+    description:
+      "A July 19, 2026 message from Rev. Myles Young at First Pentecostal Church North Little Rock.",
+    media_url: "https://www.youtube.com/watch?v=l6fveyjqzhA",
+    media_type: "video",
+    status: "published",
+    created_at: publishedAt,
+  },
+  {
     id: "our-infirmities-healed-lee-stoneking",
     title: "Our Infirmities Healed",
     speaker: "Rev. Lee Stoneking",
