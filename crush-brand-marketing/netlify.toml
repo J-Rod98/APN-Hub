@@ -1,0 +1,37 @@
+# Netlify config for the Crush Brand Marketing static site.
+# Deploy this directory (crush-brand-marketing/) as its own Netlify site:
+# set "Base directory" to crush-brand-marketing and publish ".".
+# Netlify Forms on the contact/audit pages work automatically once deployed here.
+
+[build]
+  publish = "."
+
+# Clean-URL hardening: everything already lives at /<page>/index.html,
+# so no redirects are needed. Add security headers:
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# CSS/JS change without a filename hash, so they must revalidate on every
+# load — otherwise a visitor keeps a stale stylesheet after a redeploy and
+# new sections render unstyled. Netlify serves a cheap 304 when unchanged.
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Images are stable, so they can still cache for a week.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
