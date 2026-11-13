@@ -39,28 +39,33 @@ The current catalogue starts with the verified Spotify episode provided for
 APN. Empty sections show an honest message until more reviewed content is
 added.
 
-## Content suggestions
+## Intake forms (Netlify Forms)
 
-The public **Suggest Content** form posts to a Netlify Function. The function
-validates every field, rejects bot-filled honeypots, applies Netlify rate
-limiting, and then forwards valid submissions to Formspree. Suggestions are
-never automatically published.
+Both intake forms use **Netlify Forms**. They are plain React forms that post
+(url-encoded) to the site root with a `form-name`, and are registered with
+Netlify via the static `public/__forms.html` detection file. Submissions appear
+in the Netlify dashboard under **Forms** and can be emailed to a notification
+address configured there. No API keys, endpoints, or environment variables are
+required.
 
-Cloudflare Turnstile is optional but recommended before launch. Set both
-`NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` in Netlify to turn
-on the final-submission challenge.
+- **Suggest Content** (`/submit`) — `form-name: apn-suggestions` (name, email,
+  content type, source link, message). Client-side validation plus a honeypot.
+  Suggestions are never automatically published — review them in Netlify, then
+  add approved items to `src/lib/catalog.ts` and redeploy.
+- **Launch-list signup** (homepage) — `form-name: apn-waitlist` (email only),
+  with client-side email validation and a honeypot.
 
-## Launch-list requests
+Spam protection: each form uses a honeypot (`hp_website`, declared to Netlify
+via `data-netlify-honeypot`); reCAPTCHA can be enabled per form in the Netlify
+UI if needed.
 
-The homepage launch-list form uses Formspree directly from the React client.
-It keeps APN's visual design, accepts only an email address, uses client-side
-email validation plus a honeypot, and uses Formspree's form handling and spam
-protection. The `xzdnenwv` form endpoint is public by design and does not need
-an environment variable.
+Netlify Forms is a capture inbox, not an email-campaign provider. Before APN
+sends recurring launch-list updates, export the collected emails to a provider
+with an unsubscribe method and update the public privacy policy accordingly.
 
-Formspree receives requests; it is not APN's future email-campaign provider.
-Before APN sends recurring launch-list updates, configure an email provider with
-an unsubscribe method and update the public privacy policy accordingly.
+> **Note:** Netlify Forms only records submissions on deployed Netlify builds
+> (including deploy previews) — form posts are not captured by `next dev` or a
+> local `next build`.
 
 ## Deploy
 

@@ -5,7 +5,16 @@ import { FormEvent, useState } from "react";
 import { HoneypotField } from "@/components/ui/HoneypotField";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xzdnenwv";
+
+// Netlify Forms: submissions are posted (url-encoded) to the site root with a
+// `form-name` that matches the detection form in public/__forms.html.
+const NETLIFY_FORM_NAME = "apn-waitlist";
+
+function encodeForm(data: Record<string, string>) {
+  return Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join("&");
+}
 
 export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [email, setEmail] = useState("");
@@ -28,8 +37,8 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
       return;
     }
 
-    // Keep a filled honeypot away from Formspree while giving bots a benign
-    // success state. Formspree also applies its own provider-side spam checks.
+    // A filled honeypot means a bot: show a benign success and post nothing.
+    // Netlify's own honeypot/spam checks apply as a second layer on deploy.
     if (form.get("hp_website")) {
       event.preventDefault();
       setBotSubmitted(true);
@@ -39,13 +48,16 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
     setEmailError("");
     setFormError("");
     setState("joining");
-    form.set("email", normalizedEmail);
 
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
+      const response = await fetch("/", {
         method: "POST",
-        headers: { accept: "application/json" },
-        body: form,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encodeForm({
+          "form-name": NETLIFY_FORM_NAME,
+          email: normalizedEmail,
+          hp_website: "",
+        }),
       });
       if (!response.ok) {
         setFormError("We couldn't add you right now. Please try again shortly.");
@@ -77,7 +89,16 @@ export function NewsletterForm({ variant = "dark" }: { variant?: "dark" | "light
       : "rounded-full bg-brand px-5 py-3 font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70";
 
   return (
-    <form onSubmit={handleSubmit} className="relative flex max-w-[540px] flex-col gap-3" noValidate>
+    <form
+      name="apn-waitlist"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="hp_website"
+      onSubmit={handleSubmit}
+      className="relative flex max-w-[540px] flex-col gap-3"
+      noValidate
+    >
+      <input type="hidden" name="form-name" value="apn-waitlist" />
       <HoneypotField />
       <div className="flex flex-col gap-3 sm:flex-row">
         <label className="sr-only" htmlFor="newsletter-email">

@@ -36,9 +36,9 @@ export default function PrivacyPage() {
             and message you submit so we can review and respond to that suggestion.
           </p>
           <p className="mt-3">
-            The APN launch-list form asks only for an email address. Formspree records the email
+            The APN launch-list form asks only for an email address. Netlify Forms records the email
             address and submission timestamp. APN does not ask for a name or other personal details
-            for the launch list. A hidden honeypot rejects automated submissions, and Formspree may
+            for the launch list. A hidden honeypot rejects automated submissions, and Netlify may
             process minimal technical and anti-spam data associated with a submission.
           </p>
           <p className="mt-3">Please do not submit sensitive personal information through the suggestion form.</p>
@@ -56,8 +56,8 @@ export default function PrivacyPage() {
 
         <PolicySection title="Launch-list email provider">
           <p>
-            APN uses Formspree to receive and store launch-list requests. The current form sends the
-            submitted email address to APN through Formspree; it does not send an automated
+            APN uses Netlify Forms to receive and store launch-list requests. The current form sends
+            the submitted email address to APN through Netlify; it does not send an automated
             subscription-confirmation email or create a separate marketing profile.
           </p>
           <p className="mt-3">
@@ -69,15 +69,15 @@ export default function PrivacyPage() {
 
         <PolicySection title="Service providers and third-party content">
           <p>
-            Netlify hosts APN. Formspree receives launch-list and content-suggestion submissions.
-            These providers process information under their own policies: {" "}
+            Netlify hosts APN and, through Netlify Forms, receives launch-list and content-suggestion
+            submissions. Netlify processes this information under its own policy: {" "}
             <a
-              href="https://formspree.io/legal/privacy-policy/"
+              href="https://www.netlify.com/privacy/"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-sanctuary-link hover:text-sanctuary-linkhover hover:underline"
             >
-              Formspree&apos;s Privacy Policy
+              Netlify&apos;s Privacy Policy
             </a>.
           </p>
           <p className="mt-3">
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
 
         <PolicySection title="Cookies and similar technologies">
           <p>
-            APN does not use its own analytics or advertising cookies in this release. Formspree may
+            APN does not use its own analytics or advertising cookies in this release. Netlify may
             use cookies or similar technologies when its form service processes a submission. Other
             third-party media and image providers may do the same when their content is loaded. You can
             manage many cookies through your browser settings.
@@ -105,9 +105,9 @@ export default function PrivacyPage() {
             long as those purposes require and as the relevant provider retains them under its settings.
           </p>
           <p className="mt-3">
-            Formspree retains launch-list submissions under its account and settings. APN does not set
+            Netlify retains launch-list submissions under its account and settings. APN does not set
             a separate fixed retention period for launch-list requests. If you ask APN to delete your
-            information, APN will delete the applicable Formspree submission where available and may
+            information, APN will delete the applicable Netlify submission where available and may
             retain the minimum information necessary to honor a future opt-out request. No online
             service can guarantee absolute security, but we take reasonable steps to limit access to
             the information we receive.

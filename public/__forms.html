@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Netlify form detection — APN Hub</title>
+  </head>
+  <body>
+    <!--
+      Netlify discovers forms by scanning the deployed static output for plain
+      <form> markup. Because APN's live forms are client-rendered React
+      components, this file guarantees detection: it lists every form and field
+      name exactly once. The React components POST (url-encoded) to "/" with a
+      matching `form-name`, and Netlify records the submission.
+
+      Keep the `name` and field names here in sync with:
+        - src/components/forms/NewsletterForm.tsx   (form-name: apn-waitlist)
+        - src/components/forms/SecureSubmitForm.tsx (form-name: apn-suggestions)
+    -->
+
+    <form name="apn-waitlist" data-netlify="true" data-netlify-honeypot="hp_website" hidden>
+      <input type="email" name="email" />
+      <input type="text" name="hp_website" />
+    </form>
+
+    <form name="apn-suggestions" data-netlify="true" data-netlify-honeypot="hp_website" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="content_type" />
+      <input type="url" name="source_url" />
+      <textarea name="message"></textarea>
+      <input type="text" name="hp_website" />
+    </form>
+  </body>
+</html>
