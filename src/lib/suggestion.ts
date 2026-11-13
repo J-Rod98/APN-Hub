@@ -1,5 +1,5 @@
-// Shared, browser-safe validation for APN content suggestions. The Netlify
-// function repeats this validation before forwarding anything to Formspree.
+// Shared, browser-safe validation for APN content suggestions. The form posts
+// validated values to Netlify Forms (form-name: apn-suggestions).
 
 export const SUGGESTION_TYPES = [
   "sermon",

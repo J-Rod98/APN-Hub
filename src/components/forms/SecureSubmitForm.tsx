@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { HoneypotField } from "@/components/ui/HoneypotField";
 import {
@@ -11,7 +11,16 @@ import {
 
 const fieldClass =
   "mt-1.5 w-full rounded-xl border border-sanctuary-line bg-white px-4 py-3 text-sanctuary-ink outline-none placeholder:text-sanctuary-soft focus:border-brand";
-const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+// Netlify Forms: submissions are posted (url-encoded) to the site root with a
+// `form-name` matching the detection form in public/__forms.html.
+const NETLIFY_FORM_NAME = "apn-suggestions";
+
+function encodeForm(data: Record<string, string>) {
+  return Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join("&");
+}
 
 type FormStatus =
   | { kind: "idle" }
@@ -22,8 +31,6 @@ type FormStatus =
 export function SecureSubmitForm() {
   const [status, setStatus] = useState<FormStatus>({ kind: "idle" });
   const [errors, setErrors] = useState<SuggestionErrors>({});
-  const [showTurnstile, setShowTurnstile] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
 
   if (status.kind === "success") {
     return (
@@ -46,7 +53,6 @@ export function SecureSubmitForm() {
       source_url: form.get("source_url"),
       message: form.get("message"),
       hp_website: form.get("hp_website"),
-      turnstileToken,
     };
     const checked = validateSuggestion(input);
     if (!checked.ok) {
@@ -55,27 +61,34 @@ export function SecureSubmitForm() {
       return;
     }
 
-    if (turnstileSiteKey && !turnstileToken) {
-      setShowTurnstile(true);
-      setStatus({ kind: "pending", message: "Complete the verification below, then send your suggestion." });
+    // A filled honeypot means a bot: show a benign success and send nothing.
+    if (checked.value.hp_website) {
+      setErrors({});
+      setStatus({
+        kind: "success",
+        message: "APN will review the original source before deciding whether to include it in the collection.",
+      });
       return;
     }
 
     setErrors({});
     setStatus({ kind: "pending", message: "Sending your suggestion…" });
     try {
-      const response = await fetch("/api/suggest", {
+      const response = await fetch("/", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(input),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encodeForm({
+          "form-name": NETLIFY_FORM_NAME,
+          name: checked.value.name,
+          email: checked.value.email,
+          content_type: checked.value.content_type,
+          source_url: checked.value.source_url,
+          message: checked.value.message,
+          hp_website: "",
+        }),
       });
-      const result = (await response.json().catch(() => ({}))) as {
-        error?: string;
-        errors?: SuggestionErrors;
-      };
       if (!response.ok) {
-        setErrors(result.errors ?? {});
-        setStatus({ kind: "error", message: result.error ?? "We could not send your suggestion. Please try again." });
+        setStatus({ kind: "error", message: "We could not send your suggestion. Please try again." });
         return;
       }
       setStatus({
@@ -94,7 +107,16 @@ export function SecureSubmitForm() {
         Share the original link and a short note about why it would serve the Apostolic community.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-7 grid gap-5" noValidate>
+      <form
+        name="apn-suggestions"
+        method="POST"
+        data-netlify="true"
+        data-netlify-honeypot="hp_website"
+        onSubmit={handleSubmit}
+        className="mt-7 grid gap-5"
+        noValidate
+      >
+        <input type="hidden" name="form-name" value="apn-suggestions" />
         <HoneypotField />
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Your name" id="suggestion-name" error={errors.name}>
@@ -176,20 +198,13 @@ export function SecureSubmitForm() {
 
         {status.kind === "error" && <p role="alert" className="text-sm font-semibold text-red-700">{status.message}</p>}
         {status.kind === "pending" && <p role="status" className="text-sm font-semibold text-sanctuary-ink">{status.message}</p>}
-        {showTurnstile && turnstileSiteKey && (
-          <TurnstileChallenge
-            siteKey={turnstileSiteKey}
-            onToken={setTurnstileToken}
-            onError={() => setStatus({ kind: "error", message: "Verification could not load. Please try again." })}
-          />
-        )}
 
         <button
           type="submit"
-          disabled={status.kind === "pending" && !showTurnstile}
+          disabled={status.kind === "pending"}
           className="inline-flex min-h-11 w-fit rounded-full bg-gradient-to-br from-brand to-brand-deep px-5 py-3 font-bold text-white shadow-glow transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          {status.kind === "pending" && !showTurnstile ? "Sending…" : "Send Suggestion"}
+          {status.kind === "pending" ? "Sending…" : "Send Suggestion"}
         </button>
       </form>
     </Card>
@@ -207,65 +222,6 @@ function Field({ label, id, error, children }: {
       <label htmlFor={id} className="text-sm font-bold text-ink">{label}</label>
       {children}
       {error && <p id={`${id}-error`} className="mt-1 text-sm font-medium text-red-700">{error}</p>}
-    </div>
-  );
-}
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (container: HTMLElement, options: {
-        sitekey: string;
-        callback: (token: string) => void;
-        "error-callback": () => void;
-        "expired-callback": () => void;
-      }) => void;
-    };
-  }
-}
-
-function TurnstileChallenge({ siteKey, onToken, onError }: {
-  siteKey: string;
-  onToken: (token: string) => void;
-  onError: () => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const mount = () => {
-      if (ref.current && window.turnstile) {
-        window.turnstile.render(ref.current, {
-          sitekey: siteKey,
-          callback: onToken,
-          "error-callback": onError,
-          "expired-callback": () => onToken(""),
-        });
-      }
-    };
-    const existing = document.getElementById("cf-turnstile-script") as HTMLScriptElement | null;
-    if (window.turnstile) {
-      mount();
-      return;
-    }
-    const script = existing ?? document.createElement("script");
-    if (!existing) {
-      script.id = "cf-turnstile-script";
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      script.async = true;
-      document.head.appendChild(script);
-    }
-    script.addEventListener("load", mount);
-    script.addEventListener("error", onError);
-    return () => {
-      script.removeEventListener("load", mount);
-      script.removeEventListener("error", onError);
-    };
-  }, [onError, onToken, siteKey]);
-
-  return (
-    <div>
-      <p className="mb-2 text-sm font-medium text-sanctuary-ink">Security verification</p>
-      <div ref={ref} />
     </div>
   );
 }
