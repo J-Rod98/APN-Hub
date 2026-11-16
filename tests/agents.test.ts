@@ -153,3 +153,23 @@ test("workspace import is one-time and cannot import content approvals",async()=
  const {importUnapprovedState}=await import("../server/agents/import-state");const input=fixture().s;const target=emptyState();importUnapprovedState(target,input);assert.equal(target.tasks.length,1);assert.equal(target.tasks[0].approval,undefined);assert.throws(()=>importUnapprovedState(target,input),/empty workspace/);
  const bad=fixture().s;bad.tasks[0].approval={hash:bad.tasks[0].draftHash!,sourceHashes:{},actor:"owner",at:new Date().toISOString(),scheduledAt:new Date().toISOString(),checklist:[]};assert.throws(()=>importUnapprovedState(emptyState(),bad));
 });
+
+test("auth throttling preserves separate reset and login cooldowns across remounts",async()=>{
+ const {AuthAttemptGuard,AuthPause,authFailure}=await import("../src/lib/owner-auth");
+ const values=new Map<string,string>();const storage={getItem:(k:string)=>values.get(k)||null,setItem:(k:string,v:string)=>{values.set(k,v);}};let clock=1000;let requests=0;
+ const guard=new AuthAttemptGuard(storage,()=>clock);
+ await assert.rejects(()=>guard.run("recovery",async()=>{requests++;throw new Error("Rate limit exceeded, try again later");}));
+ assert.match(authFailure(new Error("Rate limit exceeded, try again later"),"recovery"),/does not mean your password is wrong/);
+ const remounted=new AuthAttemptGuard(storage,()=>clock);
+ await assert.rejects(()=>remounted.run("recovery",async()=>{requests++;}),AuthPause);assert.equal(requests,1);
+ await remounted.run("signin",async()=>{requests++;});assert.equal(requests,2);
+ clock+=15*60000;await remounted.run("recovery",async()=>{requests++;});assert.equal(requests,3);
+ assert.ok([...values.values()].every(v=>/^\d+$/.test(v)));
+});
+test("auth guard rejects concurrent taps and never retries a throttled login automatically",async()=>{
+ const {AuthAttemptGuard,AuthPause}=await import("../src/lib/owner-auth");const guard=new AuthAttemptGuard();let requests=0;let finish!:()=>void;
+ const first=guard.run("signin",async()=>{requests++;await new Promise<void>(r=>{finish=r;});});
+ await assert.rejects(()=>guard.run("signin",async()=>{requests++;}),/already running/);finish();await first;assert.equal(requests,1);
+ await assert.rejects(()=>guard.run("signin",async()=>{requests++;throw Object.assign(new Error("throttled"),{status:429});}));
+ await assert.rejects(()=>guard.run("signin",async()=>{requests++;}),AuthPause);assert.equal(requests,2);
+});

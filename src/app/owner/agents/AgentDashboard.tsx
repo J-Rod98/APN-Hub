@@ -19,10 +19,11 @@ export default function AgentDashboard(){
   const [token,setToken]=useState("");const [data,setData]=useState<Payload|null>(null);const [tab,setTab]=useState("Queue");const [error,setError]=useState("");const [notice,setNotice]=useState("");const [busy,setBusy]=useState(false);const [selected,setSelected]=useState<string|null>(null);const [checks,setChecks]=useState<string[]>([]);const [when,setWhen]=useState("");
   const request=useCallback(async(body?:unknown)=>{
     const r=await fetch("/api/apn-agents",{method:body?"POST":"GET",credentials:"same-origin",headers:{...(token?{authorization:`Bearer ${token}`} : {}),...(body?{"content-type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
-    const v=await r.json();if(!r.ok)throw new Error(v.error||"Request failed");return v;
+    const v=await r.json();if(!r.ok)throw Object.assign(new Error(v.error||"Request failed"),{status:r.status});return v;
   },[token]);
-  const refresh=useCallback(async()=>{try{setData(await request());setError("");}catch(e){setError((e as Error).message);}},[request]);
-  useEffect(()=>{void refresh();},[refresh]);
+  const refresh=useCallback(async(showAuthError=false)=>{try{setData(await request());setError("");}catch(e){if((e as {status?:number}).status===401){setData(null);setError(showAuthError?"Your session could not open the owner workspace. Sign in with the invited owner email; if this follows a successful sign-in, report this access error.":"");}else setError((e as Error).message);}},[request]);
+  const signedIn=useCallback(()=>refresh(true),[refresh]);
+  useEffect(()=>{if(!/^#(?:invite_token|recovery_token|confirmation_token|access_token|email_change_token)=/.test(window.location.hash))void refresh();},[refresh]);
   useEffect(()=>{if(!data)return;const id=setInterval(()=>{void refresh();},10000);return()=>clearInterval(id);},[data,refresh]);
   async function send(body:unknown){setBusy(true);setError("");setNotice("");try{const result=await request(body);await refresh();setNotice(result.status==="accepted"?"Worker requested. The queue will update as it finishes.":"Saved.");}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
   function choose(t:Task){setSelected(t.id);setChecks([]);setWhen("");}
@@ -37,7 +38,7 @@ export default function AgentDashboard(){
         <div className="rounded-2xl border border-[#d2ddd1] bg-white px-5 py-4 text-sm"><span className="block text-xs uppercase tracking-widest text-[#758779]">Publication</span><strong className="mt-1 block">{data?.capabilities.publishingEnabled?"Owner approval required":"Disabled until owner activation"}</strong><span className="mt-1 block text-[#63766b]">No agent can approve its own work.</span></div>
       </div>
       {!data?<div className="mx-auto mt-12 grid max-w-lg gap-5 rounded-3xl border border-[#d2ddd1] bg-white p-6 sm:p-8">
-        <OwnerSignIn onReady={refresh}/>
+        <OwnerSignIn onReady={signedIn}/>
         <details className="border-t border-[#dce3d6] pt-4"><summary className="cursor-pointer text-sm text-[#60786a]">Advanced: owner access token</summary><form className="mt-4 grid gap-4" onSubmit={e=>{e.preventDefault();void refresh();}}>{label("Owner access token",<input type="password" autoComplete="off" className={field} value={token} onChange={e=>setToken(e.target.value)}/>)}<button className={button}>Open workspace</button></form></details>
       </div>:<>
       <div className="mt-4 flex justify-end"><OwnerSignOut/></div>

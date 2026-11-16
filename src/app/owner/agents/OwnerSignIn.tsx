@@ -1,47 +1,60 @@
 "use client";
-import { useEffect,useState } from "react";
+import { useEffect,useRef,useState } from "react";
+import { AuthAttemptGuard,authFailure,type AuthAction } from "@/lib/owner-auth";
 const field="w-full rounded-xl border border-[#c8d5cd] bg-white px-3 py-3 text-base text-[#15372e]";
 const button="rounded-full bg-[#173e38] px-5 py-3 text-sm font-semibold text-white disabled:opacity-40";
-export function OwnerSignIn({onReady}:{onReady:()=>void}){
+export function OwnerSignIn({onReady}:{onReady:()=>void|Promise<void>}){
   const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [confirm,setConfirm]=useState("");
   const [invite,setInvite]=useState("");const [reset,setReset]=useState(false);const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
+  const guard=useRef<AuthAttemptGuard>();
+  if(!guard.current){let storage:Storage|undefined;try{if(typeof window!=="undefined")storage=window.sessionStorage;}catch{}guard.current=new AuthAttemptGuard(storage);}
+  const callback=useRef<Promise<Awaited<ReturnType<typeof import("@netlify/identity")["handleAuthCallback"]>>>>();
+  const [initializing,setInitializing]=useState(true);const [,tick]=useState(0);
+  useEffect(()=>{const id=setInterval(()=>tick(n=>n+1),1000);return()=>clearInterval(id);},[]);
   useEffect(()=>{
     let live=true;
-    void import("@netlify/identity").then(async auth=>{
-      const result=await auth.handleAuthCallback();if(!live)return;
+    callback.current??=import("@netlify/identity").then(auth=>guard.current!.run("password",()=>auth.handleAuthCallback()));
+    void callback.current.then(async result=>{
+      if(!live)return;
+      const auth=await import("@netlify/identity");
       if(result?.type==="invite" && result.token){setInvite(result.token);return;}
       if(result?.type==="recovery"){setReset(true);return;}
-      if(await auth.getUser())onReady();
-    }).catch(()=>{});
+      if(await auth.getUser())await onReady();
+    }).catch(e=>{if(live)setMessage(authFailure(e,"password"));}).finally(()=>{if(live)setInitializing(false);});
     return()=>{live=false;};
   },[onReady]);
+  const operation:AuthAction=invite||reset?"password":"signin";
+  const wait=guard.current.remaining(operation);const recoveryWait=guard.current.remaining("recovery");
   async function submit(event:React.FormEvent){
-    event.preventDefault();setBusy(true);setMessage("");
+    event.preventDefault();if(busy||initializing||wait)return;setBusy(true);setMessage("");
     try{
       const auth=await import("@netlify/identity");
+      await guard.current!.run(operation,async()=>{
       if(invite||reset){
         if(password!==confirm)throw new Error("Passwords must match.");
         if(invite)await auth.acceptInvite(invite,password);else await auth.updateUser({password});
         setInvite("");setReset(false);
-      }else await auth.login(email,password);
-      setPassword("");setConfirm("");onReady();
-    }catch(e){setMessage((e as Error).message||"Sign-in failed. Use the invited owner email.");}
+      }else await auth.login(email.trim().toLowerCase(),password);
+      });
+      setPassword("");setConfirm("");await onReady();
+    }catch(e){setMessage(authFailure(e,operation));}
     finally{setBusy(false);}
   }
   async function recover(){
-    if(!email){setMessage("Enter your invited email first.");return;}
+    if(busy||initializing||recoveryWait)return;
+    if(!email.trim()){setMessage("Enter your invited email first.");return;}
     setBusy(true);
-    try{const auth=await import("@netlify/identity");await auth.requestPasswordRecovery(email);setMessage("Check your email for the password recovery link.");}
-    catch(e){setMessage((e as Error).message||"Recovery request failed.");}finally{setBusy(false);}
+    try{const auth=await import("@netlify/identity");await guard.current!.run("recovery",()=>auth.requestPasswordRecovery(email.trim().toLowerCase()));setMessage("Reset email requested. Check Inbox, Updates and Spam for an email from no-reply@netlify.com titled Reset your password for this website. Open the newest link in this browser.");}
+    catch(e){setMessage(authFailure(e,"recovery"));}finally{setBusy(false);}
   }
   return <form onSubmit={e=>void submit(e)} className="grid gap-4">
     <h2 className="font-serif text-2xl">{invite?"Accept your owner invitation":reset?"Set a new password":"Owner sign-in"}</h2>
-    <p className="text-sm text-[#60786a]">Invite-only access to APN’s private agent workspace. Sign in with the email invited by the owner.</p>
+    <p className="text-sm text-[#60786a]">Use your invited email and your APN password. This is separate from your Netlify or Google password. First visit? Open the APN invitation email to create it.</p>
     {!invite&&!reset&&<label className="grid gap-2 text-sm font-semibold">Email<input type="email" autoComplete="username" required className={field} value={email} onChange={e=>setEmail(e.target.value)}/></label>}
     <label className="grid gap-2 text-sm font-semibold">{invite||reset?"Create a password":"Password"}<input type="password" required minLength={invite||reset?12:1} autoComplete={invite||reset?"new-password":"current-password"} className={field} value={password} onChange={e=>setPassword(e.target.value)}/></label>
     {(invite||reset)&&<label className="grid gap-2 text-sm font-semibold">Confirm password<input type="password" required autoComplete="new-password" className={field} value={confirm} onChange={e=>setConfirm(e.target.value)}/></label>}
-    <button className={button} disabled={busy}>{busy?"Please wait…":invite?"Accept invitation":reset?"Save password":"Sign in"}</button>
-    {!invite&&!reset&&<button type="button" className="text-sm font-semibold underline" disabled={busy} onClick={()=>void recover()}>Forgot password?</button>}
+    <button className={button} disabled={busy||initializing||wait>0}>{initializing?"Checking sign-in…":busy?"Please wait…":wait?`Pause ${wait}s`:invite?"Accept invitation":reset?"Save password":"Sign in"}</button>
+    {!invite&&!reset&&<button type="button" className="text-sm font-semibold underline" disabled={busy||initializing||recoveryWait>0} onClick={()=>void recover()}>{recoveryWait?`Reset email requested · wait ${Math.ceil(recoveryWait/60)} min before another request`:"Forgot password?"}</button>}
     {message&&<p role="status" className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{message}</p>}
   </form>;
 }

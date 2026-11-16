@@ -220,3 +220,20 @@ an empty workspace. The import schema rejects approvals, published tasks and
 active worker leases. Disable it immediately after migration. It exists to move
 the tested local draft, dated observations and cost history to the hosted desk
 without publishing that private state in GitHub.
+
+### Sign-in troubleshooting
+
+APN's Identity password is separate from the owner's Netlify or Google password.
+The sign-in form identifies reset-email throttling separately from rejected
+credentials. A single in-flight operation prevents duplicate taps; deadlines in
+session storage contain only timestamps. Reset-email requests have a 15-minute
+client cooldown, while throttled sign-in attempts have a 60-second retry pause.
+These are client pauses, not a promise that Netlify's limits have reset. Reloading
+the same tab does not clear them. No password request is retried automatically.
+
+Open the newest invitation/recovery email in the intended browser and complete
+its password form. Callback errors are displayed rather than silently discarded;
+the dashboard waits for callbacks before checking workspace access. Signed-out
+page loads do not show a misleading owner-access warning. A failed workspace
+check after successful authentication is shown as an access error separately
+from the password form's response. Anonymous API requests still receive401.
