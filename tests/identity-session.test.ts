@@ -75,7 +75,14 @@ test("owner request verification rejects forged, unconfirmed and other accounts"
 test("Identity outages fail closed without reporting a rejected password or discarding the session",async()=>{
  const {verifyOwnerRequest}=await import("../server/agents/owner-identity");const request=new Request("https://www.apostolicpowernetwork.com/api/apn-agents",{headers:{cookie:"nf_jwt=a.b.c"}});
  const limited=await verifyOwnerRequest(request,"owner@example.com",(async()=>new Response(null,{status:429,headers:{"retry-after":"120"}})) as typeof fetch);
- assert.deepEqual(limited,{status:"unavailable",owner:false,retryAfter:"120"});
+ assert.deepEqual(limited,{status:"unavailable",owner:false,retryAfter:"120",reason:"identity_unavailable"});
  const failed=await verifyOwnerRequest(request,"owner@example.com",(async()=>{throw new Error("network unavailable");}) as typeof fetch);
- assert.deepEqual(failed,{status:"unavailable",owner:false,retryAfter:"60"});
+ assert.deepEqual(failed,{status:"unavailable",owner:false,retryAfter:"60",reason:"identity_unavailable"});
+});
+
+
+test("platform cookie context is verified when the request header omits the cookie",async()=>{
+ const {verifyOwnerRequest}=await import("../server/agents/owner-identity");let calls=0;
+ const result=await verifyOwnerRequest(new Request("https://www.apostolicpowernetwork.com/api/apn-agents"),"owner@example.com",(async(_url,options)=>{calls++;assert.equal(new Headers(options?.headers).get("authorization"),"Bearer runtime.payload.signature");return Response.json({id:"owner",email:"owner@example.com",confirmed_at:"2026-01-01T00:00:00Z"});}) as typeof fetch,"runtime.payload.signature");
+ assert.equal(calls,1);assert.equal(result.owner,true);
 });
