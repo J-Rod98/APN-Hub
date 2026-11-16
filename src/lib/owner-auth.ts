@@ -32,3 +32,20 @@ export function authFailure(error:unknown,action:AuthAction){
   if(action==="signin"&&/invalid|no user found|password/i.test(message))return "Email or APN password was not accepted. Use your invited email and the separate password created through APN’s invitation or recovery email.";
   return message;
 }
+
+export function invitationFailure(error:unknown){
+  const message=error instanceof Error?error.message:"";
+  return /user not found|token.*(?:invalid|expired)|confirmation.*expired/i.test(message)
+    ? "This invitation link was already used or has expired. Your account may already exist. Return to sign-in, or request a password-reset email instead of accepting this invitation again."
+    : authFailure(error,"password");
+}
+// Identity 2.0.1's acceptInvite creates the user but omits the nf_jwt cookie.
+// Complete the explicit sign-in once using the email returned by Identity.
+// Switch out of invite mode before login: an accepted token cannot be replayed
+// even when the following login request fails. No credentials are persisted.
+export async function completeOwnerInvitation<T extends {email?:string}>(auth:{acceptInvite:(token:string,password:string)=>Promise<T>;login:(email:string,password:string)=>Promise<T>},token:string,password:string,onAccepted:(email:string)=>void){
+  const user=await auth.acceptInvite(token,password);
+  onAccepted(user.email||"");
+  if(!user.email)throw new Error("Invitation accepted. Return to sign-in using your invited email.");
+  return auth.login(user.email,password);
+}

@@ -237,3 +237,15 @@ the dashboard waits for callbacks before checking workspace access. Signed-out
 page loads do not show a misleading owner-access warning. A failed workspace
 check after successful authentication is shown as an access error separately
 from the password form's response. Anonymous API requests still receive401.
+
+For an already-used or expired invitation, choose **Return to sign-in**. An
+invitation email is distinct from a password-recovery email; reopening a consumed
+invite can return `User not found` even while the account exists. Never delete
+and recreate the owner to repair this error.
+
+The current Identity SDK (2.0.1) omits the browser session cookie in its invite
+acceptance method. APN completes a single explicit login using the returned
+account email after successful acceptance, then checks the owner API. The form
+leaves invitation mode before this login so an accepted link is not replayed if
+the network fails. The integration test exercises the actual SDK with a wholly
+mocked Identity service through browser cookies and server owner verification.

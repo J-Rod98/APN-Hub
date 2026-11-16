@@ -12,7 +12,7 @@
     "check:launch": "node scripts/verify-launch.mjs",
     "agents:run": "tsx scripts/agents-run.ts",
     "agents:desk": "tsx scripts/agents-local.ts",
-    "test:agents": "tsx --test tests/agents.test.ts"
+    "test:agents": "tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@formspree/react": "^3.0.0",
