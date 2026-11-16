@@ -53,3 +53,29 @@ test("a failed login after acceptance does not leave the invitation available fo
  await assert.rejects(()=>completeOwnerInvitation({acceptInvite:async()=>({email:"fixture@example.com"}),login:async()=>{assert.equal(mode,"signin");throw new Error("network unavailable");}},"fixture","unused",()=>{mode="signin";}),/network unavailable/);
  assert.equal(mode,"signin");
 });
+
+test("owner API validates request cookies without SDK runtime globals",async()=>{
+ const {verifyOwnerRequest}=await import("../server/agents/owner-identity");let calls=0;
+ const verified=await verifyOwnerRequest(new Request("https://www.apostolicpowernetwork.com/api/apn-agents",{headers:{cookie:"other=value; nf_jwt=fixture.payload.signature"}}),"owner@example.com",(async(url,options)=>{
+  calls++;assert.equal(String(url),"https://www.apostolicpowernetwork.com/.netlify/identity/user");assert.equal(options?.redirect,"error");assert.equal(options?.cache,"no-store");assert.equal(new Headers(options?.headers).get("authorization"),"Bearer fixture.payload.signature");
+  return Response.json({id:"owner",email:"owner@example.com",confirmed_at:"2026-01-01T00:00:00Z"});
+ }) as typeof fetch);
+ assert.equal(calls,1);assert.deepEqual(verified,{status:"verified",owner:true});
+});
+test("owner request verification rejects forged, unconfirmed and other accounts",async()=>{
+ const {verifyOwnerRequest}=await import("../server/agents/owner-identity");let calls=0;
+ const request=(cookie?:string)=>new Request("https://www.apostolicpowernetwork.com/api/apn-agents",{headers:{...(cookie?{cookie}:{}),"x-nf-client-connection-user":JSON.stringify({id:"forged",email:"owner@example.com"})}});
+ const fail=(async()=>{calls++;return new Response(null,{status:401});}) as typeof fetch;
+ for(const cookie of [undefined,"nf_jwt=forged","nf_jwt=%broken","nf_jwt=a.b.c; nf_jwt=x.y.z"])assert.equal((await verifyOwnerRequest(request(cookie),"owner@example.com",fail)).owner,false);
+ assert.equal(calls,0);assert.equal((await verifyOwnerRequest(request("nf_jwt=a.b.c"),"owner@example.com",fail)).status,"denied");
+ for(const user of [{id:"owner",email:"owner@example.com",confirmed_at:null},{id:"other",email:"other@example.com",confirmed_at:"2026-01-01T00:00:00Z"}]){
+  assert.equal((await verifyOwnerRequest(request("nf_jwt=a.b.c"),"owner@example.com",(async()=>Response.json(user)) as typeof fetch)).owner,false);
+ }
+});
+test("Identity outages fail closed without reporting a rejected password or discarding the session",async()=>{
+ const {verifyOwnerRequest}=await import("../server/agents/owner-identity");const request=new Request("https://www.apostolicpowernetwork.com/api/apn-agents",{headers:{cookie:"nf_jwt=a.b.c"}});
+ const limited=await verifyOwnerRequest(request,"owner@example.com",(async()=>new Response(null,{status:429,headers:{"retry-after":"120"}})) as typeof fetch);
+ assert.deepEqual(limited,{status:"unavailable",owner:false,retryAfter:"120"});
+ const failed=await verifyOwnerRequest(request,"owner@example.com",(async()=>{throw new Error("network unavailable");}) as typeof fetch);
+ assert.deepEqual(failed,{status:"unavailable",owner:false,retryAfter:"60"});
+});

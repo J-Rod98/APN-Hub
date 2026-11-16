@@ -249,3 +249,15 @@ account email after successful acceptance, then checks the owner API. The form
 leaves invitation mode before this login so an accepted link is not replayed if
 the network fails. The integration test exercises the actual SDK with a wholly
 mocked Identity service through browser cookies and server owner verification.
+
+### Owner session verification
+
+The owner API verifies the `nf_jwt` cookie from its actual incoming request with
+APN's fixed HTTPS Identity `/user` endpoint. It does not rely on optional SDK
+runtime globals or fall back to decoded JWT claims. Identity must return the
+confirmed email and ID, and the email must match the server owner allowlist.
+Duplicate or malformed cookies and unverified/non-owner accounts fail closed.
+Redirects are refused so session tokens cannot be forwarded to another host.
+Identity outages return503 with a retry hint and retain the browser session;
+they are not presented as an incorrect password. Existing bearer integrations
+and same-origin checks on cookie-authenticated writes remain enforced.

@@ -1,9 +1,10 @@
-import { getUser } from "@netlify/identity";
-import { identityOwner } from "../../server/agents/owner-identity";
+import { verifyOwnerRequest,type OwnerVerification } from "../../server/agents/owner-identity";
+import { authenticated } from "../../server/agents/policy";
 import { api } from "../../server/agents/api";
 export default async (request:Request)=>{
-  let owner=false;
-  if(process.env.APN_IDENTITY_OWNER_EMAIL){try{owner=identityOwner(await getUser());}catch{owner=false;}}
+  const verified:OwnerVerification=authenticated(request)?{owner:false,status:"absent"}:await verifyOwnerRequest(request);
+  if(verified.status==="unavailable")return Response.json({error:"Your session could not be verified because the sign-in service is temporarily unavailable. Wait and refresh this page; your session has been retained."},{status:503,headers:{"cache-control":"no-store","retry-after":verified.retryAfter||"60"}});
+  const owner=verified.owner;
   return api(request,undefined,async mode=>{
   const origin=process.env.DEPLOY_PRIME_URL || process.env.URL;
   if(!origin)throw new Error("Netlify deployment URL is unavailable.");
