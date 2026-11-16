@@ -5,7 +5,8 @@
   publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20"
+  # Current Identity, Functions and OpenAI SDKs require Node >=22.12.
+  NODE_VERSION = "22"
   # This release is a fully static Next export. Skip Netlify's server-side
   # Next runtime and publish the already-generated `out/` directory instead.
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
