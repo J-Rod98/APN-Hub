@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(path, "utf8");
-const site = "https://apn-hub.netlify.app";
+const site = "https://www.apostolicpowernetwork.com";
 
 const [
   robots,
@@ -28,6 +28,7 @@ const [
 
 assert.match(robots, /User-Agent: \*/);
 assert.match(robots, /Allow: \//);
+assert.doesNotMatch(sitemap, /\/owner\//);
 assert.match(robots, new RegExp(`${site}/sitemap\\.xml`));
 assert.match(sitemap, new RegExp(`${site}/preaching/`));
 assert.match(sitemap, new RegExp(`${site}/events/`));

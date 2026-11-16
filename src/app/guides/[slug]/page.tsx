@@ -39,7 +39,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="container-app py-10 sm:py-12">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c") }} />
       <Link href="/guides/" className="mb-7 inline-block text-sm font-semibold text-sanctuary-muted hover:text-sanctuary-link">
         ← Back to APN Guides
       </Link>
@@ -89,7 +89,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         {guide.references && (
           <section className="mt-10">
             <h2 className="font-serif text-2xl font-medium text-sanctuary-ink">{guide.referencesHeading ?? "Official product information"}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-sanctuary-muted">Features, terms, and privacy controls change. Review current provider documentation before making a purchasing or data-handling decision.</p>
+            <p className="mt-3 text-sm leading-relaxed text-sanctuary-muted">Review the original sources and confirm current details before relying on time-sensitive information.</p>
             <ul className="mt-4 grid gap-2 text-sm">
               {guide.references.map((reference) => (
                 <li key={reference.href}><a href={reference.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-sanctuary-link hover:underline">{reference.label} ↗</a></li>

@@ -1,3 +1,4 @@
+import approvedGuides from "../content/approved-guides.json";
 // APN Guides — reviewed, practical articles for Apostolic pastors and churches.
 // Launch content is intentionally stored in code so every article is readable,
 // searchable, and reviewed before publishing.
@@ -259,7 +260,7 @@ const churchPromptGroups: { heading: string; prompts: string[] }[] = [
   },
 ];
 
-export const guides: Guide[] = [
+const curatedGuides: Guide[] = [
   standard({
     slug: "can-christians-use-ai",
     eyebrow: "Faith & Technology",
@@ -1809,6 +1810,8 @@ export const guides: Guide[] = [
     references: [{ label: "North American Youth Congress 2027", href: "https://northamericanyouthcongress.com/" }, { label: "Official NAYC FAQ", href: "https://northamericanyouthcongress.com/faqs/" }],
   }),
 ];
+
+export const guides: Guide[] = [...curatedGuides, ...(approvedGuides as Guide[])];
 
 export function getGuideBySlug(slug: string) {
   return guides.find((guide) => guide.slug === slug) ?? null;

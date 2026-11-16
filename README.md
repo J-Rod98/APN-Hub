@@ -3,9 +3,10 @@
 A static, curated discovery site for the Apostolic movement: sermons, podcasts,
 events, and resources from their original sources.
 
-This first release deliberately has no database, authentication, or admin
-panel. Visitors can browse the published catalogue, submit a content suggestion,
-and open or play material from its verified source.
+Public pages remain a static, curated catalogue. Visitors can browse published
+content, submit a suggestion, and open or play material from its verified source.
+The optional APN Agent Desk adds a separate private editorial queue and owner
+approval API; public browsing does not require authentication or a database.
 
 ## Run locally
 
@@ -74,3 +75,16 @@ When APN has a reliable moderation workflow and enough incoming content to
 justify it, a database can be added for submissions, editorial review, events,
 and a private admin area. That is intentionally deferred rather than required
 for the initial public launch.
+
+
+## APN Agent Desk
+
+Two cooperating server-side specialists turn real observations into prioritized
+tasks and source-backed drafts. `/owner/agents/` is the owner review dashboard.
+Publishing and schedules are disabled until explicitly configured and approved.
+Existing catalogue content and intake forms remain unchanged.
+
+Read [the agent runbook](docs/agents-runbook.md) for local commands, deployment,
+source rights, doctrine review, costs, Search Console access, and the adapter for
+the existing APN Clipper/scheduler. Private audit data and runtime state are
+intentionally ignored by git because this repository is public.

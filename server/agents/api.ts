@@ -1,0 +1,80 @@
+import { importUnapprovedState } from "./import-state";
+import { sameOriginMutation } from "./owner-identity";
+import { z } from "zod";
+import { guides } from "../../src/lib/guides";
+import { authenticated,action,approve,digest,now,assertApproved,validateDraft,recheckTask } from "./policy";
+import { sourceSchema,taskProposalSchema,type Task,type State } from "./types";
+import { getStateStore,type StateStore } from "./store";
+const json=(v:unknown,status=200)=>new Response(JSON.stringify(v),{status,headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
+export function capabilities(){return {openai:!!process.env.OPENAI_API_KEY,searchConsole:["GSC_CLIENT_ID","GSC_CLIENT_SECRET","GSC_REFRESH_TOKEN"].every(k=>!!process.env[k]),netlifyAnalytics:"Owner-imported dated snapshots; no live API configured",publishingEnabled:process.env.APN_PUBLISH_ENABLED==="true",schedulesEnabled:process.env.APN_AGENTS_ENABLED==="true",github:!!process.env.APN_GITHUB_TOKEN,clipper:"Existing publisher bridge; media processing still uses its current host",dailyBudgetUsd:Number(process.env.APN_DAILY_BUDGET_USD||1)};}
+const paths=["/","/about/","/preaching/","/podcast/","/events/","/materials/","/guides/",...guides.map(g=>`/guides/${g.slug}/`)];
+export async function api(request:Request,store?:StateStore,trigger?:(mode:string)=>Promise<void>,identityVerified=false):Promise<Response>{
+  const bearer=authenticated(request);
+  if(!bearer && !identityVerified)return json({error:"Owner access required."},401);
+  if(!bearer && !sameOriginMutation(request))return json({error:"Same-origin owner request required."},403);
+  store ??= getStateStore();
+  try{
+    if(request.method==="GET"){
+      const s=await store.read();
+      if(new URL(request.url).searchParams.get("view")==="clipper")return json({jobs:s.tasks.filter(t=>t.kind==="clip" && t.status==="approved" && Date.parse(t.approval!.scheduledAt)<=Date.now()).map(t=>{assertApproved(t,s);const src=s.sources.find(src=>t.sourceIds.includes(src.id) && src.clipKey && src.manifestHash);if(!src)throw new Error("Clip task needs a source with exact manifest hash.");return {id:t.id,hash:t.approval!.hash,clipKey:src.clipKey,manifestHash:src.manifestHash,scheduledAt:t.approval!.scheduledAt,copyrightAcknowledged:!src.copyrightFlag || t.approval!.checklist.includes("copyright"),caption:`${t.draft!.title}\n\n${t.draft!.description}\n\nSource: ${src.url}`};})});
+      return json({state:s,capabilities:capabilities()});
+    }
+    if(request.method!=="POST")return json({error:"Method not allowed"},405);
+    const text=await request.text();if(Buffer.byteLength(text)>100000)return json({error:"Request too large"},413);
+    const b=JSON.parse(text) as Record<string,unknown>;const op=z.string().parse(b.action);
+    if(op==="run") {if(process.env.CONTEXT && process.env.APN_AGENTS_ENABLED!=="true")throw new Error("Enable the reviewed server agents before requesting a run.");const mode=z.enum(["all","insights","editor","publish"]).parse(b.mode||"all");if(!trigger)throw new Error("Worker trigger is unavailable.");await trigger(mode);return json({status:"accepted"},202);}
+    const result=await store.update(s=>{
+      if(s.jobs.worker && Date.parse(s.jobs.worker.until)>Date.now())throw new Error("Worker is running; retry after it finishes.");
+      if(op==="initial-import"){
+        if(process.env.APN_INITIAL_IMPORT_ENABLED!=="true")throw new Error("Initial import is disabled.");
+        return importUnapprovedState(s,b.state);
+      }
+      if(op==="source"){
+        const data=sourceSchema.parse(b.source);if(new URL(data.url).protocol!=="https:" || new URL(data.url).username || new URL(data.url).password)throw new Error("Sources need an HTTPS attribution URL.");
+        if(data.rights!=="unknown" && data.rightsEvidence.trim().length<15)throw new Error("Describe the actual rights/authorization evidence.");
+        if(Date.parse(data.verifiedAt)>Date.now()+60000)throw new Error("Source verification cannot be in the future.");
+        const hash=digest(data);const src={...data,id:`source-${digest([data.url,hash,data.rights,data.rightsEvidence]).slice(0,24)}`,hash};
+        if(!s.sources.some(x=>x.id===src.id))s.sources.push(src);action(s,"owner","source-added",src.id,data.rights);return src;
+      }
+      if(op==="snapshot"){
+        const data=z.object({periodStart:z.string().date(),periodEnd:z.string().date(),observedAt:z.string().datetime(),pageviews:z.number().int().nonnegative(),uniqueVisitors:z.number().int().nonnegative(),rootNotFound:z.number().int().nonnegative(),notes:z.string().max(5000)}).parse(b.snapshot);
+        if(Date.parse(data.periodStart)>Date.parse(data.periodEnd)||Date.parse(data.observedAt)>Date.now()+60000)throw new Error("Snapshot dates are invalid.");
+        s.reports.push({id:`netlify-import-${digest(data).slice(0,12)}`,at:now(),start:data.periodStart,end:data.periodEnd,summary:"Owner-imported Netlify Analytics snapshot; automated traffic may be included.",uncertainties:["Imported snapshot; no claim of live API access or human traffic."],taskIds:[],evidence:[{id:`netlify-${digest(data).slice(0,12)}`,type:"netlify-owner-snapshot",observedAt:data.observedAt,url:"https://app.netlify.com/projects/apn-hub/analytics-and-metrics/analytics",data}]});action(s,"owner","netlify-imported",data.observedAt);return {ok:true};
+      }
+      if(op==="task"){
+        const p=taskProposalSchema.parse(b.task);const sourceIds=z.array(z.string()).parse(b.sourceIds);
+        if(!paths.includes(p.targetPath))throw new Error("Choose an existing APN target path.");
+        if(sourceIds.some(id=>!s.sources.some(src=>src.id===id)))throw new Error("Unknown source.");
+        if(p.kind==="metadata" && s.tasks.some(t=>t.kind==="metadata" && t.targetPath===p.targetPath && !["published","rejected"].includes(t.status)))throw new Error("An active metadata task already exists for that page. Resolve it before creating a replacement.");
+        const t:Task={...p,id:digest([p.kind,p.targetPath,p.title]).slice(0,24),status:"queued",sourceIds,createdAt:now(),updatedAt:now(),attempts:0};
+        if(s.tasks.some(x=>x.id===t.id))throw new Error("This task already exists.");s.tasks.push(t);action(s,"owner","task-created",t.id);return t;
+      }
+      if(op==="retry-report"){const id=z.string().parse(b.id);const report=s.reports.find(r=>r.id===id);if(!report?.failure)throw new Error("Only a failed report can be retried.");report.id=`${id}-failed-${Date.now()}`;action(s,"owner","insights-retry-requested",id);return {ok:true};}
+      const id=z.string().parse(b.id);const t=s.tasks.find(t=>t.id===id);if(!t)throw new Error("Task not found.");
+      if(op==="recheck")return recheckTask(s,id,paths,guides);
+      if(op==="approve"){
+        const checks=validateDraft(t,t.draft!,s.sources.filter(src=>t.sourceIds.includes(src.id)),paths,guides);if(checks.length)throw new Error(checks.join(" "));
+        return approve(s,id,z.string().parse(b.hash),z.array(z.string()).parse(b.checklist),z.string().datetime().parse(b.scheduledAt));
+      }
+      if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;action(s,"owner","rejected",id);return t;}
+      if(op==="attach"){
+        if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be revised now.");
+        const ids=z.array(z.string()).min(1).parse(b.sourceIds);if(ids.some(id=>!s.sources.some(x=>x.id===id)))throw new Error("Unknown source.");t.sourceIds=ids;t.status="queued";delete t.approval;delete t.draft;delete t.draftHash;delete t.error;action(s,"owner","sources-attached",id,"Any previous draft approval was invalidated.");return t;
+      }
+      if(op==="retry"){
+        if(!["failed","blocked"].includes(t.status))throw new Error("Only failed/blocked tasks can be retried.");
+        if(t.approval)throw new Error("Publication outcome may be uncertain. Use reconcile, never blindly regenerate an approved draft.");
+        if(t.attempts>=3)throw new Error("Maximum attempts reached; create a reviewed replacement task.");t.status="queued";delete t.error;action(s,"owner","retry-requested",id);return t;
+      }
+      if(op==="reconcile"){
+        if(t.status!=="failed" || !t.approval)throw new Error("No approved failed publication to reconcile.");assertApproved(t,s);t.status="approved";action(s,"owner","reconciliation-requested",id,"Publisher will check durable approval hash before writing.");return t;
+      }
+      if(op==="clipper-receipt"){
+        if(t.kind==="clip" && t.status==="handed_off" && t.approval?.hash===b.hash && t.publication?.receipt===b.receipt)return t;
+        if(t.kind!=="clip"||t.status!=="approved")throw new Error("Clip is not owner-approved.");assertApproved(t,s);
+        if(b.hash!==t.approval!.hash)throw new Error("Clip approval changed.");t.status="handed_off";t.publication={at:now(),receipt:z.string().max(300).parse(b.receipt)};action(s,"clipper-bridge","scheduled-by-existing-publisher",id);return t;
+      }
+      throw new Error("Unknown action.");
+    });return json(result);
+  }catch(e){return json({error:e instanceof Error?e.message:"Request failed"},400);}
+}

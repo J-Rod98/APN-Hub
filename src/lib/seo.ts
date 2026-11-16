@@ -1,3 +1,4 @@
+import metadataOverrides from "../content/metadata-overrides.json";
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://www.apostolicpowernetwork.com";
@@ -21,11 +22,13 @@ export function pageMetadata({
   image?: string | null;
   imageAlt?: string;
 }): Metadata {
+  const override = (metadataOverrides as Record<string, { title: string; description: string }>)[path];
+  if (override) { title = override.title; description = override.description; }
   const url = absoluteUrl(path);
   const socialImage = image ?? DEFAULT_SOCIAL_IMAGE;
 
   return {
-    title,
+    title: override ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     openGraph: {

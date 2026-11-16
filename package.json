@@ -9,13 +9,23 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "check:launch": "node scripts/verify-launch.mjs"
+    "check:launch": "node scripts/verify-launch.mjs",
+    "agents:run": "tsx scripts/agents-run.ts",
+    "agents:desk": "tsx scripts/agents-local.ts",
+    "test:agents": "tsx --test tests/agents.test.ts"
   },
   "dependencies": {
     "@formspree/react": "^3.0.0",
+    "@netlify/blobs": "^11.1.9",
+    "@netlify/functions": "^6.1.1",
+    "@netlify/identity": "^2.0.1",
+    "@next/env": "^14.2.35",
+    "@openai/agents": "^0.22.0",
     "next": "14.2.35",
+    "openai": "^7.57.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.16.10",
@@ -26,6 +36,7 @@
     "eslint-config-next": "14.2.35",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
+    "tsx": "^4.23.15",
     "typescript": "^5.6.2"
   }
 }

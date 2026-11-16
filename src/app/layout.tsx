@@ -1,6 +1,7 @@
+import { OwnerAuthRedirect } from "@/components/layout/OwnerAuthRedirect";
 // Root layout: global chrome (nav, footer, bottom nav) + metadata.
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Instrument_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -9,20 +10,18 @@ import { DEFAULT_SOCIAL_IMAGE, SITE_URL } from "@/lib/seo";
 
 // Sanctuary Light type pairing: Newsreader (editorial headings) + Instrument
 // Sans (body/UI). Exposed as CSS vars consumed by tailwind.config.ts.
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/Newsreader.ttf", weight: "400 600", style: "normal" },
+    { path: "./fonts/Newsreader-Italic.ttf", weight: "400 600", style: "italic" },
+  ],
   variable: "--font-newsreader",
   display: "swap",
-  // Next has no fallback metrics for Newsreader; skip the size-adjust step
-  // rather than emit a build warning on every compile.
   adjustFontFallback: false,
 });
-
-const instrument = Instrument_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const instrument = localFont({
+  src: "./fonts/InstrumentSans.ttf",
+  weight: "400 700",
   variable: "--font-instrument",
   display: "swap",
 });
@@ -63,6 +62,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${newsreader.variable} ${instrument.variable}`}>
       <body>
+        <OwnerAuthRedirect />
         <Navbar />
         <main className="min-h-[60vh] pb-20 md:pb-0">{children}</main>
         <Footer />

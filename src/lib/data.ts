@@ -1,3 +1,4 @@
+import approvedEvents from "../content/approved-events.json";
 // ============================================================================
 // APN Hub — static catalog access.
 // ----------------------------------------------------------------------------
@@ -14,7 +15,7 @@ import {
 import type { AppEvent, Material, PodcastEpisode, PreachingItem } from "./types";
 
 export function getEvents(): AppEvent[] {
-  return events;
+  return [...events, ...(approvedEvents as AppEvent[])];
 }
 
 export function getPreaching(): PreachingItem[] {
@@ -30,7 +31,7 @@ export function getMaterials(): Material[] {
 }
 
 export function getEventById(id: string): AppEvent | null {
-  return events.find((event) => event.id === id) ?? null;
+  return getEvents().find((event) => event.id === id) ?? null;
 }
 
 export function getPreachingById(id: string): PreachingItem | null {
