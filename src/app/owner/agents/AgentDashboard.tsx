@@ -2,7 +2,7 @@
 import ContentPlanPanel from "./ContentPlanPanel";
 import DiscoveryPanel from "./DiscoveryPanel";
 import { OwnerSignIn,OwnerSignOut } from "./OwnerSignIn";
-import { useCallback,useEffect,useState } from "react";
+import { useCallback,useEffect,useState,useRef } from "react";
 import type { State,Task,Report } from "../../../../server/agents/types";
 type Capabilities={openai:boolean;searchConsole:boolean;netlifyAnalytics:string;publishingEnabled:boolean;schedulesEnabled:boolean;github:boolean;clipper:string;dailyBudgetUsd:number};
 type Payload={state:State;capabilities:Capabilities};
@@ -18,6 +18,7 @@ function ReportMetrics({report}:{report:Report}){
 }
 
 export default function AgentDashboard(){
+  const reviewPane=useRef<HTMLDivElement>(null);
   const [token,setToken]=useState("");const [data,setData]=useState<Payload|null>(null);const [tab,setTab]=useState("Content plan");const [error,setError]=useState("");const [notice,setNotice]=useState("");const [busy,setBusy]=useState(false);const [selected,setSelected]=useState<string|null>(null);const [checks,setChecks]=useState<string[]>([]);const [when,setWhen]=useState("");
   const request=useCallback(async(body?:unknown)=>{
     const r=await fetch("/api/apn-agents",{method:body?"POST":"GET",credentials:"same-origin",headers:{...(token?{authorization:`Bearer ${token}`} : {}),...(body?{"content-type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
@@ -29,6 +30,7 @@ export default function AgentDashboard(){
   useEffect(()=>{if(!data)return;const id=setInterval(()=>{void refresh();},10000);return()=>clearInterval(id);},[data,refresh]);
   async function send(body:unknown){setBusy(true);setError("");setNotice("");try{const result=await request(body);await refresh();setNotice(result.status==="accepted"?"Worker requested. The queue will update as it finishes.":"Saved.");}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
   function choose(t:Task){setSelected(t.id);setChecks([]);setWhen("");}
+  useEffect(()=>{if(tab==="Queue" && selected)reviewPane.current?.scrollIntoView({block:"start"});},[tab,selected]);
   const task=data?.state.tasks.find(t=>t.id===selected);
   const copyrightRequired=!!task && !!data?.state.sources.some(s=>task.sourceIds.includes(s.id) && s.copyrightFlag);
   const requiredChecks=["facts","rights","doctrine","originality",...(copyrightRequired?["copyright"]:[]),...(task?.discovery?["source"]:[]),...(task?.discovery?.embedMode==="embed"?["embed"]:[])];
@@ -53,8 +55,8 @@ export default function AgentDashboard(){
       {tab==="Content plan" && <ContentPlanPanel tasks={data.state.tasks} openTask={t=>{choose(t);setTab("Queue");}}/>}
       {tab==="Discovery" && <DiscoveryPanel state={data.state.discovery} busy={busy} send={send} openTask={id=>{const t=data.state.tasks.find(t=>t.id===id);if(t){choose(t);setTab("Queue");}}}/>}
       {tab==="Queue" && <div className="mt-6 grid items-start gap-6 lg:grid-cols-[330px_1fr]">
-        <div className="grid gap-3">{!data.state.tasks.length && <p className="p-6">Run the workflow to collect evidence and create tasks.</p>}{data.state.tasks.map(t=><button key={t.id} onClick={()=>choose(t)} className={`rounded-2xl border p-5 text-left ${selected===t.id?"border-[#376954] bg-[#e4eee2]":"border-[#d2ddd1] bg-white"}`}><span className="text-[11px] font-bold uppercase tracking-wider text-[#6e7e68]">{t.priority} / {nice(t.kind)}</span><strong className="mt-2 block text-base">{t.title}</strong><span className="mt-3 inline-block rounded-full bg-[#edf1e8] px-3 py-1 text-xs">{nice(t.status)}</span></button>)}</div>
-        <div className="min-h-72 rounded-3xl border border-[#d2ddd1] bg-white p-6 sm:p-8">{!task?<div className="py-12"><p className="font-serif text-3xl">A clear view before a decision.</p><p className="mt-3 text-[#63766b]">Select a task to review its evidence, source rights and draft.</p></div>:<>
+        <div className="grid max-h-96 gap-3 overflow-y-auto pr-1 lg:max-h-[80vh]">{!data.state.tasks.length && <p className="p-6">Run the workflow to collect evidence and create tasks.</p>}{data.state.tasks.map(t=><button key={t.id} onClick={()=>choose(t)} className={`rounded-2xl border p-5 text-left ${selected===t.id?"border-[#376954] bg-[#e4eee2]":"border-[#d2ddd1] bg-white"}`}><span className="text-[11px] font-bold uppercase tracking-wider text-[#6e7e68]">{t.priority} / {nice(t.kind)}</span><strong className="mt-2 block text-base">{t.title}</strong><span className="mt-3 inline-block rounded-full bg-[#edf1e8] px-3 py-1 text-xs">{nice(t.status)}</span></button>)}</div>
+        <div ref={reviewPane} className="min-h-72 scroll-mt-28 rounded-3xl border border-[#d2ddd1] bg-white p-6 sm:p-8">{!task?<div className="py-12"><p className="font-serif text-3xl">A clear view before a decision.</p><p className="mt-3 text-[#63766b]">Select a task to review its evidence, source rights and draft.</p></div>:<>
           <div className="text-xs uppercase tracking-widest text-[#758779]">{nice(task.kind)} · {task.targetPath}</div><h2 className="mt-3 font-serif text-3xl">{task.title}</h2><p className="mt-4 text-[#63766b]">{task.rationale}</p>
           {task.discovery&&<div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm"><strong>Discovered source · {task.discovery.embedMode==="embed"?"Original-player embed requested":"Link-only listing / brief"}</strong><a className="mt-2 block break-all underline" href={task.discovery.url} target="_blank" rel="noreferrer">Review original source ↗</a><ul className="mt-2 list-disc pl-5">{task.discovery.flags.map(f=><li key={f}>{f}</li>)}</ul>{["sermon","podcast","music"].includes(task.kind)&&["queued","review","blocked","failed","approved"].includes(task.status)&&<button className={secondary+" mt-3"} disabled={busy} onClick={()=>{setChecks([]);void send({action:"discovery-embedding",id:task.id,embedMode:task.discovery!.embedMode==="embed"?"link":"embed"});}}>{task.discovery.embedMode==="embed"?"Use a link-only listing":"Request original-provider player"}</button>}</div>}
           {task.error && <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">{task.error}</p>}
