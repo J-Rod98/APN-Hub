@@ -76,5 +76,29 @@
     "embedAllowed": false,
     "publishedAt": "2026-11-17T18:05:00.000Z",
     "approvalHash": "136804cc578626b224b387d7604f617bf7be2ec1bc5a2d1ba55533fa69ef9942"
+  },
+  {
+    "id": "all-things-apostolic-3d7fa3",
+    "kind": "podcast",
+    "title": "All Things Apostolic",
+    "description": "Explore the original podcast. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/show/5uWt14acJLQwFJ8KJ9848i",
+    "creator": null,
+    "sourcePublishedAt": null,
+    "embedAllowed": false,
+    "publishedAt": "2026-11-17T18:06:00.000Z",
+    "approvalHash": "589eb4e7923ea0ec84d45acbce732a6009376bd81e9cfa300685c684a4e13e28"
+  },
+  {
+    "id": "biblos-the-man-with-the-water-559da5",
+    "kind": "podcast",
+    "title": "BIBLOS | The Man With the Water",
+    "description": "Explore the original podcast. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/episode/12BBc7rvQYYNEj2zH8tKl2",
+    "creator": null,
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-17T18:06:00.000Z",
+    "approvalHash": "d9015950f66d9a4ea4f30cc87d28c574c9438830cba30a2c5773ed6d3a3367f9"
   }
 ]
