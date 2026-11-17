@@ -1,3 +1,4 @@
+import {recordingUrl} from "./public-references";
 import { createHash, timingSafeEqual } from "node:crypto";
 import type { Draft, Source, State, Task } from "./types";
 export const SITE="https://www.apostolicpowernetwork.com";
@@ -30,6 +31,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
   if(sources.some(s=>s.rights==="link_only")&&!["sermon","podcast","music","news","event"].includes(task.kind))errors.push("Reference-only sources do not authorize reproduction, teaching adaptation or clips.");
   if(task.discovery){
     if(!sources.some(s=>s.url===task.discovery!.url))errors.push("Discovery attribution differs from its evidence source.");
+    if(["sermon","podcast","music"].includes(task.kind)&&!recordingUrl(task.discovery.category,task.discovery.url))errors.push("A media listing must point to an individual original-provider recording, not a directory.");
     if(["sermon","podcast","music"].includes(task.kind)&&(d.quotes.length||d.sections.length||d.faqs.length))errors.push("Metadata-only listings cannot summarize unheard media, transcripts or lyrics.");
     if(task.kind==="news"){
       if(d.quotes.length)errors.push("News briefs must paraphrase and attribute; no copied quotations.");
@@ -49,7 +51,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
     else {
       if(!/^\d{4}-\d{2}-\d{2}$/.test(e.start) || !/^\d{4}-\d{2}-\d{2}$/.test(e.end) || !Number.isFinite(Date.parse(e.start)) || !Number.isFinite(Date.parse(e.end)) || e.end<e.start) errors.push("Event start and end must be verified ISO dates in order.");
       for(const field of [e.name,e.start,e.end,e.timezone,e.venue]) if(!field.trim() || !src.text.toLowerCase().includes(field.toLowerCase())) errors.push("Event name, dates, timezone and venue must all occur in the verified source text.");
-      if(task.discovery&&Date.parse(e.end+"T23:59:59Z")<Date.now())errors.push("This discovered event has ended; verify a future or ongoing organizer listing.");
+      if(task.discovery&&Date.parse(e.end+"T23:59:59Z")+14*3600000<Date.now())errors.push("This discovered event has ended; verify a future or ongoing organizer listing.");
       if(e.organizerUrl!==src.url) errors.push("Event organizer URL differs from the source.");
       if(Date.now()-Date.parse(src.verifiedAt)>7*86400000) errors.push("Re-verify event information within seven days of publication.");
     }

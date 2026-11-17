@@ -80,6 +80,7 @@ test("changing an approved media player choice withdraws approval",async()=>{
  const {store,t}=listing();approve(store.state,t.id,t.draftHash!,checks,new Date().toISOString());
  const r=await api(new Request("https://apn.example/api/apn-agents",{method:"POST",headers:{origin:"https://apn.example"},body:JSON.stringify({action:"discovery-embedding",id:t.id,embedMode:"embed"})}),store,undefined,true);
  assert.equal(r.status,200);assert.equal(store.state.tasks[0].status,"review");assert.equal(store.state.tasks[0].approval,undefined);assert.equal(store.state.tasks[0].discovery!.embedMode,"embed");
+ const reject=await api(new Request("https://apn.example/api/apn-agents",{method:"POST",headers:{origin:"https://apn.example"},body:JSON.stringify({action:"reject",id:t.id})}),store,undefined,true);assert.equal(reject.status,200);assert.equal(store.state.discovery!.candidates[0].status,"dismissed");
 });
 test("warm hosted invocations use newly injected Blobs credentials",async()=>{
  const {getStateStore}=await import("../server/agents/store");const {emptyState}=await import("../server/agents/types");const {setEnvironmentContext}=await import("@netlify/blobs");
@@ -95,4 +96,11 @@ test("OpenAI strict-schema rejection releases only a proven pre-generation reser
  try{process.env.OPENAI_API_KEY="test-only-never-transmitted";process.env.APN_DAILY_BUDGET_USD="1";globalThis.fetch=(async(_url,init)=>{const body=JSON.parse(String(init?.body));const urlSchema=body.text.format.schema.properties.leads.items.properties.url;assert.equal(urlSchema.type,"string");assert.equal(urlSchema.format,undefined);return new Response(JSON.stringify({error}),{status:400,headers:{"content-type":"application/json"}});}) as typeof fetch;
  const store=new MemoryStore();await assert.rejects(()=>generate(store,"Contract test","Instructions",searchLeadsSchema,{}, {search:{capture:()=>{throw Error("No search result may be produced");}}}),/invalid_json_schema/);assert.equal(store.state.costs[0].status,"complete");assert.equal(store.state.costs[0].estimatedUsd,0);assert.equal(store.state.costs[0].toolCalls,0);
  }finally{globalThis.fetch=old.fetch;if(old.key===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=old.key;if(old.budget===undefined)delete process.env.APN_DAILY_BUDGET_USD;else process.env.APN_DAILY_BUDGET_USD=old.budget;}
+});
+test("media directories are research leads, never recording drafts",()=>{
+ assert.throws(()=>candidateFromReference("music",{...reference,url:"https://www.upcimusic.com/store/artists",title:"Search"},[]),/directory/);
+ const {store,t}=listing();t.discovery!.url="https://www.upcimusic.com/authors/upci-music";assert.ok(validateDraft(t,t.draft!,store.state.sources,[],[]).some(e=>e.includes("not a directory")));
+});
+test("old feed news is flagged and blocks before a paid draft request",async()=>{
+ const store=new MemoryStore();const c=candidateFromReference("news",{url:"https://upci.org/old-announcement",title:"Apostolic ministry announcement",creator:null,publishedAt:"2025-01-01T00:00:00Z",text:"This Apostolic Pentecostal ministry announcement was actually published in an earlier year."},[]);discoveryState(store.state).candidates.push(c);assert.match(c.flags.join(" "),/Historical/);prepareCandidate(store.state,c.id);let called=false;await draftNext(store,(async()=>{called=true;throw Error("Must not spend on stale news");}) as typeof generate);assert.equal(called,false);assert.equal(store.state.tasks[0].status,"blocked");
 });

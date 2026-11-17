@@ -4,7 +4,7 @@ import approvedNews from "../../src/content/approved-news.json";
 import { generate,DOCTRINE,type SearchEvidence } from "./model";
 import { action,digest,now } from "./policy";
 import { defaultDiscovery,discoveryCategories,searchLeadsSchema,type DiscoveryCategory,type DiscoveryCandidate,type DiscoveryState } from "./discovery-types";
-import { canonicalUrl,readReference,readFeed,type FeedLead,type Reference } from "./public-references";
+import { canonicalUrl,recordingUrl,readReference,readFeed,type FeedLead,type Reference } from "./public-references";
 import type { State,Task,Source,Draft } from "./types";
 import type { StateStore } from "./store";
 export function discoveryState(s:State):DiscoveryState{return s.discovery??=defaultDiscovery();}
@@ -13,6 +13,7 @@ const knownHost=(url:string)=>["upci.org","aljc.org","upcigc.net","kansasupci.or
 const normalize=(url:string)=>{try{return canonicalUrl(url);}catch{return url;}};
 function existingUrls(){return new Set([...preaching.map(x=>x.media_url),...podcast.map(x=>x.media_url),...events.map(x=>x.source_url),...(approvedMedia as {sourceUrl:string}[]).map(x=>x.sourceUrl),...(approvedNews as {references:{href:string}[]}[]).flatMap(x=>x.references.map(r=>r.href))].filter((v):v is string=>!!v).map(normalize));}
 export function candidateFromReference(category:DiscoveryCategory,reference:Reference,searchUrls:string[],feed?:FeedLead):DiscoveryCandidate{
+ if(["sermon","podcast","music"].includes(category)&&!recordingUrl(category,reference.url))throw new Error("Choose an individual YouTube recording or Spotify podcast; a directory is not a media listing.");
  const url=canonicalUrl(reference.url);const publishedAt=reference.publishedAt||feed?.publishedAt||null;
  const text=(reference.text+(feed?"\nVerified feed metadata:\n"+feed.metadata:"")).slice(0,7500);
  // Strip shared site chrome before relevance checks. A church footer on an
@@ -21,12 +22,14 @@ export function candidateFromReference(category:DiscoveryCategory,reference:Refe
  const flags=["Owner must review Apostolic relevance, doctrine and source identity."];
  if(!knownHost(url))flags.push("Wider lead: this source is not on the initial organization list.");
  if(["sermon","podcast","music"].includes(category))flags.push("Metadata only: no transcript, lyrics or summary of unheard media is available.");
+ if(category==="news"&&publishedAt&&Date.now()-Date.parse(publishedAt)>90*86400000)flags.push("Historical source: older than 90 days; current-news approval is blocked.");
  if(!publishedAt)flags.push("Original publication date is unavailable.");
  if(category==="event")flags.push("Organizer dates, timezone and venue must be verified before approval.");
  return {id:digest(url).slice(0,24),category,url,title:reference.title,creator:reference.creator||feed?.creator||null,publishedAt,text,observedAt:now(),hash:digest({url,text,publishedAt}),flags,searchEvidence:searchUrls,status:"new"};
 }
 export function prepareCandidate(s:State,id:string,embedMode:"link"|"embed"="link"){
  const ds=discoveryState(s);const c=ds.candidates.find(c=>c.id===id);if(!c||c.status!=="new")throw new Error("Choose a new, verified discovery candidate.");
+ if(["sermon","podcast","music"].includes(c.category)&&!recordingUrl(c.category,c.url))throw new Error("A media directory cannot be prepared as a recording.");
  if(c.hash!==digest({url:c.url,text:c.text,publishedAt:c.publishedAt}))throw new Error("Candidate evidence changed.");
  const src:Source={id:"discovery-source-"+c.id,hash:digest({url:c.url,text:c.text,rights:"link_only"}),title:c.title,url:c.url,kind:c.category==="event"?"event":["sermon","music"].includes(c.category)?"video_metadata":c.category==="podcast"?"podcast_metadata":"public_page",text:c.text,rights:"link_only",rightsEvidence:"Public reference evidence for an original factual brief, link or original-provider embed only. No transcript, media download, image reuse or clip reproduction rights are granted.",verifiedAt:c.observedAt,copyrightFlag:false,clipKey:null,manifestHash:null};
  const target=c.category==="sermon"?"/preaching/":c.category==="event"?"/events/":"/"+c.category+"/";
@@ -56,7 +59,7 @@ export async function runDiscovery(store:StateStore,category?:DiscoveryCategory,
   await store.update(s=>{const ds=discoveryState(s);const run=ds.runs.find(r=>r.id===claimed.run.id)!;run.evidenceUrls=evidence.urls;run.duplicates=leads.length-unique.length;run.errors=[...errors,...search.notes].slice(0,25);
    candidates.sort((a,b)=>unique.findIndex(l=>normalize(l.url)===normalize(a.url))-unique.findIndex(l=>normalize(l.url)===normalize(b.url)));
    for(const c of candidates){if(ds.candidates.some(old=>old.id===c.id)||ds.candidates.length>=250)continue;ds.candidates.push(c);run.found++;}
-   const first=[...candidates].sort((a,b)=>Number(b.category===chosen)-Number(a.category===chosen)).slice(0,3);
+   const first=candidates.filter(c=>c.category!=="news"||(!!c.publishedAt&&Date.now()-Date.parse(c.publishedAt)<=90*86400000&&Date.parse(c.publishedAt)<=Date.now()+86400000)).sort((a,b)=>Number(b.category===chosen)-Number(a.category===chosen)).slice(0,3);
    for(const c of first){if(ds.candidates.find(x=>x.id===c.id)?.status!=="new")continue;prepareCandidate(s,c.id,"link");run.queued++;}
    run.status="complete";action(s,"APN Editor","discovery-completed",run.id,"Verified "+run.found+" leads; queued "+run.queued+"; duplicates "+run.duplicates+".");
   });return {status:"complete"};

@@ -20,6 +20,9 @@ export function canonicalUrl(raw:string){
  if(u.hostname==="open.spotify.com")u.search="";
  return u.href.replace(/\/$/,"");
 }
+export function recordingUrl(category:DiscoveryCategory,raw:string){
+ try{const u=new URL(canonicalUrl(raw));return u.hostname==="www.youtube.com"||category==="podcast"&&u.hostname==="open.spotify.com"&&/^\/(?:episode|show)\/[A-Za-z0-9]+$/.test(u.pathname);}catch{return false;}
+}
 export function publicAddress(ip:string){
  if(ip.includes(":"))return /^[23][0-9a-f]{0,3}:/i.test(ip)&&!/^2002:/i.test(ip)&&!/^2001:(?:0{1,4}:|:)/i.test(ip)&&!/^2001:db8:/i.test(ip);
  const a=ip.split(".").map(Number);if(a.length!==4||a.some(x=>!Number.isInteger(x)||x<0||x>255))return false;
@@ -45,7 +48,7 @@ export async function fetchReferenceText(raw:string,hops=0):Promise<{url:string;
 }
 const iso=(s:unknown)=>typeof s==="string"&&s.trim()&&Number.isFinite(Date.parse(s))?new Date(s).toISOString():null;
 export function htmlReference(url:string,html:string):Reference{
- const $=load(html);const title=($("h1").first().text()||$("meta[property='og:title']").attr("content")||$("title").text()).trim().replace(/\s+/g," ").slice(0,250);
+ const $=load(html);const main=$("article").first().length?$("article").first():$("main").first();const title=(main.find("h1").first().text()||$("meta[property='og:title']").attr("content")||$("h1").first().text()||$("title").text()).trim().replace(/\s+/g," ").slice(0,250);
  let publishedAt=iso($("meta[property='article:published_time']").attr("content")||$("time[datetime]").first().attr("datetime"));
  const structured:string[]=[];
  $("script[type='application/ld+json']").each((_i,el)=>{try{const data=JSON.parse($(el).text());const visit=(v:unknown,depth=0)=>{if(depth>8||!v||typeof v!=="object")return;if(Array.isArray(v)){v.slice(0,30).forEach(x=>visit(x,depth+1));return;}const r=v as Record<string,unknown>;if(!publishedAt)publishedAt=iso(r.datePublished);if(String(r["@type"]).includes("Event"))for(const k of ["name","startDate","endDate","eventAttendanceMode","location"])if(r[k])structured.push(k+": "+JSON.stringify(r[k]));if(r["@graph"])visit(r["@graph"],depth+1);};visit(data);}catch{}});

@@ -61,6 +61,7 @@ export async function draftNext(store:StateStore,generateDraft:typeof generate=g
     if(!t)return null;
     const sources=t.sourceIds.map(id=>s.sources.find(x=>x.id===id)).filter((x):x is Source=>!!x);
     if(!sources.length || sources.some(src=>!permittedSource(src))){t.status="blocked";t.error="Add source text and processing/publication rights before drafting.";action(s,"APN Editor","source-blocked",t.id);return null;}
+    if(t.kind==="news"&&t.discovery){const published=Date.parse(t.discovery.publishedAt||"");if(!Number.isFinite(published)||published>Date.now()+86400000||Date.now()-published>90*86400000){t.status="blocked";t.error="News needs a verified original publication date within 90 days; no model call was made.";action(s,"APN Editor","news-date-blocked",t.id);return null;}}
     if(t.attempts>=3){t.status="failed";t.error="Maximum draft attempts reached.";return null;}
     t.status="drafting";t.attempts++;t.updatedAt=now();action(s,"APN Editor","draft-started",t.id);return structuredClone(t);
   });

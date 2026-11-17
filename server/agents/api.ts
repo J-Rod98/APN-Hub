@@ -63,7 +63,7 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
         const checks=validateDraft(t,t.draft!,s.sources.filter(src=>t.sourceIds.includes(src.id)),paths,guides);if(checks.length)throw new Error(checks.join(" "));
         return approve(s,id,z.string().parse(b.hash),z.array(z.string()).parse(b.checklist),z.string().datetime().parse(b.scheduledAt));
       }
-      if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;action(s,"owner","rejected",id);return t;}
+      if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;const candidate=s.discovery?.candidates.find(c=>c.taskId===t.id);if(candidate)candidate.status="dismissed";action(s,"owner","rejected",id);return t;}
       if(op==="attach"){
         if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be revised now.");
         const ids=z.array(z.string()).min(1).parse(b.sourceIds);if(ids.some(id=>!s.sources.some(x=>x.id===id)))throw new Error("Unknown source.");t.sourceIds=ids;t.status="queued";delete t.approval;delete t.draft;delete t.draftHash;delete t.error;action(s,"owner","sources-attached",id,"Any previous draft approval was invalidated.");return t;
