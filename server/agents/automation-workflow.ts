@@ -14,7 +14,10 @@ export function storeTrustedLead(s:State,rule:SourceRule,lead:TrustedLead) {
  if(lead.identity.provider!==rule.identity.provider||lead.identity.id!==rule.identity.id)throw Error("Source identity mismatch.");
  if(existingUrls().has(lead.reference.url))return null;
  const ds=discoveryState(s);const prior=ds.candidates.find(c=>c.url===lead.reference.url);const old=prior&&s.tasks.find(t=>t.discovery?.candidateId===prior.id);
- if(old&&(old.approval||old.policyAuthorization||!["queued","review","blocked"].includes(old.status)))return null;
+ // A recording already classified in another category must not be silently
+ // relabelled when a second standing rule covers the same channel.
+ if(prior&&prior.category!==rule.category)return null;
+ if(old&&(old.kind!==rule.category||old.approval||old.policyAuthorization||!["queued","review","blocked"].includes(old.status)))return null;
  const c=candidateFromReference(rule.category,lead.reference,[rule.feedUrl]);Object.assign(c,{identity:lead.identity,identityVerifiedAt:lead.verifiedAt,embedAvailable:lead.embedAvailable});
  if(prior){if(!old&&prior.status!=="new")return null;Object.assign(prior,c,{status:old?"queued":"new",...(old?{taskId:old.id}:{})});}else{if(ds.candidates.length>=250)throw Error("Discovery archive limit reached; review the source history.");ds.candidates.push(c);}
  let t=old;

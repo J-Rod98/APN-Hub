@@ -16,6 +16,12 @@ const url="https://www.youtube.com/watch?v=AbcDEf012_3";
 const reference={url,title:"A fixture Apostolic worship recording",creator:"Fixture creator",publishedAt:null,text:"Original provider title: A fixture Apostolic worship recording\nCreator: Fixture creator\nMetadata only. No transcript, lyrics or reproduction rights were supplied."};
 function listing(embed:"link"|"embed"="link") {const store=new MemoryStore();const ds=discoveryState(store.state);const c=candidateFromReference("music",reference,[url]);ds.candidates.push(c);const t=prepareCandidate(store.state,c.id,embed);t.draft=listingDraft(t,store.state.sources[0]);t.draftHash=digest(t.draft);t.checks=[];t.status="review";return {store,t,c};}
 const checks=["facts","rights","doctrine","originality","source"];
+test("research places guide discovery without granting source clearance or bypassing search evidence",async()=>{
+ const store=new MemoryStore();store.state.discovery=defaultDiscovery();store.state.discovery.settings.wideLeads=false;let calls=0;
+ const model=(async(...args:Parameters<typeof generate>)=>{calls++;const input=args[4] as {researchPlaces:{name:string;url:string}[]};assert.ok(input.researchPlaces.some(p=>p.url==="https://aljc.org/"));assert.ok(input.researchPlaces.some(p=>p.url==="https://www.gowpf.org/"));assert.ok(args[5]!.search!.allowedDomains!.includes("gowpf.org"));args[5]!.search!.capture({calls:1,urls:[]});return {leads:[{url:"https://aljc.org/",category:"news",reason:"A library URL alone is not search evidence"}],notes:[]};}) as typeof generate;
+ await runDiscovery(store,"news",{model,reference:async()=>{throw Error("Ungrounded library URL must not be fetched as an article");},feed:async()=>[]});
+ assert.equal(calls,1);assert.equal(store.state.discovery.candidates.length,0);assert.equal(store.state.tasks.length,0);assert.equal(store.state.automation?.rules.length||0,0);assert.match(store.state.discovery.runs[0].errors.join(" "),/Ungrounded/);
+});
 test("discovery canonicalization deduplicates YouTube variants and removes tracking",()=>{
  assert.equal(canonicalUrl("https://youtu.be/AbcDEf012_3?si=tracking"),url);assert.equal(canonicalUrl("https://youtube.com/shorts/AbcDEf012_3"),url);
  assert.equal(canonicalUrl("https://example.org/article/?utm_source=x&detail=1#x"),"https://example.org/article/?detail=1");

@@ -20,6 +20,12 @@ function fixture(count=3){
  return {s,rule};
 }
 const paths=["/music/","/news/","/about/"];
+test("a new channel category cannot reclassify or replace an existing recording task",()=>{
+ const {s,rule}=fixture(1);const before=structuredClone({task:s.tasks[0],candidate:s.discovery!.candidates[0],source:s.sources[0]});
+ const sermonRule=saveRule(s,{...rule,id:"rule-preaching",category:"sermon",includeTerms:[]});
+ const id=storeTrustedLead(s,sermonRule,{identity:rule.identity,verifiedAt:new Date().toISOString(),embedAvailable:true,reference:{url:before.candidate.url,title:"A different sermon classification",creator:"Fixture church",publishedAt:null,text:"This second rule must not replace the first recording category or evidence."}});
+ assert.equal(id,null);assert.deepEqual(s.tasks[0],before.task);assert.deepEqual(s.discovery!.candidates[0],before.candidate);assert.deepEqual(s.sources[0],before.source);assert.equal(s.tasks.length,1);
+});
 test("standing rules authorize two exact drafts, never invent owner attestations and bind all source versions",()=>{
  const {s}=fixture();assert.equal(authorizeAutomatic(s,paths,[]).length,2);assert.equal(authorizeAutomatic(s,paths,[]).length,0);assert.equal(s.tasks[2].status,"review");assert.match(s.tasks[2].automaticIssues![0],/allowance/);
  for(const t of s.tasks.slice(0,2)){assert.equal(t.approval,undefined);assertPublicationAuthorized(t,s);assert.equal((artifact(t,s,[]).content as {authorizationMode:string}[])[0].authorizationMode,"source_policy");}

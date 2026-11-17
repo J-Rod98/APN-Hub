@@ -11,6 +11,13 @@ export const INITIAL_SOURCES:RuleInput[]=[
  {label:"UPCI official news",provider:"feed",url:"https://upci.org/feed/",category:"news",includeTerms:[],embed:false},
 ];
 const parser=()=>new XMLParser({ignoreAttributes:false,processEntities:false});
+// Owner requested these organizations on 2026-11-17. Runtime registration
+// still verifies their exact feeds and records a distinct owner source grant.
+// ALJC stays in the research library: its main feed has no usable news.
+export const REQUESTED_MEDIA_SOURCES:RuleInput[]=[
+ {label:"WPFYouth preaching",provider:"youtube",url:"https://www.youtube.com/@wpfyouth",category:"sermon",includeTerms:["pastor","evangelist","bishop","rev."],embed:true},
+ {label:"FPCNLR preaching & services",provider:"youtube",url:"https://www.youtube.com/channel/UCX04--akoLEFLut61MHWzoA",category:"sermon",includeTerms:["rev.","pastor","service","sunday","midweek","fpcnlr"],embed:true},
+];
 export function youtubeEntries(xml:string,id:string) {
  if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw Error("Feed entities are forbidden.");
  const f=parser().parse(xml).feed;const root=String(f?.["yt:channelId"]||"");
