@@ -14,6 +14,8 @@ test("calendar rollover, inclusive end day, unknown dates and archive order", ()
  assert.equal(eventPeriod(a,new Date("2026-12-31T04:59:59Z")),"Upcoming");
  assert.equal(eventPeriod(a,new Date("2026-12-31T05:00:00Z")),"Past");
  assert.equal(calendarDay(new Date("2026-12-31T05:00:00Z"),"-06:00"),"2026-12-30");
+ assert.equal(calendarDay(new Date("2026-12-31T05:00:00Z"),"-0500"),"2026-12-31");
+ assert.equal(calendarDay(new Date("2026-12-30T19:00:00Z"),"+0530"),"2026-12-31");
  for(const day of [null,"2026-02-30","2026-13-01","unknown"])assert.equal(eventPeriod({...a,event_date:day},new Date()),"Unknown");
  assert.equal(eventPeriod({...a,event_date:"2027-01-01"},new Date()),"Unknown");
  const past={...a,id:"p",event_date:"2026-01-01",end_date:"2026-01-02"};const unknown={...a,id:"u",event_date:null};const at=new Date("2026-12-31T12:00:00Z");

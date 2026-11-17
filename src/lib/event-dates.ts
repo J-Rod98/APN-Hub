@@ -1,9 +1,10 @@
 import type { AppEvent } from "./types";
 export type EventPeriod = "Upcoming" | "Past" | "All dates";
 export function calendarDay(at: Date, timezone = "America/Chicago"): string {
-  if (/^[+-](?:0\d|1[0-4]):[0-5]\d$/.test(timezone)) {
+  if (/^[+-](?:0\d|1[0-4]):?[0-5]\d$/.test(timezone)) {
     const direction = timezone[0] === "+" ? 1 : -1;
-    const minutes = Number(timezone.slice(1,3)) * 60 + Number(timezone.slice(4));
+    const compact = timezone.replace(":", "");
+    const minutes = Number(compact.slice(1,3)) * 60 + Number(compact.slice(3));
     return new Date(at.getTime() + direction * minutes * 60_000).toISOString().slice(0,10);
   }
   try { return new Intl.DateTimeFormat("en-CA", { timeZone: timezone }).format(at); }
