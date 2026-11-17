@@ -65,7 +65,7 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
       }
       if(op==="discovery-settings"){const settings=discoverySettingsSchema.parse(b.settings);for(const feed of settings.feeds){const url=new URL(feed.url);if(url.protocol!=="https:"||url.username||url.password)throw new Error("Feeds require a public HTTPS URL.");}discoveryState(s).settings=settings;action(s,"owner","discovery-settings-saved","discovery");return {ok:true};}
       if(op==="discovery-prepare")return prepareCandidate(s,z.string().parse(b.id),z.enum(["link","embed"]).parse(b.embedMode||"link"));
-      if(op==="discovery-embedding"){const t=s.tasks.find(t=>t.id===b.id);if(!t?.discovery||!["sermon","podcast","music"].includes(t.kind)||!["queued","review","blocked","failed","approved"].includes(t.status))throw new Error("Choose an editable discovered media task.");t.discovery.embedMode=z.enum(["link","embed"]).parse(b.embedMode);delete t.approval;withdrawPolicy(s,t);if(t.status==="approved")t.status="review";t.updatedAt=now();action(s,"owner","discovery-embedding-changed",t.id,"Any earlier approval was withdrawn; exact embedding clearance is required.");return t;}
+      if(op==="discovery-embedding"){const t=s.tasks.find(t=>t.id===b.id);if(t?.status==="failed"&&(t.approval||t.policyAuthorization))throw Error("Reconcile the possible publication before changing its media use.");if(!t?.discovery||!["sermon","podcast","music"].includes(t.kind)||!["queued","review","blocked","failed","approved"].includes(t.status))throw new Error("Choose an editable discovered media task.");t.discovery.embedMode=z.enum(["link","embed"]).parse(b.embedMode);delete t.approval;withdrawPolicy(s,t);if(t.status==="approved")t.status="review";t.updatedAt=now();action(s,"owner","discovery-embedding-changed",t.id,"Any earlier approval was withdrawn; exact embedding clearance is required.");return t;}
       if(op==="discovery-dismiss"){const candidate=discoveryState(s).candidates.find(c=>c.id===b.id);if(!candidate||candidate.status!=="new")throw new Error("Choose a new discovery candidate.");candidate.status="dismissed";action(s,"owner","discovery-dismissed",candidate.id);return {ok:true};}
       if(op==="discovery-retry"){const run=discoveryState(s).runs.find(r=>r.id===b.id);if(!run||run.status!=="failed")throw new Error("Only failed discovery runs can be retried.");const latest=[...discoveryState(s).runs].reverse().find(r=>r.day===run.day&&r.category===run.category);if(latest?.id!==run.id)throw new Error("A later run has superseded this failure.");run.retry=true;action(s,"owner","discovery-retry-requested",run.id);return {ok:true};}
       if(op==="initial-import"){
@@ -102,6 +102,7 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
       if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;withdrawPolicy(s,t);const candidate=s.discovery?.candidates.find(c=>c.taskId===t.id);if(candidate)candidate.status="dismissed";action(s,"owner","rejected",id);return t;}
       if(op==="attach"){
         if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be revised now.");
+        if(t.status==="failed"&&(t.approval||t.policyAuthorization))throw Error("Reconcile the possible publication before revising its sources.");
         const ids=z.array(z.string()).min(1).parse(b.sourceIds);if(ids.some(id=>!s.sources.some(x=>x.id===id)))throw new Error("Unknown source.");t.sourceIds=ids;t.status="queued";delete t.approval;withdrawPolicy(s,t);delete t.draft;delete t.draftHash;delete t.error;action(s,"owner","sources-attached",id,"Any previous draft approval was invalidated.");return t;
       }
       if(op==="retry"){
@@ -122,4 +123,4 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
   }catch(e){return json({error:e instanceof Error?e.message:"Request failed"},400);}
 }
 
-function withdrawPolicy(s:State,t:Task){if(t.policyAuthorization){const r=s.automation?.reservations.find(r=>r.id===t.policyAuthorization!.reservationId);if(r)r.status="cancelled";delete t.policyAuthorization;}delete t.automationReview;}
+function withdrawPolicy(s:State,t:Task){if(t.policyAuthorization){const r=s.automation?.reservations.find(r=>r.id===t.policyAuthorization!.reservationId);if(r&&!t.error)r.status="cancelled";delete t.policyAuthorization;}delete t.automationReview;}

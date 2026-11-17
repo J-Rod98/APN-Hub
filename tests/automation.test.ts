@@ -77,3 +77,9 @@ test("daily quota uses Chicago midnight and concurrent reservations cannot excee
 test("changing a standing rule withdraws pending grants instead of silently expanding approval",()=>{
  const {s,rule}=fixture(2);authorizeAutomatic(s,paths,[]);saveRule(s,{...rule,includeTerms:["different topic"]});assert.ok(s.tasks.every(t=>t.status==="review"&&!t.policyAuthorization));assert.ok(s.automation!.reservations.every(r=>r.status==="cancelled"));assert.equal(authorizeAutomatic(s,paths,[]).length,0);
 });
+
+test("withdrawing an uncertain failed publication cannot free its daily allowance",async()=>{
+ const {s}=fixture(3);authorizeAutomatic(s,paths,[]);const t=s.tasks[0];t.status="failed";t.error="Remote outcome unknown";const store=new MemoryStore();store.state=s;
+ const r=await api(new Request("https://apn.example/api/apn-agents",{method:"POST",headers:{origin:"https://apn.example"},body:JSON.stringify({action:"reject",id:t.id})}),store,undefined,true);assert.equal(r.status,200);assert.equal(store.state.automation!.reservations.filter(r=>r.status!=="cancelled").length,2);assert.equal(authorizeAutomatic(store.state,paths,[]).length,0);
+});
+test("an automatic authorization cannot publish across a different Chicago day without a new reservation",()=>{const {s}=fixture(1);authorizeAutomatic(s,paths,[]);s.tasks[0].policyAuthorization!.day="2000-01-01";assert.throws(()=>assertPublicationAuthorized(s.tasks[0],s),/authorization/);});
