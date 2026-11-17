@@ -30,3 +30,9 @@ Actual Search Console metrics still require verified ownership and read-only aut
 - OpenAI web search and source evidence: https://developers.openai.com/api/docs/guides/tools-web-search
 - OpenAI tool pricing (verified November 16, 2026): https://developers.openai.com/api/docs/pricing — search tool charge $10 per 1,000 calls, plus model/search context token charges.
 - Netlify Blobs runtime configuration: https://docs.netlify.com/build/data-and-storage/netlify-blobs/
+
+## Owner-approved publishing activation
+
+Publishing writes only the exact owner-approved artifact to `J-Rod98/APN-Hub` on `main`, then Netlify's existing Git integration builds the site. The server needs a dedicated fine-grained GitHub credential with Contents read/write and Metadata read, restricted to APN-Hub. Store it as the secret `APN_GITHUB_TOKEN` in production Functions only; set `APN_GITHUB_REPOSITORY=J-Rod98/APN-Hub`, `APN_PUBLISH_BRANCH=main`, and enable `APN_PUBLISH_ENABLED` only after this credential is ready. No personal Git credential is copied from the Mac into the runtime.
+
+The separate `apn-publish-schedule` checks approved, due items every 15 minutes without calling AI. The owner can also choose **Publish approved now**. Research stays on its existing daily schedule. Both agent activation and publishing flags must be enabled; every write still rechecks the draft hash, source versions, discovery provenance, required owner attestations and earliest publication time. GitHub conditional writes and durable approval hashes make a lost response reconcilable. A content commit is not proof of a successful deploy: verify the resulting Netlify deployment and public page before reporting the item live.
