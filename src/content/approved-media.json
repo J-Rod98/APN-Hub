@@ -34,5 +34,35 @@
     "embedAllowed": true,
     "publishedAt": "2026-11-17T16:54:00.000Z",
     "approvalHash": "7673f51813a8cd7959a7dac1e7f6a530c33d2979913016e3b9276f640da31dec"
+  },
+  {
+    "id": "the-church-is-alive-ibc-live-2024-6312b1",
+    "kind": "music",
+    "title": "The Church Is Alive || IBC LIVE 2024",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=xRJOmlOiHRk",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-17T17:48:15.278Z",
+    "approvalHash": "c6b3b48a9ae4e357c0aba35e4e728694c4be690fe95c419d72dd3a528b08cf11",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "s2-ep-8-rev-david-boyd-iowa-youth-president-8f9b0f",
+    "kind": "podcast",
+    "title": "S2 Ep. 8 | Rev. David Boyd, Iowa Youth President",
+    "description": "Explore the original podcast from Hear the Harvest. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/episode/6cRQhOqGmbGknytMAjS7kf",
+    "creator": "Hear the Harvest",
+    "sourcePublishedAt": "2026-08-18T14:27:00.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-17T17:48:15.279Z",
+    "approvalHash": "02a31a594d5f15eddc2ed4b3a97a7603a4f2b0faf66e6f870b3c6ac623ff55f4",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-1e41f9186eae8c88bd84",
+    "sourcePolicyHash": "43654d931cecccceb53360ecbe63f5f5bff6b8e0956d70ef41e63c89eef2a8d3"
   }
 ]
