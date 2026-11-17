@@ -23,7 +23,8 @@ export interface Playable {
 
 const AUDIO_EXT = /\.(mp3|m4a|aac|ogg|oga|wav)(\?.*)?$/i;
 
-export function getPlayable(rawUrl: string | null | undefined): Playable | null {
+export function getPlayable(rawUrl: string | null | undefined, allowEmbed=true): Playable | null {
+  if(!allowEmbed)return null;
   const url = safeUrl(rawUrl); // http(s) only — blocks javascript: etc.
   if (!url) return null;
 

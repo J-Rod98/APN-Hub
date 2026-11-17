@@ -7,7 +7,7 @@ import type { PreachingItem } from "@/lib/types";
 
 export function PreachingCard({ item }: { item: PreachingItem }) {
   const media = safeUrl(item.media_url);
-  const thumbnail = getVideoThumbnail(item.media_url);
+  const thumbnail = item.embed_allowed===false?null:getVideoThumbnail(item.media_url);
 
   return (
     <Card className="flex gap-4 p-5">
@@ -48,6 +48,7 @@ export function PreachingCard({ item }: { item: PreachingItem }) {
         </Link>
         <div className="mb-1.5 flex flex-wrap gap-x-3 text-xs text-ink-muted">
           {item.speaker && <span>🎤 {item.speaker}</span>}
+          {item.source_creator && <span>Source channel: {item.source_creator}</span>}
           {item.scripture_reference && <span>📖 {item.scripture_reference}</span>}
           {item.media_type && <span className="uppercase">{item.media_type}</span>}
         </div>

@@ -33,7 +33,7 @@ export default async function PodcastDetailPage({
 
   const media = safeUrl(episode.media_url);
   const cover = safeUrl(episode.image_url);
-  const playable = getPlayable(episode.media_url);
+  const playable = getPlayable(episode.media_url, episode.embed_allowed!==false);
 
   return (
     <div className="container-app py-10 sm:py-12">
@@ -58,6 +58,7 @@ export default async function PodcastDetailPage({
             <h1 className="font-serif text-3xl font-medium tracking-[-0.02em] text-sanctuary-ink sm:text-4xl">{episode.title}</h1>
             <div className="mt-1 flex flex-wrap gap-x-4 text-sm text-sanctuary-muted">
               {episode.guest && <span>Guest: {episode.guest}</span>}
+              {episode.source_creator && <span>Original source: {episode.source_creator}</span>}
               {episode.duration && <span>{episode.duration}</span>}
               <span>{formatDate(episode.created_at.slice(0, 10))}</span>
             </div>

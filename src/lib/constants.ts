@@ -74,6 +74,8 @@ export const SUBMISSION_TYPES: { value: SubmissionType; label: string; icon: str
 // button in the navbar. Having it in both places produced two Submit controls.
 export const NAV_LINKS = [
   { href: "/", label: "Home" },
+  { href: "/news/", label: "News" },
+  { href: "/music/", label: "Music" },
   { href: "/preaching", label: "Sermons" },
   { href: "/podcast", label: "Podcasts" },
   { href: "/events", label: "Events" },

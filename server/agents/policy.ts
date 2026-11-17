@@ -16,7 +16,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
   const errors:string[]=[];const sourceMap=new Map(sources.map(s=>[s.id,s]));
   if(!sources.length || sources.some(s=>!permittedSource(s))) errors.push("Source rights or processing authorization is missing.");
   if(d.title.length<10 || d.title.length>90 || d.description.length<40 || d.description.length>180) errors.push("Check title and description lengths.");
-  if(["resource","bible_study","event"].includes(task.kind) && !/^[-a-z0-9]+$/.test(d.slug)) errors.push("Use a plain lowercase URL slug.");
+  if(["resource","bible_study","event","sermon","podcast","music","news"].includes(task.kind) && !/^[-a-z0-9]+$/.test(d.slug)) errors.push("Use a plain lowercase URL slug.");
   for(const link of d.internalLinks) if(!paths.includes(link.path)) errors.push(`Unknown internal link: ${link.path}`);
   for(const q of d.quotes) if(!sourceMap.get(q.sourceId)?.text.includes(q.quote) || !q.quote.trim()) errors.push("A quotation could not be matched exactly to its source.");
   for(const c of d.claims) if(!sourceMap.get(c.sourceId)?.text.includes(c.evidence) || c.evidence.trim().length<12) errors.push("A factual claim lacks a source excerpt.");
@@ -26,7 +26,17 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
   if(d.doctrineFlags.length) errors.push(...d.doctrineFlags.map(f=>`Doctrine review: ${f}`));
   if(d.uncertainties.length) errors.push(...d.uncertainties.map(f=>`Needs confirmation: ${f}`));
   if(task.kind==="metadata" && (d.sections.length || d.event)) errors.push("Metadata tasks may only change title and description.");
-  if(task.kind!=="metadata" && task.kind!=="clip" && d.sections.length<2) errors.push("A guide needs at least two original sections.");
+  if(!["metadata","clip","sermon","podcast","music"].includes(task.kind) && d.sections.length<2) errors.push("A guide needs at least two original sections.");
+  if(sources.some(s=>s.rights==="link_only")&&!["sermon","podcast","music","news","event"].includes(task.kind))errors.push("Reference-only sources do not authorize reproduction, teaching adaptation or clips.");
+  if(task.discovery){
+    if(!sources.some(s=>s.url===task.discovery!.url))errors.push("Discovery attribution differs from its evidence source.");
+    if(["sermon","podcast","music"].includes(task.kind)&&(d.quotes.length||d.sections.length||d.faqs.length))errors.push("Metadata-only listings cannot summarize unheard media, transcripts or lyrics.");
+    if(task.kind==="news"){
+      if(d.quotes.length)errors.push("News briefs must paraphrase and attribute; no copied quotations.");
+      if(visible.split(/\s+/).filter(Boolean).length>180)errors.push("Keep the original news brief within 180 words including metadata.");
+      const published=Date.parse(task.discovery.publishedAt||"");if(!Number.isFinite(published)||published>Date.now()+86400000||Date.now()-published>90*86400000)errors.push("News needs a verified publication date within the last 90 days.");
+    }
+  }
   const text=JSON.stringify(d).toLowerCase();
   if(/three (?:separate|distinct) (?:divine )?(?:persons|gods)|baptism is (?:merely|only) symbolic|jesus is (?:not god|a created being)/i.test(text)) errors.push("Doctrinal wording conflicts with APN's published Oneness convictions.");
   // Heuristics only: theological correctness and originality still require the
@@ -39,6 +49,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
     else {
       if(!/^\d{4}-\d{2}-\d{2}$/.test(e.start) || !/^\d{4}-\d{2}-\d{2}$/.test(e.end) || !Number.isFinite(Date.parse(e.start)) || !Number.isFinite(Date.parse(e.end)) || e.end<e.start) errors.push("Event start and end must be verified ISO dates in order.");
       for(const field of [e.name,e.start,e.end,e.timezone,e.venue]) if(!field.trim() || !src.text.toLowerCase().includes(field.toLowerCase())) errors.push("Event name, dates, timezone and venue must all occur in the verified source text.");
+      if(task.discovery&&Date.parse(e.end+"T23:59:59Z")<Date.now())errors.push("This discovered event has ended; verify a future or ongoing organizer listing.");
       if(e.organizerUrl!==src.url) errors.push("Event organizer URL differs from the source.");
       if(Date.now()-Date.parse(src.verifiedAt)>7*86400000) errors.push("Re-verify event information within seven days of publication.");
     }
@@ -61,14 +72,17 @@ export function approve(s:State,id:string,hash:string,checklist:string[],schedul
   if(!Number.isFinite(Date.parse(scheduledAt)))throw new Error("Choose a valid publication time.");
   const copyrightRequired=s.sources.some(src=>t.sourceIds.includes(src.id) && src.copyrightFlag);
   if(copyrightRequired && !checklist.includes("copyright"))throw new Error("The clipper requires a separate copyright acknowledgement for this flagged media.");
+  if(t.discovery&&!checklist.includes("source"))throw new Error("Confirm the discovered source, category and Apostolic relevance.");
+  if(t.discovery?.embedMode==="embed"&&!checklist.includes("embed"))throw new Error("Verify original-player embedding and clearance for this media use.");
   const sourceHashes:Record<string,string>={};
   for(const id of t.sourceIds){const src=s.sources.find(x=>x.id===id);if(!src || !permittedSource(src))throw new Error("Source rights changed.");sourceHashes[id]=src.hash;}
-  t.approval={hash,sourceHashes,actor:"owner",at:now(),scheduledAt,checklist:copyrightRequired?[...CHECKLIST,"copyright"]:CHECKLIST};
+  t.approval={hash,sourceHashes,actor:"owner",at:now(),scheduledAt,checklist:[...CHECKLIST,...(copyrightRequired?["copyright"]:[]),...(t.discovery?["source"]:[]),...(t.discovery?.embedMode==="embed"?["embed"]:[])],...(t.discovery?{discoveryHash:digest(t.discovery)}:{})};
   t.status="approved";t.updatedAt=now();action(s,"owner","approved",t.id,hash);
   return t;
 }
 export function assertApproved(t:Task,s:State) {
   if(!t.draft || !t.approval || t.approval.hash!==digest(t.draft) || t.approval.hash!==t.draftHash)throw new Error("Exact draft approval is required.");
+  if(t.discovery&&t.approval.discoveryHash!==digest(t.discovery))throw new Error("Approved discovery attribution or embedding choice changed.");
   for(const id of t.sourceIds){const src=s.sources.find(x=>x.id===id);if(!src || src.hash!==t.approval.sourceHashes[id] || !permittedSource(src))throw new Error("Approved source changed.");}
 }
 

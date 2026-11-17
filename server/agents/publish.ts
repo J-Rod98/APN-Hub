@@ -4,12 +4,24 @@ import { events as curatedEvents } from "../../src/lib/catalog";
 import type { Task,State } from "./types";
 import { assertApproved,digest,now } from "./policy";
 
-const contentPath=(t:Task)=>t.kind==="metadata"?"src/content/metadata-overrides.json":t.kind==="event"?"src/content/approved-events.json":"src/content/approved-guides.json";
-const publicationUrl=(t:Task)=>t.kind==="metadata"?t.targetPath:t.kind==="event"?`/events/${t.draft!.slug}/`:`/guides/${t.draft!.slug}/`;
+const contentPath=(t:Task)=>t.kind==="news"?"src/content/approved-news.json":["sermon","podcast","music"].includes(t.kind)?"src/content/approved-media.json":t.kind==="metadata"?"src/content/metadata-overrides.json":t.kind==="event"?"src/content/approved-events.json":"src/content/approved-guides.json";
+const publicationUrl=(t:Task)=>t.kind==="news"?`/news/${t.draft!.slug}/`:t.kind==="sermon"?`/preaching/${t.draft!.slug}/`:t.kind==="podcast"?`/podcast/${t.draft!.slug}/`:t.kind==="music"?`/music/${t.draft!.slug}/`:t.kind==="metadata"?t.targetPath:t.kind==="event"?`/events/${t.draft!.slug}/`:`/guides/${t.draft!.slug}/`;
 
 export function artifact(t:Task,s:State,current:unknown):{path:string;content:unknown} {
   assertApproved(t,s);const d=t.draft!;
   if(t.kind==="metadata")return {path:"src/content/metadata-overrides.json",content:{...(current as object),[t.targetPath]:{title:d.title,description:d.description,approvalHash:t.approval!.hash}}};
+  if(["news","sermon","podcast","music"].includes(t.kind)){
+    if(!t.discovery)throw new Error("Discovery provenance is required for this content.");
+    const list=Array.isArray(current)?current:[];
+    if(t.kind==="news"){
+      const record={slug:d.slug,title:d.title,description:d.description,intro:d.intro,sections:d.sections,references:t.sourceIds.map(id=>{const src=s.sources.find(x=>x.id===id)!;return {label:src.title,href:src.url};}),sourcePublishedAt:t.discovery.publishedAt,publishedAt:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
+      const old=list.find((x:{slug:string;approvalHash?:string})=>x.slug===d.slug);if(old&&old.approvalHash!==record.approvalHash)throw new Error("News slug collision; owner revision required.");
+      return {path:contentPath(t),content:[...list.filter((x:{slug:string})=>x.slug!==d.slug),record]};
+    }
+    const record={id:d.slug,kind:t.kind,title:d.title,description:d.description,sourceUrl:t.discovery.url,creator:t.discovery.creator,sourcePublishedAt:t.discovery.publishedAt,embedAllowed:t.discovery.embedMode==="embed"&&t.approval!.checklist.includes("embed"),publishedAt:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
+    const old=list.find((x:{id:string;sourceUrl:string;approvalHash?:string})=>x.id===d.slug||x.sourceUrl===record.sourceUrl);if(old&&(old.id!==d.slug||old.approvalHash!==record.approvalHash))throw new Error("Media source or slug already exists; owner revision required.");
+    return {path:contentPath(t),content:[...list.filter((x:{id:string})=>x.id!==d.slug),record]};
+  }
   if(!["resource","bible_study","event"].includes(t.kind))throw new Error("This task requires its dedicated technical or clipper handoff.");
   const list=Array.isArray(current)?current:[];
   if(t.kind==="event") {

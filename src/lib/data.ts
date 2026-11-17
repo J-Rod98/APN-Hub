@@ -1,3 +1,4 @@
+import { discoveredMedia } from "./discovered-content";
 import approvedEvents from "../content/approved-events.json";
 // ============================================================================
 // APN Hub — static catalog access.
@@ -19,11 +20,11 @@ export function getEvents(): AppEvent[] {
 }
 
 export function getPreaching(): PreachingItem[] {
-  return preaching;
+  return [...preaching,...discoveredMedia.filter(x=>x.kind==="sermon").map((x):PreachingItem=>({id:x.id,title:x.title,description:x.description,speaker:null,source_creator:x.creator,topic:null,scripture_reference:null,media_url:x.sourceUrl,media_type:"video",embed_allowed:x.embedAllowed,status:"published",created_at:x.publishedAt}))];
 }
 
 export function getPodcast(): PodcastEpisode[] {
-  return podcast;
+  return [...podcast,...discoveredMedia.filter(x=>x.kind==="podcast").map((x):PodcastEpisode=>({id:x.id,title:x.title,description:x.description,episode_number:null,source_creator:x.creator,guest:null,duration:null,media_url:x.sourceUrl,embed_allowed:x.embedAllowed,status:"published",created_at:x.publishedAt}))];
 }
 
 export function getMaterials(): Material[] {
@@ -35,9 +36,9 @@ export function getEventById(id: string): AppEvent | null {
 }
 
 export function getPreachingById(id: string): PreachingItem | null {
-  return preaching.find((item) => item.id === id) ?? null;
+  return getPreaching().find((item) => item.id === id) ?? null;
 }
 
 export function getPodcastById(id: string): PodcastEpisode | null {
-  return podcast.find((episode) => episode.id === id) ?? null;
+  return getPodcast().find((episode) => episode.id === id) ?? null;
 }

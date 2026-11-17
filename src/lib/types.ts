@@ -59,6 +59,8 @@ export interface AppEvent extends Timestamps {
 }
 
 export interface PreachingItem extends Timestamps {
+  embed_allowed?:boolean;
+  source_creator?:string|null;
   id: string;
   title: string;
   speaker: string | null;
@@ -71,6 +73,8 @@ export interface PreachingItem extends Timestamps {
 }
 
 export interface PodcastEpisode extends Timestamps {
+  embed_allowed?:boolean;
+  source_creator?:string|null;
   id: string;
   title: string;
   /** Official podcast or episode cover shown wherever this item is played. */

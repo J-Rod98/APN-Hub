@@ -1,12 +1,13 @@
 import { z } from "zod";
+import type { DiscoveryState,DiscoveryProvenance } from "./discovery-types";
 
-export const kindSchema = z.enum(["metadata", "resource", "bible_study", "event", "clip", "technical"]);
+export const kindSchema = z.enum(["metadata", "resource", "bible_study", "event", "clip", "technical", "sermon", "podcast", "music", "news"]);
 export type Kind = z.infer<typeof kindSchema>;
 export const sourceSchema = z.object({
   title: z.string().min(3).max(250), url: z.string().url(),
-  kind: z.enum(["owner_page", "transcript", "scripture", "event", "clip_manifest"]),
+  kind: z.enum(["owner_page", "transcript", "scripture", "event", "clip_manifest", "public_page", "video_metadata", "podcast_metadata"]),
   text: z.string().min(30).max(45000),
-  rights: z.enum(["owned", "permission", "public_domain", "unknown"]),
+  rights: z.enum(["owned", "permission", "public_domain", "unknown", "link_only"]),
   rightsEvidence: z.string().max(2000), verifiedAt: z.string().datetime(),
   copyrightFlag: z.boolean().default(false),
   clipKey: z.string().nullable().default(null), manifestHash: z.string().nullable().default(null),
@@ -33,11 +34,12 @@ export type Status = "queued" | "drafting" | "review" | "blocked" | "approved" |
 export interface Task extends Proposal {
   id: string; status: Status; sourceIds: string[]; createdAt: string; updatedAt: string;
   attempts: number; nextAttemptAt?: string; draft?: Draft; draftHash?: string; checks?: string[];
-  approval?: { hash: string; sourceHashes: Record<string,string>; actor: string; at: string; scheduledAt: string; checklist: string[] };
+  discovery?:DiscoveryProvenance;
+  approval?: { discoveryHash?:string; hash: string; sourceHashes: Record<string,string>; actor: string; at: string; scheduledAt: string; checklist: string[] };
   publication?: { commit?: string; url?: string; at: string; receipt?: string }; error?: string;
 }
 export type Evidence = { id: string; type: string; observedAt: string; url: string; data: unknown };
 export interface Report { failure?: string; id: string; at: string; start: string; end: string; summary: string; uncertainties: string[]; evidence: Evidence[]; taskIds: string[] }
-export interface Cost { id: string; agent: string; at: string; model: string; status: "reserved" | "complete" | "uncertain"; reservedUsd: number; inputTokens?: number; outputTokens?: number; estimatedUsd?: number }
-export interface State { version: 1; tasks: Task[]; sources: Source[]; reports: Report[]; costs: Cost[]; actions: { at: string; actor: string; action: string; target: string; detail: string }[]; jobs: Record<string,{ until: string; token: string }> }
+export interface Cost { id: string; agent: string; at: string; model: string; status: "reserved" | "complete" | "uncertain"; reservedUsd: number; inputTokens?: number; outputTokens?: number; estimatedUsd?: number; toolCalls?:number; toolUsd?:number }
+export interface State { discovery?:DiscoveryState; version: 1; tasks: Task[]; sources: Source[]; reports: Report[]; costs: Cost[]; actions: { at: string; actor: string; action: string; target: string; detail: string }[]; jobs: Record<string,{ until: string; token: string }> }
 export const emptyState = (): State => ({ version: 1, tasks: [], sources: [], reports: [], costs: [], actions: [], jobs: {} });

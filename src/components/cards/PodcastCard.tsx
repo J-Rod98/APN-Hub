@@ -8,7 +8,7 @@ import type { PodcastEpisode } from "@/lib/types";
 export function PodcastCard({ episode }: { episode: PodcastEpisode }) {
   const source = safeUrl(episode.media_url);
   const cover = safeUrl(episode.image_url);
-  const playable = getPlayable(episode.media_url);
+  const playable = getPlayable(episode.media_url, episode.embed_allowed!==false);
 
   return (
     <Card className="flex flex-col gap-3 p-5">

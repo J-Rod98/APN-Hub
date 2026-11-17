@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     title: item?.title ?? "Apostolic Sermon",
     description: item?.description ?? "Apostolic preaching curated by Apostolic Power Network.",
     path: `/preaching/${params.id}/`,
-    image: item ? getVideoThumbnail(item.media_url) : null,
+    image: item && item.embed_allowed!==false ? getVideoThumbnail(item.media_url) : null,
     imageAlt: item ? `${item.title} sermon thumbnail.` : "Apostolic sermon thumbnail.",
   });
 }
@@ -33,7 +33,7 @@ export default function PreachingDetailPage({
   if (!item) notFound();
 
   const media = safeUrl(item.media_url);
-  const playable = getPlayable(item.media_url);
+  const playable = getPlayable(item.media_url, item.embed_allowed!==false);
 
   return (
     <div className="container-app py-10 sm:py-12">
@@ -46,6 +46,7 @@ export default function PreachingDetailPage({
         <h1 className="mt-3 font-serif text-4xl font-medium tracking-[-0.02em] text-sanctuary-ink sm:text-5xl">{item.title}</h1>
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-sanctuary-muted">
           {item.speaker && <span>🎤 {item.speaker}</span>}
+          {item.source_creator && <span>Source channel: {item.source_creator}</span>}
           {item.scripture_reference && <span>📖 {item.scripture_reference}</span>}
           {item.media_type && <span className="uppercase">{item.media_type}</span>}
           <span>{formatDate(item.created_at.slice(0, 10))}</span>

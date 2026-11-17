@@ -38,7 +38,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <nav className="hidden items-center gap-0.5 lg:flex">
+        <nav className="hidden items-center gap-0.5 xl:flex">
           {NAV_LINKS.map((link) => {
             const active =
               link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
@@ -77,7 +77,7 @@ export function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={open}
             className={cn(
-              "flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border lg:hidden",
+              "flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-lg border xl:hidden",
               isHome ? "border-white/25" : "border-sanctuary-line bg-white",
             )}
           >
@@ -91,7 +91,7 @@ export function Navbar() {
       {/* Mobile dropdown */}
       {open && (
         <nav className={cn(
-          "flex flex-col gap-1 border-b px-5 pb-4 pt-1 backdrop-blur-xl lg:hidden",
+          "flex flex-col gap-1 border-b px-5 pb-4 pt-1 backdrop-blur-xl xl:hidden",
           isHome
             ? "border-white/20 bg-[rgba(8,16,38,0.94)]"
             : "border-sanctuary-line bg-white/[0.97]",

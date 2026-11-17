@@ -1,4 +1,4 @@
-import { Agent, Runner, OpenAIProvider } from "@openai/agents";
+import { Agent, Runner, OpenAIProvider, webSearchTool } from "@openai/agents";
 import OpenAI from "openai";
 import { randomUUID } from "node:crypto";
 import type { z } from "zod";
@@ -15,11 +15,21 @@ export function modelConfig() {
   if(!Number.isFinite(input)||input<0||!Number.isFinite(output)||output<0)throw new Error("Set verified model pricing before enabling this model.");
   return {model,input,output};
 }
-export async function generate<T>(store:StateStore,name:string,instructions:string,schema:z.ZodType<T>,data:unknown):Promise<T> {
+export type SearchEvidence={urls:string[];calls:number};
+export function searchEvidence(raw:unknown):SearchEvidence {
+  const urls=new Set<string>();let calls=0;
+  const walk=(v:unknown,depth=0)=>{if(depth>14||!v||typeof v!=="object")return;if(Array.isArray(v)){v.slice(0,200).forEach(x=>walk(x,depth+1));return;}const o=v as Record<string,unknown>;
+    if(o.type==="web_search_call")calls++;
+    if(typeof o.url==="string"&&(o.type==="url_citation"||typeof o.title==="string"||o.type==="url")){try{const u=new URL(o.url);if(u.protocol==="https:")urls.add(u.href);}catch{}}
+    for(const [k,value] of Object.entries(o))if(!["input","instructions","reasoning"].includes(k))walk(value,depth+1);
+  };walk(raw);return {urls:[...urls].slice(0,80),calls};
+}
+export type GenerateOptions={search?:{allowedDomains?:string[];capture:(evidence:SearchEvidence)=>void}};
+export async function generate<T>(store:StateStore,name:string,instructions:string,schema:z.ZodType<T>,data:unknown,options:GenerateOptions={}):Promise<T> {
   if(!process.env.OPENAI_API_KEY)throw new Error("OPENAI_API_KEY is not configured.");
   const payload=JSON.stringify(data);if(Buffer.byteLength(payload)>55000)throw new Error("Agent input exceeds the bounded workflow limit.");
-  const {model,input,output}=modelConfig();const maxTokens=3000;
-  const reservedUsd=((Buffer.byteLength(payload+instructions)+14000)*input+maxTokens*output)/1e6;
+  const {model,input,output}=modelConfig();const maxTokens=3000;const searchReservation=options.search?(50000*input/1e6+.02):0;
+  const reservedUsd=((Buffer.byteLength(payload+instructions)+14000)*input+maxTokens*output)/1e6+searchReservation;
   const id=randomUUID();const at=now();const dailyCap=Number(process.env.APN_DAILY_BUDGET_USD || "1");
   if(!Number.isFinite(dailyCap)||dailyCap<=0)throw new Error("Set a positive daily agent budget.");
   await store.update(s=>{
@@ -30,10 +40,11 @@ export async function generate<T>(store:StateStore,name:string,instructions:stri
   try{
     const client=new OpenAI({apiKey:process.env.OPENAI_API_KEY,maxRetries:0,timeout:90000});
     const runner=new Runner({modelProvider:new OpenAIProvider({openAIClient:client}),tracingDisabled:true,traceIncludeSensitiveData:false});
-    const agent=new Agent({name,instructions,model,outputType:schema,modelSettings:{maxTokens,store:false,promptCacheOptions:{mode:"explicit"},reasoning:{effort:"low"}}});
+    const agent=new Agent({name,instructions,model,outputType:schema,tools:options.search?[webSearchTool({searchContextSize:"low",filters:options.search.allowedDomains?{allowedDomains:options.search.allowedDomains}:undefined})]:[],modelSettings:{maxTokens,store:false,promptCacheOptions:{mode:"explicit"},reasoning:{effort:"low"},providerData:options.search?{max_tool_calls:2,include:["web_search_call.action.sources"]}:undefined}});
     const result=await runner.run(agent,payload,{maxTurns:1,signal:AbortSignal.timeout(95000)});
-    const usage=result.state.usage;
-    await store.update(s=>{const c=s.costs.find(c=>c.id===id)!;c.status="complete";c.inputTokens=usage.inputTokens;c.outputTokens=usage.outputTokens;c.estimatedUsd=(usage.inputTokens*input+usage.outputTokens*output)/1e6;action(s,name,"model-complete",id,`Input ${usage.inputTokens}; output ${usage.outputTokens}; estimated $${c.estimatedUsd.toFixed(5)}`);});
+    const usage=result.state.usage;const evidence=options.search?searchEvidence(result.rawResponses.map(r=>r.providerData)):null;const toolUsd=(evidence?.calls||0)*.01;
+    await store.update(s=>{const c=s.costs.find(c=>c.id===id)!;c.status="complete";c.inputTokens=usage.inputTokens;c.outputTokens=usage.outputTokens;c.estimatedUsd=(usage.inputTokens*input+usage.outputTokens*output)/1e6+toolUsd;if(evidence){c.toolCalls=evidence.calls;c.toolUsd=toolUsd;}action(s,name,"model-complete",id,`Input ${usage.inputTokens}; output ${usage.outputTokens}; estimated $${c.estimatedUsd.toFixed(5)}`);});
+    if(evidence){if(evidence.calls>2)throw new Error("Search exceeded its configured tool-call limit.");options.search!.capture(evidence);}
     return schema.parse(result.finalOutput);
   }catch(e){
     await store.update(s=>{const c=s.costs.find(c=>c.id===id)!;if(c.status!=="complete")c.status="uncertain";action(s,name,"model-failed",id,"No automatic model retry; reserved budget retained if billing is unknown.");});

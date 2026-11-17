@@ -13,8 +13,14 @@ export class MemoryStore implements StateStore {
 }
 // Strong reads + conditional writes protect approvals, leases, queue and budget
 // together. Mutators MUST be synchronous and contain no external side effects.
+export function blobStoreName(env:Record<string,string|undefined>=process.env){
+  if(env.APN_STORE_NAME)return env.APN_STORE_NAME;
+  if(env.CONTEXT==="production")return "apn-agent-workflow-v1-production";
+  if(env.DEPLOY_ID)return "apn-agent-workflow-v1-preview-"+env.DEPLOY_ID;
+  throw new Error("Configure an explicit APN_STORE_NAME for this runtime; no shared preview fallback is allowed.");
+}
 export class BlobStore implements StateStore {
-  blob = getStore({name: process.env.APN_STORE_NAME || `apn-agent-workflow-v1-${process.env.CONTEXT === "production" ? "production" : "preview-"+(process.env.DEPLOY_ID || "local")}`, consistency:"strong"});
+  blob = getStore({name: blobStoreName(), consistency:"strong"});
   async read() { return (await this.blob.get("state",{type:"json"}) as State|null) ?? emptyState(); }
   async update<T>(mutate:(state:State)=>T):Promise<T> {
     for(let i=0;i<8;i++) {
@@ -43,8 +49,10 @@ export class FileStore implements StateStore {
     } finally { await lock.close();await unlink(this.path+".lock"); }
   }
 }
-let singleton:StateStore|undefined;
+let localStore:FileStore|undefined;
 export function getStateStore() {
-  if(!singleton) singleton=process.env.APN_LOCAL_STATE ? new FileStore(process.env.APN_LOCAL_STATE) : new BlobStore();
-  return singleton;
+  if(process.env.APN_LOCAL_STATE)return localStore??=new FileStore(process.env.APN_LOCAL_STATE);
+  // Netlify injects short-lived credentials per invocation. Reusing a client
+  // from a prior warm invocation eventually breaks every queue read/write.
+  return new BlobStore();
 }
