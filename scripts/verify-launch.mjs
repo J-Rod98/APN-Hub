@@ -38,7 +38,7 @@ assert.match(home, /Be first to receive the APN roundup\./);
 assert.match(home, /Join the launch list/);
 assert.match(home, /One launch email, then occasional curated updates\. Unsubscribe anytime\./);
 assert.doesNotMatch(home, /Get the week ahead, every Friday/);
-assert.match(privacy, /Effective date: (?:<!-- -->)?July 17, 2026/);
+assert.match(privacy, /Effective date: (?:<!-- -->)?November 17, 2026/);
 assert.match(privacy, /APN uses Formspree to receive and store launch-list requests\./);
 assert.match(privacy, /A hidden honeypot rejects automated submissions/);
 assert.match(searchSource, /No results for/);
