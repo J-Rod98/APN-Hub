@@ -201,7 +201,7 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
         {/* trust row + featured card */}
         <div className="relative z-[2] mx-auto flex w-full max-w-[1240px] flex-wrap items-end justify-between gap-6 px-5 pb-10 sm:px-10">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3.5 text-white">
-            {["Manually curated", "Linked to original sources", "Always free"].map(
+            {["Curated sources", "Linked to original sources", "Always free"].map(
               (t, i) => (
                 <span key={t} className="flex items-center gap-3">
                   {i > 0 && <span className="hidden h-4 w-px bg-white/25 sm:block" />}

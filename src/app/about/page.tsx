@@ -41,9 +41,10 @@ export default function AboutPage() {
           <div className="mb-2 text-2xl">🛡️</div>
           <h2 className="mb-2 text-lg font-bold">Reviewed before it&apos;s posted</h2>
           <p className="text-sm text-ink-muted">
-            APN&apos;s first release is edited by hand. Every featured item is
-            checked before it is added to the public catalog and links back to
-            its original source.
+            APN combines individual review with owner-approved source rules.
+            Routine listings can publish automatically from approved sources;
+            original teaching and uncertain claims require individual review.
+            Featured content links back to its original source.
           </p>
         </Card>
 
