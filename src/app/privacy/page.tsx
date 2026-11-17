@@ -5,12 +5,12 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "How Apostolic Power Network handles launch-list and content-suggestion information.",
+  description: "How Apostolic Power Network handles suggestions, launch-list information and authorized search analytics.",
   path: "/privacy/",
 });
 
 const CONTACT_EMAIL = "apostolicpowernet@gmail.com";
-const EFFECTIVE_DATE = "July 17, 2026";
+const EFFECTIVE_DATE = "November 17, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -85,6 +85,28 @@ export default function PrivacyPage() {
             material from YouTube and Spotify. When you load an externally hosted image, play embedded
             media, or open an external resource, those providers may process information under their
             own terms and privacy policies. APN does not control those third parties.
+          </p>
+        </PolicySection>
+
+        <PolicySection title="Owner-authorized Google Search Console data">
+          <p>
+            When authorized by the site owner, APN reads Google Search Console search queries,
+            page URLs, clicks, impressions, click-through rates, average positions and indexing
+            results for APN. We use these records to measure search performance, identify website
+            problems and prioritize content improvements. This connection does not require visitors
+            to sign in to Google and does not request Gmail, advertising or Google Drive access.
+          </p>
+          <p className="mt-3">
+            Credentials and reports are held in APN&apos;s server environment on Netlify, with access
+            restricted to the owner and authorized server processes. Selected search observations
+            may be sent to OpenAI&apos;s API for APN&apos;s analytics and editorial planning. APN does not
+            use Google API data to train general-purpose AI models, sell it, or use it for advertising.
+            Raw search reports are not published on the public site.
+          </p>
+          <p className="mt-3">
+            The owner may revoke the Google connection through their Google Account permissions.
+            Revoking access stops future authorized reads; existing reports remain until removed
+            from APN&apos;s stored records. Contact APN to request removal of stored analytics records.
           </p>
         </PolicySection>
 
