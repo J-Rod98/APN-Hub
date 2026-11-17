@@ -6,9 +6,9 @@ export const feedSchema=z.object({id:z.string(),label:z.string().min(3).max(120)
 export type DiscoveryFeed=z.infer<typeof feedSchema>;
 export const discoverySettingsSchema=z.object({enabled:z.boolean(),wideLeads:z.boolean(),feeds:z.array(feedSchema).max(12)});
 export type DiscoverySettings=z.infer<typeof discoverySettingsSchema>;
-export type DiscoveryCandidate={id:string;category:DiscoveryCategory;url:string;title:string;creator:string|null;publishedAt:string|null;text:string;observedAt:string;hash:string;flags:string[];searchEvidence:string[];status:"new"|"queued"|"dismissed"|"failed";taskId?:string;error?:string};
+export type DiscoveryCandidate={identity?:import("./automation-types").SourceIdentity;identityVerifiedAt?:string;embedAvailable?:boolean;id:string;category:DiscoveryCategory;url:string;title:string;creator:string|null;publishedAt:string|null;text:string;observedAt:string;hash:string;flags:string[];searchEvidence:string[];status:"new"|"queued"|"dismissed"|"failed";taskId?:string;error?:string};
 export type DiscoveryRun={id:string;day:string;at:string;category:DiscoveryCategory;status:"running"|"complete"|"failed";found:number;queued:number;duplicates:number;errors:string[];evidenceUrls:string[];retry?:boolean};
 export type DiscoveryState={settings:DiscoverySettings;candidates:DiscoveryCandidate[];runs:DiscoveryRun[]};
-export type DiscoveryProvenance={candidateId:string;category:DiscoveryCategory;url:string;creator:string|null;publishedAt:string|null;embedMode:"link"|"embed";evidenceHash:string;flags:string[]};
+export type DiscoveryProvenance={identity?:import("./automation-types").SourceIdentity;identityVerifiedAt?:string;embedAvailable?:boolean;candidateId:string;category:DiscoveryCategory;url:string;creator:string|null;publishedAt:string|null;embedMode:"link"|"embed";evidenceHash:string;flags:string[]};
 export const defaultDiscovery=():DiscoveryState=>({settings:{enabled:true,wideLeads:true,feeds:[{id:"upci-news",label:"UPCI official news",url:"https://upci.org/feed/",category:"news",enabled:true}]},candidates:[],runs:[]});
 export const searchLeadsSchema=z.object({leads:z.array(z.object({category:categorySchema,url:z.string(),reason:z.string().max(500)})).max(8),notes:z.array(z.string()).max(6)});

@@ -5,7 +5,9 @@ import { guides } from "../../src/lib/guides";
 import { auditPublicSite, searchConsole, searchWindow, type PageAudit } from "./connectors";
 import { DOCTRINE, generate } from "./model";
 import { action, assertApproved, digest, now, permittedSource, SITE, validateDraft } from "./policy";
-import { publishTask } from "./publish";
+import { publishBatch } from "./publish";
+import { runTrustedSources,verifyAutomaticNews,updateManagementDigest } from "./automation-workflow";
+import { automationState,authorizeAutomatic,assertPublicationAuthorized,policyDay,automaticIssues } from "./automation-policy";
 import { draftSchema, insightSchema, type Evidence, type Proposal, type Source, type State, type Task } from "./types";
 import type { StateStore } from "./store";
 
@@ -54,10 +56,10 @@ export async function runInsights(store:StateStore,deps={audit:auditPublicSite,s
     action(s,"APN Insights","report-created",id,"Real observations; missing sources remain unavailable.");
   });
 }
-export async function draftNext(store:StateStore,generateDraft:typeof generate=generate) {
+export async function draftNext(store:StateStore,generateDraft:typeof generate=generate,onlyTrusted=false) {
   const task=await store.update(s=>{
     const rank={high:0,medium:1,low:2};
-    const t=s.tasks.filter(t=>t.status==="queued" && t.kind!=="technical").sort((a,b)=>rank[a.priority]-rank[b.priority]||a.createdAt.localeCompare(b.createdAt))[0];
+    const t=s.tasks.filter(t=>t.status==="queued" && t.kind!=="technical" && (!onlyTrusted||s.automation?.rules.some(r=>r.enabled&&r.category===t.kind&&r.identity.provider===t.discovery?.identity?.provider&&r.identity.id===t.discovery?.identity?.id)) && (!t.nextAttemptAt||Date.parse(t.nextAttemptAt)<=Date.now())).sort((a,b)=>rank[a.priority]-rank[b.priority]||a.createdAt.localeCompare(b.createdAt))[0];
     if(!t)return null;
     const sources=t.sourceIds.map(id=>s.sources.find(x=>x.id===id)).filter((x):x is Source=>!!x);
     if(!sources.length || sources.some(src=>!permittedSource(src))){t.status="blocked";t.error="Add source text and processing/publication rights before drafting.";action(s,"APN Editor","source-blocked",t.id);return null;}
@@ -69,33 +71,40 @@ export async function draftNext(store:StateStore,generateDraft:typeof generate=g
   try{
     const s=await store.read();const sources=s.sources.filter(src=>task.sourceIds.includes(src.id));
     const paths=["/","/about/","/preaching/","/podcast/","/events/","/materials/","/guides/","/news/","/music/",...guides.map(g=>`/guides/${g.slug}/`)];
-    const d=task.discovery&&["sermon","podcast","music"].includes(task.kind)?listingDraft(task,sources[0]):await generateDraft(store,"APN Editor",`${DOCTRINE} You are the original content research and editing specialist. Consume this prioritized task using only the supplied authorized sources. Accurate metadata, useful original writing and verified internal links matter more than volume. Never reconstruct a missing transcript or quote from memory. Every factual claim must include an exact supporting source excerpt. Quotes must be exact substrings. For metadata tasks return only a title and description; set intro empty, sections/faqs empty, event null. For a resource or Bible study write original sections; a Bible study must use supplied Scripture text. Event fields must exactly occur in organizer evidence including timezone. Use only the provided internal paths. Flag anything uncertain instead of completing it. For news, write an original attributed factual brief of at most 180 words across ALL visible fields, with two short sections, no quotations, and only facts supported by actual source excerpts. Link-only sources authorize a reference brief, not reproduction or invented interviews. Write plain prose, without Markdown link syntax; put links only in the structured internalLinks field. Use uncertainties and doctrineFlags only for specific unresolved facts or interpretations. Routine owner approval, source-identity checks and Apostolic relevance review already have mandatory dashboard attestations; do not repeat those reminders as factual uncertainties. Do not claim a checklist, doctrine, source rights or publication was approved.`,draftSchema,{task,sources:sources.map(({hash,...src})=>src),paths,existingTitles:guides.map(g=>g.title)});
+    const d=task.discovery&&["sermon","podcast","music"].includes(task.kind)?listingDraft(task,sources[0]):await generateDraft(store,"APN Editor",`${DOCTRINE} You are the original content research and editing specialist. Consume this prioritized task using only the supplied authorized sources. Accurate metadata, useful original writing and verified internal links matter more than volume. Never reconstruct a missing transcript or quote from memory. Every factual claim must include an exact supporting source excerpt. Quotes must be exact substrings. For metadata tasks return only a title and description; set intro empty, sections/faqs empty, event null. For a resource or Bible study write original sections; a Bible study must use supplied Scripture text. Event fields must occur in organizer evidence. For date-only events, leave timezone empty if no clock time is stated; never infer it. Use only the provided internal paths. Flag anything uncertain instead of completing it. For news, write an original attributed factual brief of at most 180 words across ALL visible fields, with two short sections, no quotations, and only facts supported by actual source excerpts. Link-only sources authorize a reference brief, not reproduction or invented interviews. Write plain prose, without Markdown link syntax; put links only in the structured internalLinks field. Use uncertainties and doctrineFlags only for specific unresolved facts or interpretations. Routine owner approval, source-identity checks and Apostolic relevance review already have mandatory dashboard attestations; do not repeat those reminders as factual uncertainties. Do not claim a checklist, doctrine, source rights or publication was approved.`,draftSchema,{asOf:new Date().toISOString(),task,sources:sources.map(({hash,...src})=>src),paths,existingTitles:guides.map(g=>g.title)});
     await store.update(s=>{
       const current=s.tasks.find(t=>t.id===task.id)!;if(current.status!=="drafting")return;
       const checks=validateDraft(current,d,s.sources.filter(src=>current.sourceIds.includes(src.id)),paths,guides);
       current.draft=d;current.draftHash=digest(d);current.checks=checks;delete current.approval;current.updatedAt=now();current.status=checks.length?"blocked":"review";
       action(s,"APN Editor","draft-completed",task.id,checks.length?`${checks.length} blocking checks`:"Awaiting owner review");
     });
-  }catch(e){await store.update(s=>{const t=s.tasks.find(t=>t.id===task.id)!;t.status="failed";t.error=e instanceof Error?e.message:"Draft failed";t.updatedAt=now();action(s,"APN Editor","draft-failed",task.id,t.error);});}
+  }catch(e){await store.update(s=>{const t=s.tasks.find(t=>t.id===task.id)!;const budget=(e as Error).message==="Daily AI budget reached; no model call was made.";t.status=budget?"queued":"failed";if(budget){t.attempts--;t.nextAttemptAt=new Date(Date.now()+86400000).toISOString();}t.error=e instanceof Error?e.message:"Draft failed";t.updatedAt=now();action(s,"APN Editor",budget?"draft-budget-deferred":"draft-failed",task.id,t.error);});}
 }
 export async function publishNext(store:StateStore) {
   if(process.env.APN_PUBLISH_ENABLED!=="true")return;
-  const task=await store.update(s=>{
-    const t=s.tasks.find(t=>t.status==="approved" && t.kind!=="clip" && Date.parse(t.approval!.scheduledAt)<=Date.now());
-    if(!t)return null;assertApproved(t,s);
-    t.status="publishing";t.updatedAt=now();action(s,"publisher","publish-started",t.id);return structuredClone(t);
+  const paths=["/","/about/","/preaching/","/podcast/","/events/","/materials/","/guides/","/news/","/music/",...guides.map(g=>`/guides/${g.slug}/`)];
+  const tasks=await store.update(s=>{
+    const auto=automationState(s);
+    // Unused grants roll over only after a fresh atomic daily reservation.
+    for(const t of s.tasks.filter(t=>t.status==="approved"&&t.policyAuthorization&&t.policyAuthorization.day!==policyDay())){
+      const old=auto.reservations.find(r=>r.id===t.policyAuthorization!.reservationId);if(old)old.status="cancelled";delete t.policyAuthorization;t.status="review";
+    }
+    authorizeAutomatic(s,paths,guides);
+    const due=s.tasks.filter(t=>t.status==="approved"&&t.kind!=="clip"&&Date.parse(t.approval?.scheduledAt||t.policyAuthorization?.scheduledAt||"")<=Date.now()).slice(0,12);
+    const valid:Task[]=[];
+    for(const t of due){
+      try{assertPublicationAuthorized(t,s);const errors=validateDraft(t,t.draft!,s.sources.filter(src=>t.sourceIds.includes(src.id)),paths,guides);if(t.policyAuthorization)errors.push(...automaticIssues(t,s,paths,guides).issues);if(errors.length)throw Error([...new Set(errors)].join(" "));
+        t.status="publishing";t.updatedAt=now();action(s,"publisher","publish-started",t.id);valid.push(structuredClone(t));
+      }catch(e){t.status="failed";t.error=(e as Error).message;action(s,"publisher","publish-failed",t.id,t.error);}
+    }return valid;
   });
-  if(!task)return;
-  try {
-    const s=await store.read();const sources=s.sources.filter(src=>task.sourceIds.includes(src.id));
-    const paths=["/","/about/","/preaching/","/podcast/","/events/","/materials/","/guides/","/news/","/music/",...guides.map(g=>`/guides/${g.slug}/`)];
-    const checks=validateDraft(task,task.draft!,sources,paths,guides);
-    if(checks.length)throw new Error(checks.join(" "));
-    const publication=await publishTask(task,s);
-    await store.update(s=>{const t=s.tasks.find(t=>t.id===task.id)!;assertApproved(t,s);t.status="published";t.publication=publication;t.updatedAt=now();action(s,"publisher","content-committed",t.id,publication.commit);});
-  }catch(e){await store.update(s=>{const t=s.tasks.find(t=>t.id===task.id)!;t.status="failed";t.error=e instanceof Error?e.message:"Publication failed; reconcile before retrying";t.updatedAt=now();action(s,"publisher","publish-failed",t.id,t.error);});}
+  if(!tasks.length){await store.update(updateManagementDigest);return;}
+  try{
+    const snapshot=await store.read();const receipts=await publishBatch(tasks,snapshot,()=>store.read());
+    await store.update(s=>{for(const task of tasks){const t=s.tasks.find(t=>t.id===task.id)!;t.status="published";t.publication=receipts[t.id];t.updatedAt=now();const r=s.automation?.reservations.find(r=>r.id===t.policyAuthorization?.reservationId);if(r)r.status="published";action(s,"publisher","content-committed",t.id,t.publication.commit);}updateManagementDigest(s);});
+  }catch(e){await store.update(s=>{for(const task of tasks){const t=s.tasks.find(t=>t.id===task.id)!;t.status="failed";t.error=(e as Error).message;action(s,"publisher","publish-failed",t.id,t.error);}updateManagementDigest(s);});}
 }
-export type WorkflowMode="all"|"insights"|"editor"|"publish"|"discover"|`discover-${DiscoveryCategory}`;
+export type WorkflowMode="all"|"insights"|"editor"|"publish"|"trusted"|"discover"|`discover-${DiscoveryCategory}`;
 export async function tick(store:StateStore,mode:WorkflowMode="all") {
   const token=randomUUID();const acquired=await store.update(s=>{
     if(s.jobs.worker && Date.parse(s.jobs.worker.until)>Date.now())return false;
@@ -108,9 +117,12 @@ export async function tick(store:StateStore,mode:WorkflowMode="all") {
     if(mode==="insights")await runInsights(store);
     if(mode==="all")try{await runInsights(store);}catch(e){await store.update(s=>action(s,"worker","insights-stage-failed",mode,(e as Error).message));}
     if(mode==="discover"||mode.startsWith("discover-"))await runDiscovery(store,mode.startsWith("discover-")?mode.slice(9) as DiscoveryCategory:undefined);
-    if(mode==="all")try{await runDiscovery(store);}catch(e){await store.update(s=>action(s,"worker","discovery-stage-failed",mode,(e as Error).message));}
-    if(mode==="all"||mode==="editor"||mode.startsWith("discover"))await draftNext(store);
-    if(mode==="all"||mode==="publish")await publishNext(store);
+    if(mode==="trusted"||mode==="all"&&(await store.read()).automation?.enabled)await runTrustedSources(store);
+    if(mode==="all"&&!(await store.read()).automation?.rules.length)try{await runDiscovery(store);}catch(e){await store.update(s=>action(s,"worker","discovery-stage-failed",mode,(e as Error).message));}
+    if(mode==="all"||mode==="editor"||mode==="trusted"||mode.startsWith("discover"))await draftNext(store,generate,mode==="trusted");
+    if(mode==="all"||mode==="editor"||mode==="trusted")await verifyAutomaticNews(store);
+    if(mode==="all"||mode==="publish"||mode==="trusted")await publishNext(store);
+    await store.update(updateManagementDigest);
     return {status:"complete"};
   }catch(e){await store.update(s=>action(s,"worker","run-failed",mode,e instanceof Error?e.message:"Run failed"));throw e;}
   finally{await store.update(s=>{if(s.jobs.worker?.token===token)delete s.jobs.worker;});}

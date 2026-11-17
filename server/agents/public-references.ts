@@ -30,18 +30,18 @@ export function publicAddress(ip:string){
 }
 // Resolve and pin a public address for each HTTPS hop. No caller credentials,
 // cookies or private-network redirects are forwarded to discovered sources.
-export async function fetchReferenceText(raw:string,hops=0):Promise<{url:string;text:string;contentType:string}>{
+export async function fetchReferenceText(raw:string,hops=0,maxBytes=700000):Promise<{url:string;text:string;contentType:string}>{
  if(hops>3)throw new Error("Too many source redirects.");const u=publicUrl(raw);const addresses=await lookup(u.hostname,{all:true});
  if(!addresses.length||addresses.some(a=>!publicAddress(a.address)))throw new Error("Private-network sources are forbidden.");
  const pinned=addresses.find(a=>a.family===4)||addresses[0];
  const pinnedLookup=((_host,options,callback)=>{if(options.all)callback(null,[pinned]);else callback(null,pinned.address,pinned.family);}) as LookupFunction;
  return new Promise((resolve,reject)=>{
   const req=request(u,{method:"GET",signal:AbortSignal.timeout(15000),lookup:pinnedLookup,headers:{"user-agent":"APN-Discovery/1.0 (public source research)",accept:"text/html,application/rss+xml,application/atom+xml,application/xml,application/json,text/plain"}},res=>{
-   if([301,302,303,307,308].includes(res.statusCode||0)&&res.headers.location){res.resume();fetchReferenceText(new URL(res.headers.location,u).href,hops+1).then(resolve,reject);return;}
+   if([301,302,303,307,308].includes(res.statusCode||0)&&res.headers.location){res.resume();fetchReferenceText(new URL(res.headers.location,u).href,hops+1,maxBytes).then(resolve,reject);return;}
    if(res.statusCode!==200){res.resume();reject(new Error("Source HTTP "+res.statusCode));return;}
    const contentType=String(res.headers["content-type"]||"");if(!/html|xml|json|text\/plain/i.test(contentType)){res.resume();reject(new Error("Source format requires manual review; no document or media was downloaded."));return;}
    let size=0;const chunks:Buffer[]=[];
-   res.on("data",chunk=>{size+=chunk.length;if(size>700000){req.destroy(new Error("Reference exceeds the bounded research size."));return;}chunks.push(chunk);});
+   res.on("data",chunk=>{size+=chunk.length;if(size>Math.min(maxBytes,3000000)){req.destroy(new Error("Reference exceeds the bounded research size."));return;}chunks.push(chunk);});
    res.on("end",()=>resolve({url:u.href,text:Buffer.concat(chunks).toString("utf8"),contentType}));res.on("error",reject);
   });req.setTimeout(12000,()=>req.destroy(new Error("Source request timed out.")));req.on("error",reject);req.end();
  });

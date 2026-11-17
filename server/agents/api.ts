@@ -1,3 +1,5 @@
+import { verifyRule,INITIAL_SOURCES } from "./trusted-sources";
+import { automationState,revokePolicy,saveRule,assertPublicationAuthorized } from "./automation-policy";
 import { assignSlot, planTask, saveReviewDraft, slotSchema } from "./content-plan";
 import { canonicalUrl, readReference } from "./public-references";
 import { discoveryState,prepareCandidate, candidateFromReference, existingUrls, listingDraft } from "./discovery";
@@ -26,13 +28,19 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
     if(request.method!=="POST")return json({error:"Method not allowed"},405);
     const text=await request.text();if(Buffer.byteLength(text)>100000)return json({error:"Request too large"},413);
     const b=JSON.parse(text) as Record<string,unknown>;const op=z.string().parse(b.action);
-    if(op==="run") {if(process.env.CONTEXT && process.env.APN_AGENTS_ENABLED!=="true")throw new Error("Enable the reviewed server agents before requesting a run.");const mode=z.enum(["all","insights","editor","publish","discover",...discoveryCategories.map(c=>"discover-"+c)]).parse(b.mode||"all");if(!trigger)throw new Error("Worker trigger is unavailable.");await trigger(mode);return json({status:"accepted"},202);}
+    if(op==="run") {if(process.env.CONTEXT && process.env.APN_AGENTS_ENABLED!=="true")throw new Error("Enable the reviewed server agents before requesting a run.");const mode=z.enum(["all","insights","editor","publish","trusted","discover",...discoveryCategories.map(c=>"discover-"+c)]).parse(b.mode||"all");if(!trigger)throw new Error("Worker trigger is unavailable.");await trigger(mode);return json({status:"accepted"},202);}
+    if(op==="automation-pause" || op==="source-pause")return json(await store.update(s=>{revokePolicy(s,op==="source-pause"?z.string().parse(b.id):undefined);return {ok:true};}));
+    const verifiedRule = op==="trusted-source" ? await verifyRule(b.source) : null;
+    const initialRules = op==="trusted-source-presets" ? await Promise.all(INITIAL_SOURCES.map(source=>verifyRule(source))) : null;
     // Fetch public evidence before the atomic mutation, through the existing
     // SSRF-checked reference reader. No model call or publication occurs here.
     const intake = op === "research-intake" ? z.object({ action: z.literal("research-intake"), category: z.enum(discoveryCategories), url: z.string().url(), slot: slotSchema }).strict().parse(b) : null;
     const reference = intake ? await readReference(intake.url) : null;
     const result=await store.update(s=>{
       if(s.jobs.worker && Date.parse(s.jobs.worker.until)>Date.now())throw new Error("Worker is running; retry after it finishes.");
+      if(verifiedRule)return saveRule(s,verifiedRule);
+      if(initialRules){const rules=initialRules.map(r=>saveRule(s,r));action(s,"owner","initial-source-policy-approved","automation","Owner selected these four named sources in the APN setup conversation.");return rules;}
+      if(op==="automation-settings") {const settings=z.object({enabled:z.boolean(),dailyLimit:z.number().int().min(1).max(2)}).strict().parse(b.settings);const a=automationState(s);if(settings.enabled&&!a.rules.some(r=>r.enabled))throw Error("Approve at least one exact source first.");if(!settings.enabled)revokePolicy(s);a.enabled=settings.enabled;a.dailyLimit=settings.dailyLimit;action(s,"owner","automatic-publishing-settings","automation",`${settings.enabled?"enabled":"paused"}; maximum ${settings.dailyLimit} automatic posts per America/Chicago day.`);return {ok:true};}
       if(op==="plan-slot") return planTask(s, b.item);
       if(op==="review-draft") return saveReviewDraft(s, b.item, paths, guides);
       if(intake && reference) {
@@ -57,7 +65,7 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
       }
       if(op==="discovery-settings"){const settings=discoverySettingsSchema.parse(b.settings);for(const feed of settings.feeds){const url=new URL(feed.url);if(url.protocol!=="https:"||url.username||url.password)throw new Error("Feeds require a public HTTPS URL.");}discoveryState(s).settings=settings;action(s,"owner","discovery-settings-saved","discovery");return {ok:true};}
       if(op==="discovery-prepare")return prepareCandidate(s,z.string().parse(b.id),z.enum(["link","embed"]).parse(b.embedMode||"link"));
-      if(op==="discovery-embedding"){const t=s.tasks.find(t=>t.id===b.id);if(!t?.discovery||!["sermon","podcast","music"].includes(t.kind)||!["queued","review","blocked","failed","approved"].includes(t.status))throw new Error("Choose an editable discovered media task.");t.discovery.embedMode=z.enum(["link","embed"]).parse(b.embedMode);delete t.approval;if(t.status==="approved")t.status="review";t.updatedAt=now();action(s,"owner","discovery-embedding-changed",t.id,"Any earlier approval was withdrawn; exact embedding clearance is required.");return t;}
+      if(op==="discovery-embedding"){const t=s.tasks.find(t=>t.id===b.id);if(!t?.discovery||!["sermon","podcast","music"].includes(t.kind)||!["queued","review","blocked","failed","approved"].includes(t.status))throw new Error("Choose an editable discovered media task.");t.discovery.embedMode=z.enum(["link","embed"]).parse(b.embedMode);delete t.approval;withdrawPolicy(s,t);if(t.status==="approved")t.status="review";t.updatedAt=now();action(s,"owner","discovery-embedding-changed",t.id,"Any earlier approval was withdrawn; exact embedding clearance is required.");return t;}
       if(op==="discovery-dismiss"){const candidate=discoveryState(s).candidates.find(c=>c.id===b.id);if(!candidate||candidate.status!=="new")throw new Error("Choose a new discovery candidate.");candidate.status="dismissed";action(s,"owner","discovery-dismissed",candidate.id);return {ok:true};}
       if(op==="discovery-retry"){const run=discoveryState(s).runs.find(r=>r.id===b.id);if(!run||run.status!=="failed")throw new Error("Only failed discovery runs can be retried.");const latest=[...discoveryState(s).runs].reverse().find(r=>r.day===run.day&&r.category===run.category);if(latest?.id!==run.id)throw new Error("A later run has superseded this failure.");run.retry=true;action(s,"owner","discovery-retry-requested",run.id);return {ok:true};}
       if(op==="initial-import"){
@@ -91,18 +99,18 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
         const checks=validateDraft(t,t.draft!,s.sources.filter(src=>t.sourceIds.includes(src.id)),paths,guides);if(checks.length)throw new Error(checks.join(" "));
         return approve(s,id,z.string().parse(b.hash),z.array(z.string()).parse(b.checklist),z.string().datetime().parse(b.scheduledAt));
       }
-      if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;const candidate=s.discovery?.candidates.find(c=>c.taskId===t.id);if(candidate)candidate.status="dismissed";action(s,"owner","rejected",id);return t;}
+      if(op==="reject"){if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be rejected now.");t.status="rejected";delete t.approval;withdrawPolicy(s,t);const candidate=s.discovery?.candidates.find(c=>c.taskId===t.id);if(candidate)candidate.status="dismissed";action(s,"owner","rejected",id);return t;}
       if(op==="attach"){
         if(["published","handed_off","publishing","drafting"].includes(t.status))throw new Error("This task cannot be revised now.");
-        const ids=z.array(z.string()).min(1).parse(b.sourceIds);if(ids.some(id=>!s.sources.some(x=>x.id===id)))throw new Error("Unknown source.");t.sourceIds=ids;t.status="queued";delete t.approval;delete t.draft;delete t.draftHash;delete t.error;action(s,"owner","sources-attached",id,"Any previous draft approval was invalidated.");return t;
+        const ids=z.array(z.string()).min(1).parse(b.sourceIds);if(ids.some(id=>!s.sources.some(x=>x.id===id)))throw new Error("Unknown source.");t.sourceIds=ids;t.status="queued";delete t.approval;withdrawPolicy(s,t);delete t.draft;delete t.draftHash;delete t.error;action(s,"owner","sources-attached",id,"Any previous draft approval was invalidated.");return t;
       }
       if(op==="retry"){
         if(!["failed","blocked"].includes(t.status))throw new Error("Only failed/blocked tasks can be retried.");
-        if(t.approval)throw new Error("Publication outcome may be uncertain. Use reconcile, never blindly regenerate an approved draft.");
+        if(t.approval||t.policyAuthorization)throw new Error("Publication outcome may be uncertain. Use reconcile, never blindly regenerate an approved draft.");
         if(t.attempts>=3)throw new Error("Maximum attempts reached; create a reviewed replacement task.");t.status="queued";delete t.error;action(s,"owner","retry-requested",id);return t;
       }
       if(op==="reconcile"){
-        if(t.status!=="failed" || !t.approval)throw new Error("No approved failed publication to reconcile.");assertApproved(t,s);t.status="approved";action(s,"owner","reconciliation-requested",id,"Publisher will check durable approval hash before writing.");return t;
+        if(t.status!=="failed" || !(t.approval||t.policyAuthorization))throw new Error("No approved failed publication to reconcile.");assertPublicationAuthorized(t,s);t.status="approved";action(s,"owner","reconciliation-requested",id,"Publisher will check durable approval hash before writing.");return t;
       }
       if(op==="clipper-receipt"){
         if(t.kind==="clip" && t.status==="handed_off" && t.approval?.hash===b.hash && t.publication?.receipt===b.receipt)return t;
@@ -113,3 +121,5 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
     });return json(result);
   }catch(e){return json({error:e instanceof Error?e.message:"Request failed"},400);}
 }
+
+function withdrawPolicy(s:State,t:Task){if(t.policyAuthorization){const r=s.automation?.reservations.find(r=>r.id===t.policyAuthorization!.reservationId);if(r)r.status="cancelled";delete t.policyAuthorization;}delete t.automationReview;}

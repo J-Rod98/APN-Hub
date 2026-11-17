@@ -51,7 +51,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
     if(!e || !src || src.kind!=="event" || !src.text.includes(e.evidence) || e.evidence.length<20) errors.push("An event requires current organizer evidence.");
     else {
       if(!/^\d{4}-\d{2}-\d{2}$/.test(e.start) || !/^\d{4}-\d{2}-\d{2}$/.test(e.end) || !Number.isFinite(Date.parse(e.start)) || !Number.isFinite(Date.parse(e.end)) || e.end<e.start) errors.push("Event start and end must be verified ISO dates in order.");
-      for(const field of [e.name,e.start,e.end,e.timezone,e.venue]) if(!field.trim() || !src.text.toLowerCase().includes(field.toLowerCase())) errors.push("Event name, dates, timezone and venue must all occur in the verified source text.");
+      for(const field of [e.name,e.start,e.end,e.venue,...(e.timezone?[e.timezone]:[])]) if(!field.trim() || !src.text.toLowerCase().includes(field.toLowerCase())) errors.push("Event name, dates, supplied timezone and venue must all occur in the verified source text.");
       if(task.discovery&&Date.parse(e.end+"T23:59:59Z")+14*3600000<Date.now())errors.push("This discovered event has ended; verify a future or ongoing organizer listing.");
       if(e.organizerUrl!==src.url) errors.push("Event organizer URL differs from the source.");
       if(Date.now()-Date.parse(src.verifiedAt)>7*86400000) errors.push("Re-verify event information within seven days of publication.");

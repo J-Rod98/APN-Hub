@@ -46,7 +46,7 @@ export function planTask(s: State, input: unknown) {
 export function saveReviewDraft(s: State, input: unknown, paths: string[], existing: {title:string;description:string;slug?:string}[]) {
   const b = z.object({ id: z.string(), sourceIds: z.array(z.string()).min(1).max(15), draft: draftSchema.strict() }).strict().parse(input);
   const t = s.tasks.find(t => t.id === b.id);
-  if (!t || t.approval || !["queued", "review", "blocked", "failed"].includes(t.status)) throw new Error("Only an unapproved editable task can receive a researched draft.");
+  if (!t || t.approval || t.policyAuthorization || !["queued", "review", "blocked", "failed"].includes(t.status)) throw new Error("Only an unapproved editable task can receive a researched draft.");
   if (["sermon", "podcast", "music", "news"].includes(t.kind) && !t.discovery) throw new Error("Original discovery provenance is required.");
   if (b.sourceIds.some(id => !s.sources.some(src => src.id === id))) throw new Error("Unknown source.");
   // Retry the identical request safely; never grant or reconstruct an approval.

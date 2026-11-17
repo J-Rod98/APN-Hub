@@ -32,6 +32,9 @@ export const draftSchema = z.object({
 export type Draft = z.infer<typeof draftSchema>;
 export type Status = "queued" | "drafting" | "review" | "blocked" | "approved" | "publishing" | "published" | "handed_off" | "rejected" | "failed";
 export interface Task extends Proposal {
+  policyAuthorization?: import("./automation-types").PolicyAuthorization;
+  automationReview?: {hash:string;sourceHashes:Record<string,string>;at:string;issues:string[]};
+  automaticIssues?: string[];
   editorialPlan?: import("../../src/lib/editorial-plan").EditorialPlan;
   id: string; status: Status; sourceIds: string[]; createdAt: string; updatedAt: string;
   attempts: number; nextAttemptAt?: string; draft?: Draft; draftHash?: string; checks?: string[];
@@ -42,5 +45,5 @@ export interface Task extends Proposal {
 export type Evidence = { id: string; type: string; observedAt: string; url: string; data: unknown };
 export interface Report { failure?: string; id: string; at: string; start: string; end: string; summary: string; uncertainties: string[]; evidence: Evidence[]; taskIds: string[] }
 export interface Cost { id: string; agent: string; at: string; model: string; status: "reserved" | "complete" | "uncertain"; reservedUsd: number; inputTokens?: number; outputTokens?: number; estimatedUsd?: number; toolCalls?:number; toolUsd?:number }
-export interface State { discovery?:DiscoveryState; version: 1; tasks: Task[]; sources: Source[]; reports: Report[]; costs: Cost[]; actions: { at: string; actor: string; action: string; target: string; detail: string }[]; jobs: Record<string,{ until: string; token: string }> }
+export interface State { automation?:import("./automation-types").AutomationState; discovery?:DiscoveryState; version: 1; tasks: Task[]; sources: Source[]; reports: Report[]; costs: Cost[]; actions: { at: string; actor: string; action: string; target: string; detail: string }[]; jobs: Record<string,{ until: string; token: string }> }
 export const emptyState = (): State => ({ version: 1, tasks: [], sources: [], reports: [], costs: [], actions: [], jobs: {} });
