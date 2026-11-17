@@ -11,4 +11,4 @@ export type DiscoveryRun={id:string;day:string;at:string;category:DiscoveryCateg
 export type DiscoveryState={settings:DiscoverySettings;candidates:DiscoveryCandidate[];runs:DiscoveryRun[]};
 export type DiscoveryProvenance={candidateId:string;category:DiscoveryCategory;url:string;creator:string|null;publishedAt:string|null;embedMode:"link"|"embed";evidenceHash:string;flags:string[]};
 export const defaultDiscovery=():DiscoveryState=>({settings:{enabled:true,wideLeads:true,feeds:[{id:"upci-news",label:"UPCI official news",url:"https://upci.org/feed/",category:"news",enabled:true}]},candidates:[],runs:[]});
-export const searchLeadsSchema=z.object({leads:z.array(z.object({category:categorySchema,url:z.string().url(),reason:z.string().max(500)})).max(8),notes:z.array(z.string()).max(6)});
+export const searchLeadsSchema=z.object({leads:z.array(z.object({category:categorySchema,url:z.string(),reason:z.string().max(500)})).max(8),notes:z.array(z.string()).max(6)});

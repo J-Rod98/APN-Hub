@@ -89,3 +89,10 @@ test("warm hosted invocations use newly injected Blobs credentials",async()=>{
   assert.deepEqual(sent,["Bearer expired-fixture-token","Bearer fresh-fixture-token"]);
  }finally{globalThis.fetch=old.fetch;for(const [key,value] of [["NETLIFY_BLOBS_CONTEXT",old.context],["APN_STORE_NAME",old.name],["APN_LOCAL_STATE",old.local]])if(value===undefined)delete process.env[key!];else process.env[key!]=value;}
 });
+test("OpenAI strict-schema rejection releases only a proven pre-generation reservation",async()=>{
+ const {schemaRejected}=await import("../server/agents/model");const old={fetch:globalThis.fetch,key:process.env.OPENAI_API_KEY,budget:process.env.APN_DAILY_BUDGET_USD};const error={type:"invalid_request_error",param:"text.format.schema",code:"invalid_json_schema",message:"Invalid schema fixture"};
+ assert.equal(schemaRejected({...error,status:400}),true);assert.equal(schemaRejected({...error,status:500}),false);assert.equal(schemaRejected({status:400}),false);
+ try{process.env.OPENAI_API_KEY="test-only-never-transmitted";process.env.APN_DAILY_BUDGET_USD="1";globalThis.fetch=(async(_url,init)=>{const body=JSON.parse(String(init?.body));const urlSchema=body.text.format.schema.properties.leads.items.properties.url;assert.equal(urlSchema.type,"string");assert.equal(urlSchema.format,undefined);return new Response(JSON.stringify({error}),{status:400,headers:{"content-type":"application/json"}});}) as typeof fetch;
+ const store=new MemoryStore();await assert.rejects(()=>generate(store,"Contract test","Instructions",searchLeadsSchema,{}, {search:{capture:()=>{throw Error("No search result may be produced");}}}),/invalid_json_schema/);assert.equal(store.state.costs[0].status,"complete");assert.equal(store.state.costs[0].estimatedUsd,0);assert.equal(store.state.costs[0].toolCalls,0);
+ }finally{globalThis.fetch=old.fetch;if(old.key===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=old.key;if(old.budget===undefined)delete process.env.APN_DAILY_BUDGET_USD;else process.env.APN_DAILY_BUDGET_USD=old.budget;}
+});
