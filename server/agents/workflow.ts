@@ -1,5 +1,6 @@
 import { runDiscovery,listingDraft } from "./discovery";
 import { researchPlaces } from "../../src/lib/agent-source-library";
+import { googleSearchConfigured } from "./google-search-auth";
 import { discoveryCategories,type DiscoveryCategory } from "./discovery-types";
 import { randomUUID } from "node:crypto";
 import { guides } from "../../src/lib/guides";
@@ -24,8 +25,16 @@ export function ownedPage(p:PageAudit):Source {
   const hash=digest(p.text);return {id:`owner-${digest(p.path).slice(0,12)}-${hash.slice(0,12)}`,hash,title:p.title,url:SITE+p.path,kind:"owner_page",text:p.text,rights:"owned",rightsEvidence:"Existing APN first-party published page; owner requested improvements to this website.",verifiedAt:now(),copyrightFlag:false,clipKey:null,manifestHash:null};
 }
 export async function runInsights(store:StateStore,deps={audit:auditPublicSite,search:searchConsole,model:generate}) {
-  const id=weekId();if((await store.read()).reports.some(r=>r.id===id))return;
+  const base=weekId();const priorState=await store.read();
+  const prior=priorState.reports.find(r=>r.id===base);
+  // Preserve the original report and permit one bounded review after Google
+  // access is connected. Otherwise an earlier access-gap report hides the
+  // newly available data until next week. Normal weekly deduplication remains.
+  const firstConnected=!!prior&&googleSearchConfigured()&&!prior.evidence.some(e=>e.type==="search-console"&&(e.data as {status?:string})?.status==="available");
+  const id=firstConnected?base+"-search-connected":base;
+  if(priorState.reports.some(r=>r.id===id))return;
   const {pages,evidence}=await deps.audit();const gsc=await deps.search();
+  if(firstConnected&&gsc.status!=="available")throw Error("Search Console access is still unavailable; no additional model call was made.");
   const at=now();evidence.push({id:"gsc",type:"search-console",observedAt:at,url:"https://search.google.com/search-console",data:gsc});
   const state=await store.read();
   // Imported Netlify observations remain dated evidence. Never turn a missing
