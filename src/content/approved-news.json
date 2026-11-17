@@ -1,1 +1,39 @@
-[]
+[
+  {
+    "slug": "general-conference-2026-election-results",
+    "title": "UPCI Reports General Conference 2026 Election Results",
+    "description": "UPCI Communications reports Scott Graham’s reelection as general secretary-treasurer and Jordan Hudspeth’s election as general youth secretary.",
+    "intro": "",
+    "sections": [
+      {
+        "heading": "General secretary-treasurer",
+        "paragraphs": [
+          "UPCI Communications reports that Scott Graham was reelected general secretary-treasurer of the United Pentecostal Church International during General Conference 2026 in Salt Lake City, Utah."
+        ],
+        "bullets": []
+      },
+      {
+        "heading": "Youth leadership transition",
+        "paragraphs": [
+          "According to the report, Jordan Hudspeth was elected general youth secretary to succeed Jeremy Stafford."
+        ],
+        "bullets": []
+      }
+    ],
+    "internalLinks": [
+      {
+        "label": "More news",
+        "path": "/news/"
+      }
+    ],
+    "references": [
+      {
+        "label": "General Conference 2026 Election Results",
+        "href": "https://upci.org/general-conference-2026-election-results"
+      }
+    ],
+    "sourcePublishedAt": "2026-09-30T18:32:00.000Z",
+    "publishedAt": "2026-11-17T16:56:00.000Z",
+    "approvalHash": "0acfd8598797531a8beca957199702ac38aeed41cb8913474fd80e67c528d2e2"
+  }
+]
