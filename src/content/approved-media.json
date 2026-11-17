@@ -64,5 +64,17 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-1e41f9186eae8c88bd84",
     "sourcePolicyHash": "43654d931cecccceb53360ecbe63f5f5bff6b8e0956d70ef41e63c89eef2a8d3"
+  },
+  {
+    "id": "kingdom-speak-with-pastor-daniel-mckillop-68a3d7",
+    "kind": "podcast",
+    "title": "Kingdom Speak with Pastor Daniel McKillop",
+    "description": "Explore the original podcast. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/show/4S3pM8uQgXcpzJWHQhk7yj",
+    "creator": null,
+    "sourcePublishedAt": null,
+    "embedAllowed": false,
+    "publishedAt": "2026-11-17T18:05:00.000Z",
+    "approvalHash": "136804cc578626b224b387d7604f617bf7be2ec1bc5a2d1ba55533fa69ef9942"
   }
 ]
