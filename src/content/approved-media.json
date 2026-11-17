@@ -22,5 +22,17 @@
     "embedAllowed": true,
     "publishedAt": "2026-11-17T16:53:00.000Z",
     "approvalHash": "81c37c4bb79bfa9cfe7a1e66a176a99aed8758ecbf0e70538482c8584c6fb33c"
+  },
+  {
+    "id": "hear-the-harvest-c0ceaa",
+    "kind": "podcast",
+    "title": "Hear the Harvest",
+    "description": "Explore the original podcast. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/show/6JDPvDbLUUVx9Mh0F7rh4l",
+    "creator": null,
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-17T16:54:00.000Z",
+    "approvalHash": "7673f51813a8cd7959a7dac1e7f6a530c33d2979913016e3b9276f640da31dec"
   }
 ]
