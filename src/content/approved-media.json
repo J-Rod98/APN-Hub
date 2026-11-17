@@ -10,5 +10,17 @@
     "embedAllowed": true,
     "publishedAt": "2026-11-17T13:55:00.000Z",
     "approvalHash": "1287584d5f1b6fa6c63c67dd2abd25df7e18c1e503b7c216c3b73722b786454f"
+  },
+  {
+    "id": "poa-worship-service-8b645b",
+    "kind": "music",
+    "title": "POA Worship Service",
+    "description": "Explore the original music video from The Pentecostals of Alexandria. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=tzM3kAVFFg0",
+    "creator": "The Pentecostals of Alexandria",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-17T16:53:00.000Z",
+    "approvalHash": "81c37c4bb79bfa9cfe7a1e66a176a99aed8758ecbf0e70538482c8584c6fb33c"
   }
 ]
