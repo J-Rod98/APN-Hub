@@ -14,7 +14,7 @@ export function artifact(t:Task,s:State,current:unknown):{path:string;content:un
     if(!t.discovery)throw new Error("Discovery provenance is required for this content.");
     const list=Array.isArray(current)?current:[];
     if(t.kind==="news"){
-      const record={slug:d.slug,title:d.title,description:d.description,intro:d.intro,sections:d.sections,references:t.sourceIds.map(id=>{const src=s.sources.find(x=>x.id===id)!;return {label:src.title,href:src.url};}),sourcePublishedAt:t.discovery.publishedAt,publishedAt:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
+      const record={slug:d.slug,title:d.title,description:d.description,intro:d.intro,sections:d.sections,internalLinks:d.internalLinks,references:t.sourceIds.map(id=>{const src=s.sources.find(x=>x.id===id)!;return {label:src.title,href:src.url};}),sourcePublishedAt:t.discovery.publishedAt,publishedAt:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
       const old=list.find((x:{slug:string;approvalHash?:string})=>x.slug===d.slug);if(old&&old.approvalHash!==record.approvalHash)throw new Error("News slug collision; owner revision required.");
       return {path:contentPath(t),content:[...list.filter((x:{slug:string})=>x.slug!==d.slug),record]};
     }

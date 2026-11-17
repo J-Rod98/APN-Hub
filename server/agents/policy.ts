@@ -34,6 +34,7 @@ export function validateDraft(task:Task,d:Draft,sources:Source[],paths:string[],
     if(["sermon","podcast","music"].includes(task.kind)&&!recordingUrl(task.discovery.category,task.discovery.url))errors.push("A media listing must point to an individual original-provider recording, not a directory.");
     if(["sermon","podcast","music"].includes(task.kind)&&(d.quotes.length||d.sections.length||d.faqs.length))errors.push("Metadata-only listings cannot summarize unheard media, transcripts or lyrics.");
     if(task.kind==="news"){
+      if(/\[[^\]]+\]\((?:https?:\/\/|\/)[^)]+\)/.test(visible))errors.push("Write plain prose and use structured link fields for news references.");
       if(d.quotes.length)errors.push("News briefs must paraphrase and attribute; no copied quotations.");
       if(visible.split(/\s+/).filter(Boolean).length>180)errors.push("Keep the original news brief within 180 words including metadata.");
       const published=Date.parse(task.discovery.publishedAt||"");if(!Number.isFinite(published)||published>Date.now()+86400000||Date.now()-published>90*86400000)errors.push("News needs a verified publication date within the last 90 days.");

@@ -63,6 +63,7 @@ test("failed paid searches need explicit owner retry and stale worker runs are r
  await assert.rejects(()=>runDiscovery(store,"music",deps));await runDiscovery(store,"music",deps);assert.equal(calls,1);
  const r=await api(new Request("https://apn.example/api/apn-agents",{method:"POST",headers:{origin:"https://apn.example"},body:JSON.stringify({action:"discovery-retry",id:store.state.discovery!.runs[0].id})}),store,undefined,true);assert.equal(r.status,200);
  await assert.rejects(()=>runDiscovery(store,"music",deps));assert.equal(calls,2);
+ const obsolete=await api(new Request("https://apn.example/api/apn-agents",{method:"POST",headers:{origin:"https://apn.example"},body:JSON.stringify({action:"discovery-retry",id:store.state.discovery!.runs[0].id})}),store,undefined,true);assert.equal(obsolete.status,400);
  store.state.discovery!.runs.push({id:"stale",day:chicagoDay(),at:new Date().toISOString(),category:"news",status:"running",found:0,queued:0,duplicates:0,errors:[],evidenceUrls:[]});await tick(store,"editor");assert.equal(store.state.discovery!.runs.at(-1)!.status,"failed");
 });
 test("search evidence comes from actual tool results, and budget denies search before the network",async()=>{
@@ -103,4 +104,11 @@ test("media directories are research leads, never recording drafts",()=>{
 });
 test("old feed news is flagged and blocks before a paid draft request",async()=>{
  const store=new MemoryStore();const c=candidateFromReference("news",{url:"https://upci.org/old-announcement",title:"Apostolic ministry announcement",creator:null,publishedAt:"2025-01-01T00:00:00Z",text:"This Apostolic Pentecostal ministry announcement was actually published in an earlier year."},[]);discoveryState(store.state).candidates.push(c);assert.match(c.flags.join(" "),/Historical/);prepareCandidate(store.state,c.id);let called=false;await draftNext(store,(async()=>{called=true;throw Error("Must not spend on stale news");}) as typeof generate);assert.equal(called,false);assert.equal(store.state.tasks[0].status,"blocked");
+});
+test("news publication preserves structured links and keeps actual uncertainties blocking",()=>{
+ const store=new MemoryStore();const c=candidateFromReference("news",{url:"https://upci.org/fixture-announcement",title:"Fixture Apostolic ministry announcement",creator:"Fixture ministry",publishedAt:new Date().toISOString(),text:"The fixture Apostolic ministry announced a new resource for its churches. This supplied fixture is test evidence only."},[]);discoveryState(store.state).candidates.push(c);const t=prepareCandidate(store.state,c.id);const source=store.state.sources[0];
+ t.draft={...listingDraft(t,source),title:c.title,description:"An original, source-linked fixture brief about a verified Apostolic ministry announcement.",intro:"",sections:[{heading:"Announcement",paragraphs:["The fixture Apostolic ministry announced a resource."],bullets:[]},{heading:"Original source",paragraphs:["See the original announcement for details."],bullets:[]}],internalLinks:[{label:"APN news",path:"/news/"}]};t.draftHash=digest(t.draft);t.status="review";t.checks=[];
+ assert.deepEqual(validateDraft(t,t.draft,store.state.sources,["/news/"],[]),[]);t.draft.uncertainties=["The announcement date needs confirmation."];assert.ok(validateDraft(t,t.draft,store.state.sources,["/news/"],[]).some(e=>e.includes("Needs confirmation")));t.draft.uncertainties=[];
+ t.draft.sections[1].paragraphs=["See the [source](https://upci.org/fixture-announcement)."];assert.ok(validateDraft(t,t.draft,store.state.sources,["/news/"],[]).some(e=>e.includes("structured link")));t.draft.sections[1].paragraphs=["See the original announcement for details."];t.draftHash=digest(t.draft);
+ approve(store.state,t.id,t.draftHash,checks,new Date().toISOString());const a=artifact(t,store.state,[]);assert.deepEqual((a.content as {internalLinks:unknown}[])[0].internalLinks,t.draft.internalLinks);
 });
