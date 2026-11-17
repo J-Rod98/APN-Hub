@@ -16,7 +16,7 @@ export default async function EventsPage() {
   return (
     <div className="container-app py-10 sm:py-12">
       <SanctuaryPageHeader
-        eyebrow="Upcoming"
+        eyebrow="Calendar"
         title="Apostolic Events"
         subtitle="Verified gatherings, conferences, rallies, and training from across the Apostolic movement."
         action={<Button href="/submit" variant="ghost" size="sm">Suggest an event</Button>}

@@ -13,6 +13,8 @@
 // ============================================================================
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useCurrentTime } from "@/hooks/useCurrentTime";
+import { eventsForPeriod } from "@/lib/event-dates";
 import { useRouter } from "next/navigation";
 import { PlayerModal, type PlayerItem } from "./PlayerModal";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
@@ -42,7 +44,7 @@ interface Props {
 // --- helpers ---------------------------------------------------------------
 
 function sermonToPlayer(p: PreachingItem, i: number): PlayerItem | null {
-  const playable = getPlayable(p.media_url);
+  const playable = p.embed_allowed === false ? null : getPlayable(p.media_url);
   if (!playable) return null;
   return {
     title: p.title,
@@ -55,7 +57,7 @@ function sermonToPlayer(p: PreachingItem, i: number): PlayerItem | null {
 }
 
 function podcastToPlayer(e: PodcastEpisode, i: number): PlayerItem | null {
-  const playable = getPlayable(e.media_url);
+  const playable = e.embed_allowed === false ? null : getPlayable(e.media_url);
   if (!playable) return null;
   return {
     title: e.title,
@@ -82,6 +84,8 @@ const PlayTriangle = ({ size = 20 }: { size?: number }) => (
 // ============================================================================
 
 export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Props) {
+  const at = useCurrentTime();
+  const upcoming = useMemo(() => at ? eventsForPeriod(events, "Upcoming", at).slice(0, 3) : [], [events, at]);
   const [playing, setPlaying] = useState<PlayerItem | null>(null);
   const [q, setQ] = useState("");
   const router = useRouter();
@@ -323,10 +327,10 @@ export function SanctuaryHome({ events, preaching, podcast, featuredIndex }: Pro
             </Link>
           </div>
           <div className="flex flex-col gap-3.5">
-            {events.length === 0 ? (
-              <EmptyPanel text="No events published yet." href="/submit" cta="Submit an event" />
+            {!at ? <p role="status" className="text-sm text-sanctuary-muted">Checking upcoming dates…</p> : upcoming.length === 0 ? (
+              <EmptyPanel text="No upcoming gatherings listed. Browse the calendar or suggest an event." href="/submit" cta="Submit an event" />
             ) : (
-              events.slice(0, 3).map((e) => {
+              upcoming.map((e) => {
                 const b = dateBadge(e.event_date);
                 const artwork = resolveEventImage(e);
                 const image = safeUrl(artwork.image_url);

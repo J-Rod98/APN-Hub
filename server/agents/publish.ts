@@ -27,7 +27,7 @@ export function artifact(t:Task,s:State,current:unknown):{path:string;content:un
   if(t.kind==="event") {
     const e=d.event;if(!e)throw new Error("Verified event fields are required.");
     if(curatedEvents.some(old=>old.id===d.slug))throw new Error("This event slug is already in the curated catalogue.");
-    const record={id:d.slug,title:d.title,description:d.description,event_date:e.start,end_date:e.end,event_time:null,venue:e.venue,city:null,state:null,church_name:null,speaker:null,category:null,image_url:null,image_alt:null,highlights:d.sections.flatMap(section=>section.bullets),source_url:e.organizerUrl,contact_email:null,status:"published",created_at:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
+    const record={id:d.slug,title:d.title,description:d.description,event_date:e.start,end_date:e.end,event_time:null,timezone:e.timezone,venue:e.venue,city:null,state:null,church_name:null,speaker:null,category:null,image_url:null,image_alt:null,highlights:d.sections.flatMap(section=>section.bullets),source_url:e.organizerUrl,contact_email:null,status:"published",created_at:t.approval!.scheduledAt,approvalHash:t.approval!.hash};
     const old=list.find((event:{id:string;approvalHash?:string})=>event.id===d.slug);
     if(old && old.approvalHash!==record.approvalHash)throw new Error("Event slug collision; owner review required.");
     return {path:"src/content/approved-events.json",content:[...list.filter((event:{id:string})=>event.id!==d.slug),record]};

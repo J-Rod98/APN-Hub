@@ -1,4 +1,6 @@
-import { discoveryState,prepareCandidate } from "./discovery";
+import { assignSlot, planTask, saveReviewDraft, slotSchema } from "./content-plan";
+import { canonicalUrl, readReference } from "./public-references";
+import { discoveryState,prepareCandidate, candidateFromReference, existingUrls, listingDraft } from "./discovery";
 import { discoveryCategories,discoverySettingsSchema } from "./discovery-types";
 import { importUnapprovedState } from "./import-state";
 import { sameOriginMutation } from "./owner-identity";
@@ -25,8 +27,34 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
     const text=await request.text();if(Buffer.byteLength(text)>100000)return json({error:"Request too large"},413);
     const b=JSON.parse(text) as Record<string,unknown>;const op=z.string().parse(b.action);
     if(op==="run") {if(process.env.CONTEXT && process.env.APN_AGENTS_ENABLED!=="true")throw new Error("Enable the reviewed server agents before requesting a run.");const mode=z.enum(["all","insights","editor","publish","discover",...discoveryCategories.map(c=>"discover-"+c)]).parse(b.mode||"all");if(!trigger)throw new Error("Worker trigger is unavailable.");await trigger(mode);return json({status:"accepted"},202);}
+    // Fetch public evidence before the atomic mutation, through the existing
+    // SSRF-checked reference reader. No model call or publication occurs here.
+    const intake = op === "research-intake" ? z.object({ action: z.literal("research-intake"), category: z.enum(discoveryCategories), url: z.string().url(), slot: slotSchema }).strict().parse(b) : null;
+    const reference = intake ? await readReference(intake.url) : null;
     const result=await store.update(s=>{
       if(s.jobs.worker && Date.parse(s.jobs.worker.until)>Date.now())throw new Error("Worker is running; retry after it finishes.");
+      if(op==="plan-slot") return planTask(s, b.item);
+      if(op==="review-draft") return saveReviewDraft(s, b.item, paths, guides);
+      if(intake && reference) {
+        const url = canonicalUrl(reference.url);
+        if(existingUrls().has(url)) throw new Error("This source is already public on APN.");
+        const ds = discoveryState(s);
+        let candidate = ds.candidates.find(c => canonicalUrl(c.url) === url);
+        if(candidate && candidate.category !== intake.category) throw new Error("This source is already classified in a different category.");
+        if(!candidate) { candidate = candidateFromReference(intake.category, reference, [url]); ds.candidates.push(candidate); }
+        const prior = s.tasks.find(t => t.discovery?.candidateId === candidate!.id);
+        if(prior && ["rejected","published","publishing","handed_off"].includes(prior.status)) throw new Error("This source has already been resolved.");
+        const t = prior || prepareCandidate(s, candidate.id, "link");
+        assignSlot(s,t,intake.slot);
+        if(!t.draft && ["sermon","podcast","music"].includes(t.kind)) {
+          const src = s.sources.find(src => t.sourceIds.includes(src.id))!;
+          return saveReviewDraft(s, {id:t.id, sourceIds:t.sourceIds, draft:listingDraft(t,src)}, paths, guides);
+        }
+        // News and events need an original researched draft. Keep them out of
+        // the paid worker until one is supplied or explicitly retried.
+        if(!t.draft) { t.status="blocked";t.checks=["Research the original report or verify event dates, timezone and venue before drafting."]; }
+        return t;
+      }
       if(op==="discovery-settings"){const settings=discoverySettingsSchema.parse(b.settings);for(const feed of settings.feeds){const url=new URL(feed.url);if(url.protocol!=="https:"||url.username||url.password)throw new Error("Feeds require a public HTTPS URL.");}discoveryState(s).settings=settings;action(s,"owner","discovery-settings-saved","discovery");return {ok:true};}
       if(op==="discovery-prepare")return prepareCandidate(s,z.string().parse(b.id),z.enum(["link","embed"]).parse(b.embedMode||"link"));
       if(op==="discovery-embedding"){const t=s.tasks.find(t=>t.id===b.id);if(!t?.discovery||!["sermon","podcast","music"].includes(t.kind)||!["queued","review","blocked","failed","approved"].includes(t.status))throw new Error("Choose an editable discovered media task.");t.discovery.embedMode=z.enum(["link","embed"]).parse(b.embedMode);delete t.approval;if(t.status==="approved")t.status="review";t.updatedAt=now();action(s,"owner","discovery-embedding-changed",t.id,"Any earlier approval was withdrawn; exact embedding clearance is required.");return t;}

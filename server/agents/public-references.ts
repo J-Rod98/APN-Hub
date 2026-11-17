@@ -59,6 +59,14 @@ export function htmlReference(url:string,html:string):Reference{
 }
 export async function readReference(raw:string,read=fetchReferenceText):Promise<Reference>{
  const url=canonicalUrl(raw);const u=new URL(url);
+ if(u.hostname==="open.spotify.com" && u.pathname.startsWith("/show/")) {
+  // Spotify show oEmbed can name its latest episode. Bind a show listing to
+  // the actual show page so it cannot masquerade as that individual episode.
+  const r=await read(url);const $=load(r.text);
+  const title=$("meta[property='og:title']").attr("content")?.trim();
+  if(!title)throw new Error("Original Spotify show title is unavailable; use an individual episode or review manually.");
+  return {url,title:title.slice(0,250),creator:null,publishedAt:null,text:"Original show URL: "+url+"\nProvider show title: "+title+"\nMetadata only. This is a show directory, not an individual episode. No transcript, unheard-content summary, audio or reproduction rights were supplied."};
+ }
  if(u.hostname==="www.youtube.com"||u.hostname==="open.spotify.com"){
   const endpoint=u.hostname==="www.youtube.com"?"https://www.youtube.com/oembed?format=json&url=":"https://open.spotify.com/oembed?url=";
   const r=await read(endpoint+encodeURIComponent(url));const v=JSON.parse(r.text) as {title?:string;author_name?:string;author_url?:string;provider_name?:string};

@@ -32,6 +32,7 @@ export const draftSchema = z.object({
 export type Draft = z.infer<typeof draftSchema>;
 export type Status = "queued" | "drafting" | "review" | "blocked" | "approved" | "publishing" | "published" | "handed_off" | "rejected" | "failed";
 export interface Task extends Proposal {
+  editorialPlan?: import("../../src/lib/editorial-plan").EditorialPlan;
   id: string; status: Status; sourceIds: string[]; createdAt: string; updatedAt: string;
   attempts: number; nextAttemptAt?: string; draft?: Draft; draftHash?: string; checks?: string[];
   discovery?:DiscoveryProvenance;

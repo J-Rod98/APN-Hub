@@ -11,7 +11,7 @@ export function discoveryState(s:State):DiscoveryState{return s.discovery??=defa
 export const chicagoDay=(at=new Date())=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/Chicago"}).format(at);
 const knownHost=(url:string)=>["upci.org","aljc.org","upcigc.net","kansasupci.org"].some(h=>new URL(url).hostname===h||new URL(url).hostname.endsWith("."+h));
 const normalize=(url:string)=>{try{return canonicalUrl(url);}catch{return url;}};
-function existingUrls(){return new Set([...preaching.map(x=>x.media_url),...podcast.map(x=>x.media_url),...events.map(x=>x.source_url),...(approvedMedia as {sourceUrl:string}[]).map(x=>x.sourceUrl),...(approvedNews as {references:{href:string}[]}[]).flatMap(x=>x.references.map(r=>r.href))].filter((v):v is string=>!!v).map(normalize));}
+export function existingUrls(){return new Set([...preaching.map(x=>x.media_url),...podcast.map(x=>x.media_url),...events.map(x=>x.source_url),...(approvedMedia as {sourceUrl:string}[]).map(x=>x.sourceUrl),...(approvedNews as {references:{href:string}[]}[]).flatMap(x=>x.references.map(r=>r.href))].filter((v):v is string=>!!v).map(normalize));}
 export function candidateFromReference(category:DiscoveryCategory,reference:Reference,searchUrls:string[],feed?:FeedLead):DiscoveryCandidate{
  if(["sermon","podcast","music"].includes(category)&&!recordingUrl(category,reference.url))throw new Error("Choose an individual YouTube recording or Spotify podcast; a directory is not a media listing.");
  const url=canonicalUrl(reference.url);const publishedAt=reference.publishedAt||feed?.publishedAt||null;

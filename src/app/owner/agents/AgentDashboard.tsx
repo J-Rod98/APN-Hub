@@ -1,11 +1,12 @@
 "use client";
+import ContentPlanPanel from "./ContentPlanPanel";
 import DiscoveryPanel from "./DiscoveryPanel";
 import { OwnerSignIn,OwnerSignOut } from "./OwnerSignIn";
 import { useCallback,useEffect,useState } from "react";
 import type { State,Task,Report } from "../../../../server/agents/types";
 type Capabilities={openai:boolean;searchConsole:boolean;netlifyAnalytics:string;publishingEnabled:boolean;schedulesEnabled:boolean;github:boolean;clipper:string;dailyBudgetUsd:number};
 type Payload={state:State;capabilities:Capabilities};
-const tabs=["Queue","Discovery","Reports","Sources","Costs & actions"];
+const tabs=["Content plan","Queue","Discovery","Reports","Sources","Costs & actions"];
 const button="rounded-full bg-[#173e38] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40";
 const secondary="rounded-full border border-[#c8d5cd] px-4 py-2 text-sm font-semibold text-[#244d43] disabled:opacity-40";
 const field="w-full rounded-xl border border-[#c8d5cd] bg-white px-3 py-2 text-sm text-[#15372e]";
@@ -17,7 +18,7 @@ function ReportMetrics({report}:{report:Report}){
 }
 
 export default function AgentDashboard(){
-  const [token,setToken]=useState("");const [data,setData]=useState<Payload|null>(null);const [tab,setTab]=useState("Queue");const [error,setError]=useState("");const [notice,setNotice]=useState("");const [busy,setBusy]=useState(false);const [selected,setSelected]=useState<string|null>(null);const [checks,setChecks]=useState<string[]>([]);const [when,setWhen]=useState("");
+  const [token,setToken]=useState("");const [data,setData]=useState<Payload|null>(null);const [tab,setTab]=useState("Content plan");const [error,setError]=useState("");const [notice,setNotice]=useState("");const [busy,setBusy]=useState(false);const [selected,setSelected]=useState<string|null>(null);const [checks,setChecks]=useState<string[]>([]);const [when,setWhen]=useState("");
   const request=useCallback(async(body?:unknown)=>{
     const r=await fetch("/api/apn-agents",{method:body?"POST":"GET",credentials:"same-origin",headers:{...(token?{authorization:`Bearer ${token}`} : {}),...(body?{"content-type":"application/json"}:{})},body:body?JSON.stringify(body):undefined});
     const v=await r.json();if(!r.ok)throw Object.assign(new Error(v.error||"Request failed"),{status:r.status});return v;
@@ -49,6 +50,7 @@ export default function AgentDashboard(){
       <div className="rounded-2xl border border-[#d2ddd1] bg-white p-5"><p className="text-xs uppercase tracking-widest text-[#758779]">Stewardship</p><h2 className="mt-2 font-serif text-2xl">${total.toFixed(4)} estimated</h2><p className="mt-2 text-sm text-[#63766b]">${data.capabilities.dailyBudgetUsd.toFixed(2)} daily AI guard. Uncertain calls keep their reservation. Hosting excluded.</p></div></div>
       <div className="mt-5 flex flex-wrap items-center gap-3"><button className={button} disabled={busy} onClick={()=>void send({action:"run",mode:"all"})}>Run workflow</button><button className={secondary} disabled={busy} onClick={()=>void refresh()}>Refresh</button>{data.capabilities.publishingEnabled&&<button className={secondary} disabled={busy||!data.state.tasks.some(t=>t.status==="approved"&&t.kind!=="clip"&&!!t.approval&&Date.parse(t.approval.scheduledAt)<=Date.now())} onClick={()=>void send({action:"run",mode:"publish"})}>Publish approved now</button>}<span className="text-xs text-[#63766b]">{data.capabilities.schedulesEnabled?"Schedules configured":"Schedules awaiting activation"} · reports retain source dates</span></div>
       <p className="mt-3 text-xs text-[#63766b]">Runs send cleared source text and recorded performance observations to OpenAI. Source rights and publication decisions stay under owner review.</p><div className="mt-9 flex flex-wrap gap-2 border-b border-[#cbd7cd] pb-4" role="tablist" aria-label="Agent workspace">{tabs.map(t=><button key={t} role="tab" aria-selected={tab===t} className={tab===t?button:secondary} onClick={()=>setTab(t)}>{t}</button>)}</div>
+      {tab==="Content plan" && <ContentPlanPanel tasks={data.state.tasks} openTask={t=>{choose(t);setTab("Queue");}}/>}
       {tab==="Discovery" && <DiscoveryPanel state={data.state.discovery} busy={busy} send={send} openTask={id=>{const t=data.state.tasks.find(t=>t.id===id);if(t){choose(t);setTab("Queue");}}}/>}
       {tab==="Queue" && <div className="mt-6 grid items-start gap-6 lg:grid-cols-[330px_1fr]">
         <div className="grid gap-3">{!data.state.tasks.length && <p className="p-6">Run the workflow to collect evidence and create tasks.</p>}{data.state.tasks.map(t=><button key={t.id} onClick={()=>choose(t)} className={`rounded-2xl border p-5 text-left ${selected===t.id?"border-[#376954] bg-[#e4eee2]":"border-[#d2ddd1] bg-white"}`}><span className="text-[11px] font-bold uppercase tracking-wider text-[#6e7e68]">{t.priority} / {nice(t.kind)}</span><strong className="mt-2 block text-base">{t.title}</strong><span className="mt-3 inline-block rounded-full bg-[#edf1e8] px-3 py-1 text-xs">{nice(t.status)}</span></button>)}</div>

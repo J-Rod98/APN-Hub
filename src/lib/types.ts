@@ -39,6 +39,8 @@ export interface AppEvent extends Timestamps {
   /** Inclusive final date for multi-day gatherings. */
   end_date: string | null;
   event_time: string | null;
+  /** Organizer timezone, when verified; legacy date-only entries use APN’s calendar timezone. */
+  timezone?: string | null;
   venue: string | null;
   city: string | null;
   state: string | null;
