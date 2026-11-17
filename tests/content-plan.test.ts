@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CONTENT_PLAN_SLOTS, CONTENT_PLAN_TARGETS } from "../src/lib/editorial-plan";
-import { planTask, saveReviewDraft } from "../server/agents/content-plan";
-import { emptyState, type Draft } from "../server/agents/types";
+import { planTask, saveReviewDraft, fillNextResearchGap } from "../server/agents/content-plan";
+import { emptyState, type Draft, type Task } from "../server/agents/types";
 import { digest } from "../server/agents/policy";
 import { api } from "../server/agents/api";
 import { MemoryStore } from "../server/agents/store";
@@ -26,7 +26,7 @@ test("32 category-balanced slots are retry-safe and never queued as fabricated c
  const s=emptyState();const input={slot:"week-1-1",title:"Verify an actual upcoming gathering",researchNote:"The organizer has not supplied a venue or a verified timezone."};
  const t=planTask(s,input);assert.equal(t.status,"blocked");assert.equal(t.draft,undefined);assert.equal(planTask(s,input).id,t.id);assert.equal(s.tasks.length,1);
  assert.throws(()=>planTask(s,{...input,approval:{hash:"invented"}}));
- const second=planTask(s,{...input,slot:"week-1-2"});assert.throws(()=>planTask(s,{slot:"week-1-1",existingId:second.id}),/already has/);
+ const second=planTask(s,{...input,slot:"week-1-2"});t.sourceIds=["registered-source"];assert.throws(()=>planTask(s,{slot:"week-1-1",existingId:second.id}),/already/);
  assert.throws(()=>planTask(s,{slot:"week-1-3",existingId:t.id}),/category/);
 });
 test("researched drafts pass existing validation and cannot import approval or overwrite approved work", async () => {
@@ -46,4 +46,18 @@ test("Spotify show evidence does not mislabel the latest episode as a show", asy
  const ref=await readReference(url,async request=>{calls.push(request);return {url:request,contentType:"text/html",text:'<meta property="og:title" content="Actual fixture show">'};});
  assert.equal(ref.title,"Actual fixture show");assert.deepEqual(calls,[url]);assert.match(ref.text,/not an individual episode/);
  await assert.rejects(()=>readReference(url,async()=>({url,contentType:"text/html",text:"Unavailable"})),/show title/);
+});
+
+test("a verified task can fill a research-only slot without losing history or replacing reviewed drafts", () => {
+ const s=emptyState();const gap=planTask(s,{slot:"week-2-3",title:"Find a dated original Apostolic report",researchNote:"The current leads have no verified recent publication date."});
+ const unsourced={...gap,id:"unsourced-task",editorialPlan:undefined};s.tasks.push(unsourced);assert.throws(()=>planTask(s,{slot:"week-2-3",existingId:unsourced.id}),/Attach verified/);assert.equal(gap.status,"blocked");
+ const sourced:Task={...gap,id:"discovery-task-fixture",sourceIds:["verified-source"],editorialPlan:undefined,status:"review" as const};s.tasks.push(sourced);
+ planTask(s,{slot:"week-2-3",existingId:sourced.id});assert.equal(gap.status,"rejected");assert.equal(gap.editorialPlan,undefined);assert.equal(sourced.editorialPlan?.slot,"week-2-3");assert.equal(sourced.status,"review");assert.equal(sourced.approval,undefined);assert.equal(s.actions.filter(a=>a.action==="research-gap-filled").length,1);
+ const other={...sourced,id:"another-verified-task",editorialPlan:undefined};s.tasks.push(other);assert.throws(()=>planTask(s,{slot:"week-2-3",existingId:other.id}),/already has/);assert.equal(sourced.editorialPlan?.slot,"week-2-3");
+});
+
+test("scheduled discovery fills the next news gap only with dated current evidence and no approval", () => {
+ const s=emptyState();const gap=planTask(s,{slot:"week-2-3",title:"Find a current Apostolic ministry report",researchNote:"A recent verified original news report is still needed."});
+ const task:Task={...gap,id:"discovery-task-news",editorialPlan:undefined,sourceIds:["original-source"],status:"queued",discovery:{candidateId:"fixture",category:"news",url:"https://upci.org/fixture",creator:null,publishedAt:"2025-01-01T00:00:00Z",embedMode:"link",evidenceHash:"fixture",flags:[]}};s.tasks.push(task);
+ assert.equal(fillNextResearchGap(s,task),null);assert.equal(gap.status,"blocked");task.discovery!.publishedAt=new Date().toISOString();fillNextResearchGap(s,task);assert.equal(task.editorialPlan?.slot,"week-2-3");assert.equal(gap.status,"rejected");assert.equal(task.status,"queued");assert.equal(task.approval,undefined);assert.ok(s.actions.some(a=>a.action==="research-gap-filled"&&a.actor==="APN Editor"));
 });

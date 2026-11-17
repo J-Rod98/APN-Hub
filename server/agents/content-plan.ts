@@ -3,22 +3,38 @@ import { CONTENT_PLAN_ID, CONTENT_PLAN_SLOTS } from "../../src/lib/editorial-pla
 import { action, digest, now, validateDraft } from "./policy";
 import { draftSchema, type State, type Task } from "./types";
 export const slotSchema = z.string().refine(id => CONTENT_PLAN_SLOTS.some(slot => slot.id === id), "Unknown content-plan slot.");
-export function assignSlot(s: State, task: Task, slotId: string) {
+export function assignSlot(s: State, task: Task, slotId: string, fillResearchGap = false, actor = "owner") {
   const slot = CONTENT_PLAN_SLOTS.find(slot => slot.id === slotSchema.parse(slotId))!;
   if (slot.kind !== task.kind) throw new Error("Content category differs from the plan slot.");
   const occupied = s.tasks.find(t => t.id !== task.id && t.editorialPlan?.id === CONTENT_PLAN_ID && t.editorialPlan.slot === slotId);
-  if (occupied) throw new Error("This plan slot already has a task.");
   if (task.editorialPlan && task.editorialPlan.slot !== slotId) throw new Error("This task is already assigned to another slot.");
+  if (occupied) {
+    if (!fillResearchGap || occupied.status !== "blocked" || occupied.draft || occupied.sourceIds.length || occupied.approval || !occupied.id.startsWith("plan-")) throw new Error("This plan slot already has a task.");
+    if (!task.sourceIds.length) throw new Error("Attach verified sources before filling a research gap.");
+    // A sourced replacement may fill a research-only placeholder. Retain the
+    // original gap and audit trail; never supersede a draft or an approval.
+    occupied.status = "rejected";occupied.updatedAt = now();delete occupied.editorialPlan;
+    action(s, actor, "research-gap-filled", occupied.id, "Replaced by sourced task " + task.id);
+  }
   task.editorialPlan = { id: CONTENT_PLAN_ID, slot: slotId, week: slot.week };
-  action(s, "owner", "content-plan-assigned", task.id, slotId);
+  action(s, actor, "content-plan-assigned", task.id, slotId);
   return task;
+}
+export function fillNextResearchGap(s: State, task: Task) {
+  if (!task.sourceIds.length || task.editorialPlan) return null;
+  if (task.kind === "news") {
+    const published = Date.parse(task.discovery?.publishedAt || "");
+    if (!Number.isFinite(published) || published > Date.now() + 86400000 || Date.now() - published > 90 * 86400000) return null;
+  }
+  const gap = s.tasks.filter(t => t.kind === task.kind && t.editorialPlan?.id === CONTENT_PLAN_ID && t.status === "blocked" && !t.draft && !t.sourceIds.length && !t.approval).sort((a,b) => a.editorialPlan!.week - b.editorialPlan!.week)[0];
+  return gap ? assignSlot(s, task, gap.editorialPlan!.slot, true, "APN Editor") : null;
 }
 export function planTask(s: State, input: unknown) {
   const b = z.object({ slot: slotSchema, existingId: z.string().optional(), title: z.string().min(10).max(200).optional(), researchNote: z.string().min(20).max(4000).optional() }).strict().parse(input);
   if (b.existingId) {
     const task = s.tasks.find(t => t.id === b.existingId);
     if (!task || ["rejected", "publishing", "published", "handed_off"].includes(task.status)) throw new Error("Choose an unpublished active task.");
-    return assignSlot(s, task, b.slot);
+    return assignSlot(s, task, b.slot, true);
   }
   const existing = s.tasks.find(t => t.editorialPlan?.id === CONTENT_PLAN_ID && t.editorialPlan.slot === b.slot);
   if (existing) return existing;

@@ -4,11 +4,11 @@ Confirmed: APN has owner-only review, shared source/task state, daily API budget
 
 Planning baseline: 13 sermons, 3 podcasts, 1 music video, 0 news briefs, 2 future events and 5 resource listings, observed November 17, 2026. Existing guides skew toward ministry technology and conference planning. Targets add 7 sermons, 5 podcasts, 5 music videos, 4 news briefs, 6 future events and 5 practical resources.
 
-Review order: six numbered weeks, at most six slots per week. These are editorial priorities, not automatic publication dates. Missing source facts remain blocked. Broader leads retain source and doctrine review flags. Metadata listings must not reconstruct unheard sermons, episodes or lyrics. Recent news requires a dated original report. Event facts expire after seven days and must be reverified before publication.
+Review order: six numbered weeks, at most six slots per week. These are editorial priorities, not automatic publication dates. Missing source facts remain blocked. Scheduled discovery can fill a research-only gap with the next verified source in that category; current news requires a verified recent publication date first. The original research task remains in the action history and no approval is granted. Broader leads retain source and doctrine review flags. Metadata listings must not reconstruct unheard sermons, episodes or lyrics. Recent news requires a dated original report. Event facts expire after seven days and must be reverified before publication.
 
 Owner-authenticated API operations:
 
-- `plan-slot`: assign an existing active task or record a blocked research gap. Slots and categories are fixed; retries do not duplicate tasks.
+- `plan-slot`: assign an existing active task or record a blocked research gap. Slots and categories are fixed; retries do not duplicate tasks. A newly sourced task can replace a blocked research-only placeholder, retaining that placeholder as rejected history. Drafted, sourced, approved and published items cannot be displaced.
 - `research-intake`: retrieve original evidence using the existing bounded, SSRF-safe reader, reuse any unresolved candidate, assign a slot, and prepare a metadata-only listing for media. News/events wait for researched prose.
 - `review-draft`: save externally researched original prose against registered sources. The normal validator computes blocking checks and a fresh draft hash. It cannot accept approvals or revise approved/public content. No APN model request is made by these operations. They log operator-assisted preparation without claiming that external tools have no costs.
 

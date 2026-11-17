@@ -1,3 +1,4 @@
+import { fillNextResearchGap } from "./content-plan";
 import { preaching,podcast,events } from "../../src/lib/catalog";
 import approvedMedia from "../../src/content/approved-media.json";
 import approvedNews from "../../src/content/approved-news.json";
@@ -60,7 +61,7 @@ export async function runDiscovery(store:StateStore,category?:DiscoveryCategory,
    candidates.sort((a,b)=>unique.findIndex(l=>normalize(l.url)===normalize(a.url))-unique.findIndex(l=>normalize(l.url)===normalize(b.url)));
    for(const c of candidates){if(ds.candidates.some(old=>old.id===c.id)||ds.candidates.length>=250)continue;ds.candidates.push(c);run.found++;}
    const first=candidates.filter(c=>c.category!=="news"||(!!c.publishedAt&&Date.now()-Date.parse(c.publishedAt)<=90*86400000&&Date.parse(c.publishedAt)<=Date.now()+86400000)).sort((a,b)=>Number(b.category===chosen)-Number(a.category===chosen)).slice(0,3);
-   for(const c of first){if(ds.candidates.find(x=>x.id===c.id)?.status!=="new")continue;prepareCandidate(s,c.id,"link");run.queued++;}
+   for(const c of first){if(ds.candidates.find(x=>x.id===c.id)?.status!=="new")continue;const task=prepareCandidate(s,c.id,"link");fillNextResearchGap(s,task);run.queued++;}
    run.status="complete";action(s,"APN Editor","discovery-completed",run.id,"Verified "+run.found+" leads; queued "+run.queued+"; duplicates "+run.duplicates+".");
   });return {status:"complete"};
  }catch(e){await store.update(s=>{const run=discoveryState(s).runs.find(r=>r.id===claimed.run.id)!;run.status="failed";run.errors=[...errors,(e as Error).message].slice(0,25);action(s,"APN Editor","discovery-failed",run.id,"Owner retry required; paid search is not repeated automatically.");});throw e;}

@@ -45,7 +45,7 @@ export async function api(request:Request,store?:StateStore,trigger?:(mode:strin
         const prior = s.tasks.find(t => t.discovery?.candidateId === candidate!.id);
         if(prior && ["rejected","published","publishing","handed_off"].includes(prior.status)) throw new Error("This source has already been resolved.");
         const t = prior || prepareCandidate(s, candidate.id, "link");
-        assignSlot(s,t,intake.slot);
+        assignSlot(s,t,intake.slot,true);
         if(!t.draft && ["sermon","podcast","music"].includes(t.kind)) {
           const src = s.sources.find(src => t.sourceIds.includes(src.id))!;
           return saveReviewDraft(s, {id:t.id, sourceIds:t.sourceIds, draft:listingDraft(t,src)}, paths, guides);
