@@ -1,1 +1,74 @@
-[]
+[
+  {
+    "slug": "a-simple-seven-day-prayer-routine",
+    "eyebrow": "APN Resource",
+    "title": "A Simple Seven-Day Prayer Routine",
+    "description": "Build a steady prayer habit with a practical seven-day routine, verified Scripture references, and space for gratitude, repentance and intercession.",
+    "readingTime": "2 min read",
+    "publishedAt": "2026-11-17T16:57:00.000Z",
+    "intro": "Start with a repeatable appointment with God. This seven-day routine offers a practical beginning; its suggested minutes are a planning aid, not a measure of spiritual maturity.",
+    "sections": [
+      {
+        "heading": "Choose a place and a manageable time",
+        "paragraphs": [
+          "In Mark 1:35, Jesus withdraws to a solitary place to pray. In 1 Thessalonians 5:16–18, Paul connects rejoicing, continuing prayer and thanksgiving. Read those passages in their context before using this routine.",
+          "Choose a place where you can give your attention to prayer. Set aside ten minutes to begin, or another amount you can sustain. Put your phone aside and keep a Bible and a small notebook nearby. If mornings are difficult, choose a different consistent time."
+        ],
+        "bullets": []
+      },
+      {
+        "heading": "Use this first week to build a rhythm",
+        "paragraphs": [
+          "Begin each day by turning your attention to Jesus. Speak plainly and leave room to listen and reflect. You do not need to perform for anyone."
+        ],
+        "bullets": [
+          "Day 1: Thank God for specific mercies you can name.",
+          "Day 2: Ask God to search your heart; respond with repentance and an honest next step.",
+          "Day 3: Pray for your household, friends and the people you care for.",
+          "Day 4: Pray for your pastor, church and those serving your community.",
+          "Day 5: Bring the needs of neighbors, missionaries and people who need the gospel.",
+          "Day 6: Bring a difficult situation to God without scripting the outcome.",
+          "Day 7: Review the week, give thanks and choose a time for the next week."
+        ]
+      },
+      {
+        "heading": "Keep requests without turning prayer into a scorecard",
+        "paragraphs": [
+          "Write only what helps you remember to pray. Use initials for someone else’s private need and ask before sharing their story. Record changes you can actually verify; leave unresolved requests open rather than calling them answered.",
+          "At the end of the week, notice what helped you give God your attention. Adjust the place or time if needed. If you missed a day, resume at the next opportunity. Talk with your pastor about growing in prayer within the life of your local church."
+        ],
+        "bullets": []
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do I have to pray for exactly ten minutes?",
+        "answer": "No. Ten minutes is simply a suggested starting point. Choose a manageable time and grow with guidance from your pastor."
+      },
+      {
+        "question": "Is this a required order of prayer?",
+        "answer": "No. This is an optional routine to help you begin. Read Scripture, follow pastoral guidance and leave room for the needs of the day."
+      }
+    ],
+    "referencesHeading": "Sources reviewed by APN",
+    "references": [
+      {
+        "label": "King James Version: 1 Thessalonians 5",
+        "href": "https://ebible.org/eng-kjv/1TH05.htm"
+      },
+      {
+        "label": "King James Version: Mark 1",
+        "href": "https://ebible.org/eng-kjv/MRK01.htm"
+      },
+      {
+        "label": "Browse Apostolic preaching",
+        "href": "/preaching/"
+      },
+      {
+        "label": "APN’s convictions",
+        "href": "/about/"
+      }
+    ],
+    "approvalHash": "e32656ead41479df793d858bf04f1bfedf05fa66a76b910e134fff431d5b97c7"
+  }
+]
