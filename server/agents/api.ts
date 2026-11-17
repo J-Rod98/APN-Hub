@@ -1,3 +1,4 @@
+import { googleSearchConfigured } from "./google-search-auth";
 import { verifyRule,INITIAL_SOURCES } from "./trusted-sources";
 import { automationState,revokePolicy,saveRule,assertPublicationAuthorized } from "./automation-policy";
 import { assignSlot, planTask, saveReviewDraft, slotSchema } from "./content-plan";
@@ -12,7 +13,7 @@ import { authenticated,action,approve,digest,now,assertApproved,validateDraft,re
 import { sourceSchema,taskProposalSchema,type Task,type State } from "./types";
 import { getStateStore,type StateStore } from "./store";
 const json=(v:unknown,status=200)=>new Response(JSON.stringify(v),{status,headers:{"content-type":"application/json","cache-control":"no-store","x-content-type-options":"nosniff"}});
-export function capabilities(){return {openai:!!process.env.OPENAI_API_KEY,searchConsole:["GSC_CLIENT_ID","GSC_CLIENT_SECRET","GSC_REFRESH_TOKEN"].every(k=>!!process.env[k]),netlifyAnalytics:"Owner-imported dated snapshots; no live API configured",publishingEnabled:process.env.APN_PUBLISH_ENABLED==="true",schedulesEnabled:process.env.APN_AGENTS_ENABLED==="true",github:!!process.env.APN_GITHUB_TOKEN,clipper:"Existing publisher bridge; media processing still uses its current host",dailyBudgetUsd:Number(process.env.APN_DAILY_BUDGET_USD||1)};}
+export function capabilities(){return {openai:!!process.env.OPENAI_API_KEY,searchConsole:googleSearchConfigured(),netlifyAnalytics:"Owner-imported dated snapshots; no live API configured",publishingEnabled:process.env.APN_PUBLISH_ENABLED==="true",schedulesEnabled:process.env.APN_AGENTS_ENABLED==="true",github:!!process.env.APN_GITHUB_TOKEN,clipper:"Existing publisher bridge; media processing still uses its current host",dailyBudgetUsd:Number(process.env.APN_DAILY_BUDGET_USD||1)};}
 const paths=["/","/about/","/preaching/","/podcast/","/events/","/materials/","/guides/","/news/","/music/",...guides.map(g=>`/guides/${g.slug}/`)];
 export async function api(request:Request,store?:StateStore,trigger?:(mode:string)=>Promise<void>,identityVerified=false):Promise<Response>{
   const bearer=authenticated(request);

@@ -1,5 +1,6 @@
 import { SITE, digest, now } from "./policy";
 import type { Evidence } from "./types";
+import { googleSearchConfigured,googleSearchToken } from "./google-search-auth";
 
 export type PageAudit={ path:string;status:number|null;title:string;description:string;canonical:string;text:string;error?:string };
 const unescape=(s:string)=>s.replace(/&amp;/g,"&").replace(/&#x27;|&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
@@ -48,13 +49,10 @@ export function searchWindow(at=new Date()) {
 }
 export async function searchConsole(at=new Date(),requestFetch:typeof fetch=fetch) {
   const window=searchWindow(at);const property=process.env.GSC_PROPERTY || "sc-domain:apostolicpowernetwork.com";
-  const missing=["GSC_CLIENT_ID","GSC_CLIENT_SECRET","GSC_REFRESH_TOKEN"].filter(k=>!process.env[k]);
-  if(missing.length)return {status:"unavailable",reason:"APN ownership verification and read-only Search Console API authorization are required.",window,totals:null,previousTotals:null,queries:[],pages:[],inspection:null};
+  if(!googleSearchConfigured())return {status:"unavailable",reason:"APN ownership verification and read-only Search Console API authorization are required.",window,totals:null,previousTotals:null,queries:[],pages:[],inspection:null};
   try{
-    const tokenResponse=await requestFetch("https://oauth2.googleapis.com/token",{method:"POST",signal:AbortSignal.timeout(15000),body:new URLSearchParams({client_id:process.env.GSC_CLIENT_ID!,client_secret:process.env.GSC_CLIENT_SECRET!,refresh_token:process.env.GSC_REFRESH_TOKEN!,grant_type:"refresh_token"})});
-    if(!tokenResponse.ok)throw new Error(`Google token HTTP ${tokenResponse.status}`);
-    const token=await tokenResponse.json() as {access_token:string};
-    const headers={authorization:`Bearer ${token.access_token}`,"content-type":"application/json"};
+    const accessToken=await googleSearchToken(requestFetch);
+    const headers={authorization:`Bearer ${accessToken}`,"content-type":"application/json"};
     const query=async(start:string,end:string,dimensions:string[],rowLimit=1000)=>{
       const r=await requestFetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(property)}/searchAnalytics/query`,{method:"POST",headers,signal:AbortSignal.timeout(20000),body:JSON.stringify({startDate:start,endDate:end,dimensions,type:"web",dataState:"final",rowLimit})});
       if(!r.ok)throw new Error(`Search Console HTTP ${r.status}`);

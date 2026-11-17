@@ -1,0 +1,7 @@
+# APN Search Console connection
+
+The owner connected APN in Windsor and then selected a dedicated APN-only read-only Google connection instead of reusing the broad Windsor API key. The Windsor key was not copied. Chat-side access confirmed the exact property sc-domain:apostolicpowernetwork.com; November 1–14, 2026 returned 12 clicks and 472 impressions. These observations are not proof of unattended Netlify access.
+
+Dedicated project: apn-search-analytics, created under the owner’s existing organization. Credential setup is pending. The server supports a dedicated Google service identity stored only as GSC_SERVICE_ACCOUNT_JSON in production Functions secrets. It signs a one-hour JWT for the fixed Google token endpoint with only webmasters.readonly and no delegated user. No project IAM roles are needed for the identity; grant it access only to APN’s Search Console property. Existing user OAuth credentials remain supported. No advertising credentials, paid hosting, new subscription or Cloud billing upgrade is authorized.
+
+Search reporting preserves separate property totals, equal completed Pacific-date weeks, top query/page and page breakdowns, and the existing stored homepage URL inspection result. A daily scheduled workflow runs one analytics review per week, generates evidence-backed shared priorities and preserves publishing rules and the $1/day AI cap. Missing or failed access stays unavailable.
