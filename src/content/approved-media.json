@@ -100,5 +100,35 @@
     "embedAllowed": true,
     "publishedAt": "2026-11-17T18:06:00.000Z",
     "approvalHash": "d9015950f66d9a4ea4f30cc87d28c574c9438830cba30a2c5773ed6d3a3367f9"
+  },
+  {
+    "id": "joy-ibc-live-2025-483024",
+    "kind": "music",
+    "title": "Joy || IBC LIVE 2025",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=vh70Rbmcg8g",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-18T06:00:38.052Z",
+    "approvalHash": "470a92c6613e52e8784b6110905a3aff606228b52e85e8619cce473176304b97",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "word-of-god-joy-ibc-live-2025-e9348c",
+    "kind": "music",
+    "title": "Word of God || Joy || IBC LIVE 2025",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=iUVNa-dAgnM",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-18T06:00:38.052Z",
+    "approvalHash": "8fabf8be0437a87bde201c51b45378e45255ffa4b88fb78d3c2956b7044aab70",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
   }
 ]
