@@ -130,5 +130,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-d54ba2257344252737fb",
     "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "what-a-god-joy-ibc-live-2025-08f441",
+    "kind": "music",
+    "title": "What A God || Joy || IBC LIVE 2025",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=6KuPjo1diLg",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-19T06:05:38.491Z",
+    "approvalHash": "1b7bbe25dd16e8594747a69de357d4a247cb715cc40f709ab611142ec6b068ce",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "peak-2026-friday-pm-pastor-daniel-mckillop-157785",
+    "kind": "sermon",
+    "title": "PEAK 2026 Friday PM. -Pastor Daniel McKillop",
+    "description": "Explore the original sermon from WPFYouth. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=7w8NN9Pj3fE",
+    "creator": "WPFYouth",
+    "sourcePublishedAt": "2026-07-18T04:08:15.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-19T06:05:38.491Z",
+    "approvalHash": "beb567bac10fda7dc36ad9eaf89086bc24d54eff9e289781c2011b793648de00",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-2b235540e5ff91a443b8",
+    "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
   }
 ]
