@@ -4,18 +4,29 @@
 // only webmasters.readonly, confirms the target property is readable, and
 // prints the refresh token to store as the GSC_REFRESH_TOKEN Functions secret.
 //
-//   GSC_CLIENT_ID=... GSC_CLIENT_SECRET=... node scripts/gsc-authorize.mjs
+//   node scripts/gsc-authorize.mjs
+// It asks for the client ID and secret (or reads GSC_CLIENT_ID / GSC_CLIENT_SECRET).
 import { createServer } from "node:http";
 import { createHash, randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
+import { createInterface } from "node:readline/promises";
 
-const clientId = process.env.GSC_CLIENT_ID;
-const clientSecret = process.env.GSC_CLIENT_SECRET;
 const property = process.env.GSC_PROPERTY || "https://www.apostolicpowernetwork.com/";
 const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
-
+let clientId = process.env.GSC_CLIENT_ID?.trim();
+let clientSecret = process.env.GSC_CLIENT_SECRET?.trim();
 if (!clientId || !clientSecret) {
-  console.error("Set GSC_CLIENT_ID and GSC_CLIENT_SECRET from APN's desktop OAuth client in Google Cloud.");
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  clientId ||= (await rl.question("Paste the Client ID, then press Enter: ")).trim();
+  clientSecret ||= (await rl.question("Paste the Client secret, then press Enter: ")).trim();
+  rl.close();
+}
+if (!/^\d+-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(clientId)) {
+  console.error(`That Client ID doesn't look right: "${clientId}". It should look like 123456789012-abc123.apps.googleusercontent.com (not the client name, project ID or secret).`);
+  process.exit(1);
+}
+if (!clientSecret) {
+  console.error("No Client secret entered.");
   process.exit(1);
 }
 
