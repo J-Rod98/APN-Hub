@@ -59,7 +59,9 @@ async function checkProperty(accessToken) {
   const r = await fetch("https://www.googleapis.com/webmasters/v3/sites", { headers: { authorization: `Bearer ${accessToken}` } });
   if (!r.ok) throw Error(`Search Console site list failed (HTTP ${r.status}).`);
   const sites = (await r.json()).siteEntry || [];
-  return sites.find(s => s.siteUrl === property)?.permissionLevel || "not listed";
+  const match = sites.find(s => s.siteUrl === property);
+  if (!match) console.log(`\nProperties this Google account can see: ${sites.length ? sites.map(s => `${s.siteUrl} (${s.permissionLevel})`).join(", ") : "none"}`);
+  return match?.permissionLevel || "not listed";
 }
 
 const server = createServer(async (req, res) => {
