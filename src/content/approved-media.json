@@ -160,5 +160,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-2b235540e5ff91a443b8",
     "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
+  },
+  {
+    "id": "witness-indiana-bible-college-live-2026-3dd86c",
+    "kind": "music",
+    "title": "Witness | Indiana Bible College | LIVE 2026",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=bB1J7NH5i_Q",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-20T06:00:39.829Z",
+    "approvalHash": "4f210a695ec1d5a298902c6779a478503c81d57ec01f1ebcafc4568f47e8b6c7",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "peak-2026-friday-am-pastor-julian-ryder-ac7f18",
+    "kind": "sermon",
+    "title": "PEAK 2026 Friday AM -Pastor Julian Ryder",
+    "description": "Explore the original sermon from WPFYouth. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=clqVZaTcG88",
+    "creator": "WPFYouth",
+    "sourcePublishedAt": "2026-07-17T18:32:21.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-20T06:00:39.829Z",
+    "approvalHash": "63f8e0d3028a990ae544d2f9b1c6544ab55a2b9f5eb94750e9602f9cfb227029",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-2b235540e5ff91a443b8",
+    "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
   }
 ]
