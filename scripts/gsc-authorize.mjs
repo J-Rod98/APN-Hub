@@ -9,16 +9,18 @@
 import { createServer } from "node:http";
 import { createHash, randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
-import { createInterface } from "node:readline/promises";
+import { createInterface } from "node:readline";
 
 const property = process.env.GSC_PROPERTY || "https://www.apostolicpowernetwork.com/";
 const SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 let clientId = process.env.GSC_CLIENT_ID?.trim();
 let clientSecret = process.env.GSC_CLIENT_SECRET?.trim();
 if (!clientId || !clientSecret) {
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  clientId ||= (await rl.question("Paste the Client ID, then press Enter: ")).trim();
-  clientSecret ||= (await rl.question("Paste the Client secret, then press Enter: ")).trim();
+  const rl = createInterface({ input: process.stdin });
+  const lines = rl[Symbol.asyncIterator]();
+  const ask = async prompt => { process.stdout.write(prompt); return ((await lines.next()).value || "").trim(); };
+  clientId ||= await ask("Paste the Client ID, then press Enter: ");
+  clientSecret ||= await ask("Paste the Client secret, then press Enter: ");
   rl.close();
 }
 if (!/^\d+-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(clientId)) {
