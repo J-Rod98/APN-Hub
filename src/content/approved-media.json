@@ -190,5 +190,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-2b235540e5ff91a443b8",
     "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
+  },
+  {
+    "id": "proclaim-indiana-bible-college-live-2026-4ee819",
+    "kind": "music",
+    "title": "Proclaim | Indiana Bible College | LIVE 2026",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=8undJrnV6G0",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-21T06:05:34.313Z",
+    "approvalHash": "1c520d559ec8dba22566f369334177198f45f50d0f46969ecb43e2236999dcb8",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "peak-2026-thursday-pm-pastor-nathaniel-harris-28e8d1",
+    "kind": "sermon",
+    "title": "PEAK 2026 Thursday PM -Pastor Nathaniel Harris",
+    "description": "Explore the original sermon from WPFYouth. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=bJ838BAnW-M",
+    "creator": "WPFYouth",
+    "sourcePublishedAt": "2026-07-17T03:12:10.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-21T06:05:34.313Z",
+    "approvalHash": "81cea9bce88ed1024e5f1c09cd390f6b004c0949c784487088928f93d8389078",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-2b235540e5ff91a443b8",
+    "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
   }
 ]
