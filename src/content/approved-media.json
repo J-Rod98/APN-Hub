@@ -220,5 +220,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-2b235540e5ff91a443b8",
     "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
+  },
+  {
+    "id": "let-the-alabaster-break-alabaster-box-indiana-bible-college-live--2e85f9",
+    "kind": "music",
+    "title": "Let The Alabaster Break / Alabaster Box | Indiana Bible College | LIVE 2026",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=MudN7x-FdZs",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-22T06:00:37.885Z",
+    "approvalHash": "a3ab790df93bd02c6335a886df8ecf36197b0c1af746d295761df81671ff48fb",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "peak-2026-thursday-am-pastor-joel-booker-c61596",
+    "kind": "sermon",
+    "title": "PEAK 2026 Thursday AM -Pastor Joel Booker",
+    "description": "Explore the original sermon from WPFYouth. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=oqTHew4Bt1Y",
+    "creator": "WPFYouth",
+    "sourcePublishedAt": "2026-07-16T18:29:11.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-22T06:00:37.885Z",
+    "approvalHash": "ec9a6021d22170c3e347ce55abda1a0d8cc518415b0cecc12100702da83decea",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-2b235540e5ff91a443b8",
+    "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
   }
 ]
