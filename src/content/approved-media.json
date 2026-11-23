@@ -250,5 +250,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-2b235540e5ff91a443b8",
     "sourcePolicyHash": "1f04a889ab57db536fd2367da40b6e0faff73d17dd47abd55fd89ec89a93c45a"
+  },
+  {
+    "id": "you-always-win-indiana-bible-college-live-2026-85d105",
+    "kind": "music",
+    "title": "You Always Win | Indiana Bible College | LIVE 2026",
+    "description": "Explore the original music video from Indiana Bible College. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=b6Ljz3TUwlY",
+    "creator": "Indiana Bible College",
+    "sourcePublishedAt": null,
+    "embedAllowed": true,
+    "publishedAt": "2026-11-23T06:05:32.467Z",
+    "approvalHash": "34c3e73a53a197cb3be9a406c19421a798d7184f2ed3f8d626a76442b82c913e",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-d54ba2257344252737fb",
+    "sourcePolicyHash": "a67c931416c404ac0bdda6a6b7a8cdba0dd7e0e2b1739742deb37e21d0a8d91b"
+  },
+  {
+    "id": "how-to-defeat-the-philistines-rev-ben-rodriguz-november-17-2026-d79ffd",
+    "kind": "sermon",
+    "title": "How to Defeat the Philistines | Rev. Ben Rodriguz | November 17, 2026",
+    "description": "Explore the original sermon from First Pentecostal Church North Little Rock. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=V6G0Ga8F3xQ",
+    "creator": "First Pentecostal Church North Little Rock",
+    "sourcePublishedAt": "2026-11-18T03:13:13.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-23T06:05:32.467Z",
+    "approvalHash": "6a0478b36ce045a13cc800a9d2c018cf6d32dd0aef6244b9c3c3545ca39c0345",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-62a22fc030ce5d1a48d3",
+    "sourcePolicyHash": "cca0d8672cc8aa2ad74ecbd69502a54b2e33f8c6bb46e810e44568ec3d2e8c6f"
   }
 ]
