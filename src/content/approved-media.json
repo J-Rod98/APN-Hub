@@ -280,5 +280,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-62a22fc030ce5d1a48d3",
     "sourcePolicyHash": "cca0d8672cc8aa2ad74ecbd69502a54b2e33f8c6bb46e810e44568ec3d2e8c6f"
+  },
+  {
+    "id": "fpcnlr-sunday-night-522dc3",
+    "kind": "sermon",
+    "title": "FPCNLR SUNDAY NIGHT",
+    "description": "Explore the original sermon from First Pentecostal Church North Little Rock. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=6jDEr_6SmQg",
+    "creator": "First Pentecostal Church North Little Rock",
+    "sourcePublishedAt": "2026-11-16T02:07:13.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-24T06:00:41.494Z",
+    "approvalHash": "9ad8f3a035dbda465690d02c0268d0fb6db4b963129edae80942bb509a24dfc7",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-62a22fc030ce5d1a48d3",
+    "sourcePolicyHash": "cca0d8672cc8aa2ad74ecbd69502a54b2e33f8c6bb46e810e44568ec3d2e8c6f"
+  },
+  {
+    "id": "s2-ep-9-rev-chris-frank-section-4-presbyter-35478a",
+    "kind": "podcast",
+    "title": "S2 Ep. 9 | Rev. Chris Frank, Section 4 Presbyter",
+    "description": "Explore the original podcast from Hear the Harvest. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://open.spotify.com/episode/7oYvncRkXJ4jGkwPXuDkVy",
+    "creator": "Hear the Harvest",
+    "sourcePublishedAt": "2026-11-20T22:57:00.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-24T06:00:41.495Z",
+    "approvalHash": "a1bc4567652a92f12f8ecdad54807cc5b8c7185ad7fefa3de190e20f306dd857",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-1e41f9186eae8c88bd84",
+    "sourcePolicyHash": "43654d931cecccceb53360ecbe63f5f5bff6b8e0956d70ef41e63c89eef2a8d3"
   }
 ]
