@@ -310,5 +310,35 @@
     "authorizationMode": "source_policy",
     "sourcePolicyId": "rule-1e41f9186eae8c88bd84",
     "sourcePolicyHash": "43654d931cecccceb53360ecbe63f5f5bff6b8e0956d70ef41e63c89eef2a8d3"
+  },
+  {
+    "id": "worship-service-november-22-2026-92c8b1",
+    "kind": "sermon",
+    "title": "Worship Service | November 22, 2026 ",
+    "description": "Explore the original sermon from First Pentecostal Church North Little Rock. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=O5dqzMINC-k",
+    "creator": "First Pentecostal Church North Little Rock",
+    "sourcePublishedAt": "2026-11-23T02:10:17.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-25T06:05:39.145Z",
+    "approvalHash": "d2b98f9574145d2ef2f28ab1349b0d26042bc70d589ca441e71019f92281fcbc",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-62a22fc030ce5d1a48d3",
+    "sourcePolicyHash": "cca0d8672cc8aa2ad74ecbd69502a54b2e33f8c6bb46e810e44568ec3d2e8c6f"
+  },
+  {
+    "id": "storms-steal-memories-rev-ben-rodriguez-november-22-2026-1ff725",
+    "kind": "sermon",
+    "title": "Storms Steal Memories | Rev. Ben Rodriguez | November 22, 2026",
+    "description": "Explore the original sermon from First Pentecostal Church North Little Rock. Follow the source link for the creator’s recording and complete details.",
+    "sourceUrl": "https://www.youtube.com/watch?v=dNcWoJZ0DZQ",
+    "creator": "First Pentecostal Church North Little Rock",
+    "sourcePublishedAt": "2026-11-22T18:26:21.000Z",
+    "embedAllowed": true,
+    "publishedAt": "2026-11-25T06:05:39.145Z",
+    "approvalHash": "62c194530a55b76aafee6320771b783aa65f2fda32f7d85b9c67f8382e539b1a",
+    "authorizationMode": "source_policy",
+    "sourcePolicyId": "rule-62a22fc030ce5d1a48d3",
+    "sourcePolicyHash": "cca0d8672cc8aa2ad74ecbd69502a54b2e33f8c6bb46e810e44568ec3d2e8c6f"
   }
 ]
